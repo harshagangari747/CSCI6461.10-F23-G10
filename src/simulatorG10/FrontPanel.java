@@ -22,9 +22,9 @@ import javax.swing.border.EmptyBorder;
 
 import simulatorG10.*;
 
-@SuppressWarnings("serial")
 public class FrontPanel extends JFrame {
 	public FrontPanel() {
+		InitializeFrameComponents();
 	}
 
 	private static JFrame frame;
@@ -63,10 +63,9 @@ public class FrontPanel extends JFrame {
 	private static JButton ixr1LoadBtn;
 	private static JButton ixr2LoadBtn;
 	private static JButton ixr3LoadBtn;
-	
+
 	private static JButton helpBtn;
 	private static Map<String, String> gprInputMux = new HashMap();
-	
 
 	private static JLabel pcLbl;
 	private static JLabel marLbl;
@@ -90,7 +89,7 @@ public class FrontPanel extends JFrame {
 
 	private static JDialog errorDialogBox;
 
-	private  Memory memory;
+	private Memory memory;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -106,7 +105,7 @@ public class FrontPanel extends JFrame {
 			}
 		});
 	}
-	
+
 	private static void SetActions() {
 		loadBtn.addActionListener(new ActionListener() {
 			@Override
@@ -197,16 +196,16 @@ public class FrontPanel extends JFrame {
 				}
 			}
 		});
-		
+
 		helpBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new  PopUps().ShowPop("some message");
+				new PopUps().ShowPop("some message");
 			}
 		});
 	}
 
 	private static void InitializeFrameComponents() {
-		frame = new JFrame("Group 10");
+		frame = new JFrame("Group10");
 		frame.getContentPane().setBackground(SystemColor.activeCaption);
 		frame.setSize(840, 460);
 		frame.getContentPane().setLayout(null);
@@ -409,7 +408,7 @@ public class FrontPanel extends JFrame {
 		irLoadBtn.setMargin(new Insets(0, 0, 0, -3));
 		irLoadBtn.setFont(new Font("Tahoma", Font.PLAIN, 9));
 		irLoadBtn.setBounds(765, 100, 18, 14);
-		
+
 		helpBtn = new JButton("Help");
 		helpBtn.setMargin(new Insets(0, 0, 0, -3));
 		helpBtn.setFont(new Font("Yu Gothic UI", Font.BOLD, 12));
@@ -418,7 +417,7 @@ public class FrontPanel extends JFrame {
 		// error dialog box
 		errorDialogBox = new JDialog();
 
-		// Add To Frame Here
+// 		  Add To Frame Here
 
 		frame.getContentPane().add(gpr0Lbl);
 		frame.getContentPane().add(gpr0ValueLbl);
@@ -481,8 +480,7 @@ public class FrontPanel extends JFrame {
 		frame.getContentPane().add(pcLoadBtn);
 		frame.getContentPane().add(marLoadBtn);
 		frame.getContentPane().add(irLoadBtn);
-		
-		
+
 		frame.getContentPane().add(helpBtn);
 
 		frame.setVisible(true);
@@ -495,7 +493,7 @@ public class FrontPanel extends JFrame {
 		gprInputMux.put("10", "gpr2ValueLbl");
 		gprInputMux.put("11", "gpr3ValueLbl");
 	}
-	
+
 	private static void SetDefaultValues() {
 		gpr0ValueLbl.setText(Constants.default16Zeroes);
 		gpr1ValueLbl.setText(Constants.default16Zeroes);
@@ -512,18 +510,17 @@ public class FrontPanel extends JFrame {
 		prvlgValueLbl.setText(Constants.defaultSingleZero);
 	}
 
-	private static String LoadGPR() throws Exception
-	{
-				try {
-						return new UserInputReader(oprInput.getText(), gprInput.getText(), ixrInput.getText(),
-							indexInput.getText(), addrInput.getText()).GetUserInput();
-				} catch (Exception e) {
-					throw new Exception(e.getMessage());
-			}
+	private static String LoadGPR() throws Exception {
+		try {
+			return new UserInputReader(oprInput.getText(), gprInput.getText(), ixrInput.getText(), indexInput.getText(),
+					addrInput.getText()).GetUserInput();
+		} catch (Exception e) {
+			throw new Exception(e.getMessage());
+		}
 	}
 
 	private static void ShowDialog(String message) {
-		new PopUps().ShowPop(message);;
+		new PopUps().ShowPop(message);
 	}
 
 }
