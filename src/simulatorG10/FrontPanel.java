@@ -7,22 +7,14 @@ import java.awt.Insets;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
-
-import simulatorG10.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class FrontPanel extends JFrame {
 	public FrontPanel() {
@@ -39,10 +31,10 @@ public class FrontPanel extends JFrame {
 	private static JLabel gpr1Lbl;
 	private static JLabel gpr2Lbl;
 	private static JLabel gpr3Lbl;
-	private static JLabel gpr0ValueLbl;
-	private static JLabel gpr1ValueLbl;
-	private static JLabel gpr2ValueLbl;
-	private static JLabel gpr3ValueLbl;
+	public static JLabel gpr0ValueLbl;
+	public static JLabel gpr1ValueLbl;
+	public static JLabel gpr2ValueLbl;
+	public static JLabel gpr3ValueLbl;
 	private static JTextField indexInput;
 	private static JLabel oprInputLbl;
 	private static JLabel gprInputLbl;
@@ -53,9 +45,9 @@ public class FrontPanel extends JFrame {
 	private static JLabel ixr1Lbl;
 	private static JLabel ixr2Lbl;
 	private static JLabel ixr3Lbl;
-	private static JLabel ixr1ValueLbl;
-	private static JLabel ixr2ValueLbl;
-	private static JLabel ixr3ValueLbl;
+	public static JLabel ixr1ValueLbl;
+	public static JLabel ixr2ValueLbl;
+	public static JLabel ixr3ValueLbl;
 
 	private static JButton gpr0LoadBtn;
 	private static JButton gpr2LoadBtn;
@@ -76,25 +68,24 @@ public class FrontPanel extends JFrame {
 	private static JLabel mfrLbl;
 	private static JLabel prvlgLbl;
 
-	private static JLabel pcValueLbl;
+	public static JLabel pcValueLbl;
 
-	private static String gprText;
-	private static String pcText;
-	private static String ixrText;
+	private static String gprText = Constants.default16Zeroes;
+	private static String pcText = Constants.default12Zeroes;
+	private static String ixrText = Constants.default16Zeroes;
+	private static String marText = Constants.default12Zeroes;
+	private static String mbrText = Constants.default16Zeroes;
 
-	private static JLabel marValueLbl;
-	private static JLabel mbrValueLbl;
-	private static JLabel irValueLbl;
-	private static JLabel mfrValueLbl;
-	private static JLabel prvlgValueLbl;
+	public static JLabel marValueLbl;
+	public static JLabel mbrValueLbl;
+	public static JLabel irValueLbl;
+	public static JLabel mfrValueLbl;
+	public static JLabel prvlgValueLbl;
 
 	private static JButton pcLoadBtn;
 	private static JButton marLoadBtn;
-	private static JButton irLoadBtn;
+	private static JButton mbrLoadBtn;
 
-	private static JDialog errorDialogBox;
-
-	private Memory memory;
 	private static JButton loadBtn;
 	private static JButton storeBtn;
 
@@ -258,6 +249,54 @@ public class FrontPanel extends JFrame {
 				}
 			}
 		});
+
+		marLoadBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					marText = LoadRegister(Registers.MAR);
+					marValueLbl.setText(marText);
+
+				} catch (Exception ex) {
+					marValueLbl.setText(Constants.default12Zeroes);
+					ShowDialog(ex.getMessage());
+				}
+			}
+		});
+
+		mbrLoadBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					mbrText = LoadRegister(Registers.MBR);
+					mbrValueLbl.setText(mbrText);
+				} catch (Exception ex) {
+					mbrValueLbl.setText(Constants.default16Zeroes);
+					ShowDialog(ex.getMessage());
+				}
+			}
+		});
+
+		loadBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					mbrText = LoadRegisterFromMemory();
+					mbrValueLbl.setText(mbrText);
+				} catch (Exception ex) {
+					mbrValueLbl.setText(Constants.default16Zeroes);
+					ShowDialog(ex.getMessage());
+				}
+			}
+		});
+
+		storeBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					Memory.StoreIntoMemory(marText, mbrText);
+
+				} catch (Exception e2) {
+
+				}
+			}
+		});
 	}
 
 	private static void InitializeFrameComponents() {
@@ -384,14 +423,14 @@ public class FrontPanel extends JFrame {
 		mbrLbl.setBounds(475, 106, 46, 14);
 
 		mbrValueLbl = new JLabel(Constants.default16Zeroes);
-		mbrValueLbl.setBounds(545, 100, 200, 20);
+		mbrValueLbl.setBounds(545, 100, 164, 20);
 		mbrValueLbl.setFont(new Font("Calibri", Font.BOLD, 18));
 
 		irLbl = new JLabel("IR");
 		irLbl.setBounds(475, 136, 46, 14);
 
 		irValueLbl = new JLabel(Constants.default16Zeroes);
-		irValueLbl.setBounds(545, 130, 200, 20);
+		irValueLbl.setBounds(545, 130, 164, 20);
 		irValueLbl.setFont(new Font("Calibri", Font.BOLD, 18));
 
 		mfrLbl = new JLabel("MFR");
@@ -459,22 +498,21 @@ public class FrontPanel extends JFrame {
 		pcLoadBtn.setBounds(719, 40, 18, 14);
 
 		marLoadBtn = new JButton("LD");
+
 		marLoadBtn.setMargin(new Insets(0, 0, 0, -3));
 		marLoadBtn.setFont(new Font("Tahoma", Font.PLAIN, 9));
 		marLoadBtn.setBounds(719, 70, 18, 14);
 
-		irLoadBtn = new JButton("LD");
-		irLoadBtn.setMargin(new Insets(0, 0, 0, -3));
-		irLoadBtn.setFont(new Font("Tahoma", Font.PLAIN, 9));
-		irLoadBtn.setBounds(719, 100, 18, 14);
+		mbrLoadBtn = new JButton("LD");
+
+		mbrLoadBtn.setMargin(new Insets(0, 0, 0, -3));
+		mbrLoadBtn.setFont(new Font("Tahoma", Font.PLAIN, 9));
+		mbrLoadBtn.setBounds(719, 100, 18, 14);
 
 		helpBtn = new JButton("Help");
 		helpBtn.setMargin(new Insets(0, 0, 0, -3));
 		helpBtn.setFont(new Font("Yu Gothic UI", Font.BOLD, 12));
 		helpBtn.setBounds(743, 387, 40, 23);
-
-		// error dialog box
-		errorDialogBox = new JDialog();
 
 // 		  Add To Frame Here
 
@@ -538,7 +576,7 @@ public class FrontPanel extends JFrame {
 
 		frame.getContentPane().add(pcLoadBtn);
 		frame.getContentPane().add(marLoadBtn);
-		frame.getContentPane().add(irLoadBtn);
+		frame.getContentPane().add(mbrLoadBtn);
 
 		frame.getContentPane().add(helpBtn);
 
@@ -547,10 +585,12 @@ public class FrontPanel extends JFrame {
 		frame.getContentPane().add(singleStepBtn);
 
 		loadBtn = new JButton("Load");
+
 		loadBtn.setBounds(272, 331, 70, 25);
 		frame.getContentPane().add(loadBtn);
 
 		storeBtn = new JButton("Store");
+
 		storeBtn.setBounds(364, 331, 70, 25);
 		frame.getContentPane().add(storeBtn);
 
@@ -585,13 +625,21 @@ public class FrontPanel extends JFrame {
 		new PopUps().ShowPop(message);
 	}
 
-	private static String LoadRegister(Registers registerName) throws Exception {
+	public static String LoadRegister(Registers registerName) throws Exception {
 		try {
 			UserInputReader reader = new UserInputReader(oprInput.getText(), gprInput.getText(), ixrInput.getText(),
 					indexInput.getText(), addrInput.getText());
 			return reader.GetValueForSpecificRegister(registerName);
 		} catch (Exception e) {
 			throw new Exception(e.getMessage());
+		}
+	}
+
+	public static String LoadRegisterFromMemory() throws Exception {
+		try {
+			return Memory.GetFromMemory(marText);
+		} catch (Exception e) {
+			throw new Exception("Address " + marText + " not found");
 		}
 	}
 }

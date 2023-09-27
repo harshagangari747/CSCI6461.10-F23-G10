@@ -42,17 +42,17 @@ public class UserInputReader {
 //		}
 //	}
 
-	private boolean ValidateInput() throws Exception{
-		if (ValidateLength(opCode,6) && ValidateLength(gprCode, 2) && ValidateLength(ixrCode, 2)
+	private boolean ValidateInput() throws Exception {
+		if (ValidateLength(opCode, 6) && ValidateLength(gprCode, 2) && ValidateLength(ixrCode, 2)
 				&& ValidateLength(indexCode, 1) && ValidateLength(addrCode, 5)) {
 			return true;
-		} 
-		else {
-			throw new Exception("One or more input fields are not in expected length. \n Click Help to the input format");
+		} else {
+			throw new Exception(
+					"One or more input fields are not in expected length. \n Click Help to the input format");
 		}
 	}
 
-	public boolean ValidateLength(String partialInpString, int expectedlength) throws Exception  {
+	public boolean ValidateLength(String partialInpString, int expectedlength) throws Exception {
 		if (partialInpString.length() == expectedlength && IsBinaryString(partialInpString))
 			return true;
 		return false;
@@ -67,41 +67,44 @@ public class UserInputReader {
 		return true;
 	}
 
-	public String GetValueForSpecificRegister(Registers registerText) throws Exception 
-	{
+	public String GetValueForSpecificRegister(Registers registerText) throws Exception {
 		String textForRegister = "";
-		switch (registerText){
-		case PC: {
-			if(ValidateInput())
-			{
+		if (ValidateInput()) {
+			switch (registerText) {
+			case PC: {
 				String fullPcCode = UtilClass.ReturnWithAppendedZeroes(this.addrCode, 12);
-				textForRegister =  UtilClass.GetStringFormat(fullPcCode);				
+				textForRegister = UtilClass.GetStringFormat(fullPcCode);
 			}
-		}
-		break;
-		case GPR0:
-		case GPR1:
-		case GPR2:
-		case GPR3:
-		case IXR1:
-		case IXR2:
-		case IXR3:
-		{
-			if(ValidateInput())
-			{
-				textForRegister = GetGprOrIndexValue();				
+				break;
+			case GPR0:
+			case GPR1:
+			case GPR2:
+			case GPR3:
+			case IXR1:
+			case IXR2:
+			case IXR3: {
+				textForRegister = GetCompleteUserInput();
 			}
-		}
-		break;
-		default:
-			throw new IllegalArgumentException("Unexpected value: " + registerText);
+				break;
+			case MAR: {
+				String fullMarCode = UtilClass.ReturnWithAppendedZeroes(this.addrCode, 12);
+				textForRegister = UtilClass.GetStringFormat(fullMarCode);
+			}
+				break;
+			case MBR: {
+				textForRegister = GetCompleteUserInput();
+			}
+				break;
+
+			default:
+				throw new IllegalArgumentException("Unexpected value: " + registerText);
+			}
 		}
 		return textForRegister;
 
 	}
-	
-	private String GetGprOrIndexValue()
-	{
-		return  UtilClass.GetStringFormat(opCode+gprCode+ixrCode+indexCode+addrCode);
+
+	private String GetCompleteUserInput() {
+		return UtilClass.GetStringFormat(opCode + gprCode + ixrCode + indexCode + addrCode);
 	}
 }
