@@ -1,9 +1,8 @@
 package simulatorG10;
 
 public class Constants {
-	public static final String default16Zeroes = "---- ---- ---- ----";
-	public static final String default12Zeroes = "---- ---- ----";
-	public static final String default4Zeroes = "----"; 
-	public  static final String defaultSingleZero = "-";
-
+	public static final String default16Zeroes = "0000 0000 0000 0000";
+	public static final String default12Zeroes = "0000 0000 0000";
+	public static final String default4Zeroes = "0000"; 
+	public  static final String defaultSingleZero = "0";
 }
