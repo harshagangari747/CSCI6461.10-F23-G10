@@ -21,6 +21,8 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import simulatorG10.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class FrontPanel extends JFrame {
 	public FrontPanel() {
@@ -47,7 +49,7 @@ public class FrontPanel extends JFrame {
 	private static JLabel ixrInputLbl;
 	private static JLabel indexInputLbl;
 	private static JLabel addrInputLbl;
-	private static JButton loadBtn;
+	private static JButton fileLoadBtn;
 	private static JLabel ixr1Lbl;
 	private static JLabel ixr2Lbl;
 	private static JLabel ixr3Lbl;
@@ -77,6 +79,9 @@ public class FrontPanel extends JFrame {
 	private static JLabel pcValueLbl;
 
 	private static String gprText;
+	private static String pcText;
+	private static String ixrText;
+
 	private static JLabel marValueLbl;
 	private static JLabel mbrValueLbl;
 	private static JLabel irValueLbl;
@@ -90,6 +95,8 @@ public class FrontPanel extends JFrame {
 	private static JDialog errorDialogBox;
 
 	private Memory memory;
+	private static JButton loadBtn;
+	private static JButton storeBtn;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -107,7 +114,7 @@ public class FrontPanel extends JFrame {
 	}
 
 	private static void SetActions() {
-		loadBtn.addActionListener(new ActionListener() {
+		fileLoadBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				FileHandler newfileFileHandler = new FileHandler();
@@ -149,7 +156,7 @@ public class FrontPanel extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					gprText = LoadGPR();
+					gprText = LoadRegister(Registers.GPR0);
 					gpr0ValueLbl.setText(gprText);
 				} catch (Exception e1) {
 					gpr0ValueLbl.setText(Constants.default16Zeroes);
@@ -162,7 +169,7 @@ public class FrontPanel extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					gprText = LoadGPR();
+					gprText = LoadRegister(Registers.GPR1);
 					gpr1ValueLbl.setText(gprText);
 				} catch (Exception e1) {
 					gpr1ValueLbl.setText(Constants.default16Zeroes);
@@ -175,7 +182,7 @@ public class FrontPanel extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					gprText = LoadGPR();
+					gprText = LoadRegister(Registers.GPR2);
 					gpr2ValueLbl.setText(gprText);
 				} catch (Exception e1) {
 					gpr2ValueLbl.setText(Constants.default16Zeroes);
@@ -188,7 +195,7 @@ public class FrontPanel extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					gprText = LoadGPR();
+					gprText = LoadRegister(Registers.GPR3);
 					gpr3ValueLbl.setText(gprText);
 				} catch (Exception e1) {
 					gpr3ValueLbl.setText(Constants.default16Zeroes);
@@ -200,6 +207,55 @@ public class FrontPanel extends JFrame {
 		helpBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new PopUps().ShowPop("some message");
+			}
+		});
+
+		pcLoadBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					pcText = LoadRegister(Registers.PC);
+					pcValueLbl.setText(pcText);
+				} catch (Exception ex) {
+					pcValueLbl.setText(Constants.default12Zeroes);
+					ShowDialog(ex.getMessage());
+
+				}
+			}
+		});
+
+		ixr1LoadBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					ixrText = LoadRegister(Registers.IXR1);
+					ixr1ValueLbl.setText(ixrText);
+				} catch (Exception ex) {
+					pcValueLbl.setText(Constants.default16Zeroes);
+					ShowDialog(ex.getMessage());
+				}
+			}
+		});
+
+		ixr2LoadBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					ixrText = LoadRegister(Registers.IXR2);
+					ixr2ValueLbl.setText(ixrText);
+				} catch (Exception ex) {
+					pcValueLbl.setText(Constants.default16Zeroes);
+					ShowDialog(ex.getMessage());
+				}
+			}
+		});
+
+		ixr3LoadBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					ixrText = LoadRegister(Registers.IXR3);
+					ixr3ValueLbl.setText(ixrText);
+				} catch (Exception ex) {
+					pcValueLbl.setText(Constants.default16Zeroes);
+					ShowDialog(ex.getMessage());
+				}
 			}
 		});
 	}
@@ -216,7 +272,7 @@ public class FrontPanel extends JFrame {
 		gpr0Lbl.setForeground(Color.black);
 		gpr0Lbl.setBounds(86, 40, 33, 14);
 
-		gpr0ValueLbl = new JLabel();
+		gpr0ValueLbl = new JLabel(Constants.default16Zeroes);
 		gpr0ValueLbl.setBounds(130, 40, 173, 20);
 		gpr0ValueLbl.setForeground(SystemColor.activeCaptionText);
 		gpr0ValueLbl.setFont(new Font("Calibri", Font.BOLD, 18));
@@ -225,7 +281,7 @@ public class FrontPanel extends JFrame {
 		gpr1Lbl.setForeground(Color.black);
 		gpr1Lbl.setBounds(86, 70, 33, 14);
 
-		gpr1ValueLbl = new JLabel();
+		gpr1ValueLbl = new JLabel(Constants.default16Zeroes);
 		gpr1ValueLbl.setBounds(129, 70, 164, 20);
 		gpr1ValueLbl.setForeground(SystemColor.activeCaptionText);
 		gpr1ValueLbl.setFont(new Font("Calibri", Font.BOLD, 18));
@@ -234,7 +290,7 @@ public class FrontPanel extends JFrame {
 		gpr2Lbl.setBounds(86, 100, 33, 14);
 		gpr2Lbl.setForeground(Color.black);
 
-		gpr2ValueLbl = new JLabel();
+		gpr2ValueLbl = new JLabel(Constants.default16Zeroes);
 		gpr2ValueLbl.setBounds(129, 100, 164, 20);
 		gpr2ValueLbl.setForeground(SystemColor.activeCaptionText);
 		gpr2ValueLbl.setFont(new Font("Calibri", Font.BOLD, 18));
@@ -243,7 +299,7 @@ public class FrontPanel extends JFrame {
 		gpr3Lbl.setBounds(86, 130, 33, 14);
 		gpr3Lbl.setForeground(Color.black);
 
-		gpr3ValueLbl = new JLabel();
+		gpr3ValueLbl = new JLabel(Constants.default16Zeroes);
 		gpr3ValueLbl.setBounds(128, 130, 164, 20);
 		gpr3ValueLbl.setForeground(SystemColor.activeCaptionText);
 		gpr3ValueLbl.setFont(new Font("Calibri", Font.BOLD, 18));
@@ -260,18 +316,18 @@ public class FrontPanel extends JFrame {
 		ixr3Lbl.setBounds(86, 225, 46, 14);
 		ixr3Lbl.setForeground(Color.black);
 
-		ixr1ValueLbl = new JLabel();
-		ixr1ValueLbl.setBounds(129, 165, 209, 20);
+		ixr1ValueLbl = new JLabel(Constants.default16Zeroes);
+		ixr1ValueLbl.setBounds(129, 165, 164, 20);
 		ixr1ValueLbl.setForeground(SystemColor.activeCaptionText);
 		ixr1ValueLbl.setFont(new Font("Calibri", Font.BOLD, 18));
 
-		ixr2ValueLbl = new JLabel();
-		ixr2ValueLbl.setBounds(129, 195, 209, 20);
+		ixr2ValueLbl = new JLabel(Constants.default16Zeroes);
+		ixr2ValueLbl.setBounds(129, 195, 164, 20);
 		ixr2ValueLbl.setForeground(SystemColor.activeCaptionText);
 		ixr2ValueLbl.setFont(new Font("Calibri", Font.BOLD, 18));
 
-		ixr3ValueLbl = new JLabel();
-		ixr3ValueLbl.setBounds(129, 225, 209, 20);
+		ixr3ValueLbl = new JLabel(Constants.default16Zeroes);
+		ixr3ValueLbl.setBounds(129, 225, 164, 20);
 		ixr3ValueLbl.setForeground(SystemColor.activeCaptionText);
 		ixr3ValueLbl.setFont(new Font("Calibri", Font.BOLD, 18));
 
@@ -379,11 +435,13 @@ public class FrontPanel extends JFrame {
 		ixr1LoadBtn.setMargin(new Insets(0, 0, 0, -3));
 
 		ixr2LoadBtn = new JButton("LD");
+
 		ixr2LoadBtn.setFont(new Font("Tahoma", Font.PLAIN, 9));
 		ixr2LoadBtn.setBounds(300, 195, 18, 14);
 		ixr2LoadBtn.setMargin(new Insets(0, 0, 0, -3));
 
 		ixr3LoadBtn = new JButton("LD");
+
 		ixr3LoadBtn.setFont(new Font("Tahoma", Font.PLAIN, 9));
 		ixr3LoadBtn.setBounds(300, 225, 18, 14);
 		ixr3LoadBtn.setMargin(new Insets(0, 0, 0, -3));
@@ -391,23 +449,24 @@ public class FrontPanel extends JFrame {
 		runBtn = new JButton("Run");
 		runBtn.setBounds(630, 307, 70, 25);
 
-		loadBtn = new JButton("IPL");
-		loadBtn.setBounds(630, 263, 70, 25);
+		fileLoadBtn = new JButton("IPL");
+		fileLoadBtn.setBounds(630, 263, 70, 25);
 
 		pcLoadBtn = new JButton("LD");
+
 		pcLoadBtn.setFont(new Font("Tahoma", Font.PLAIN, 9));
 		pcLoadBtn.setMargin(new Insets(0, 0, 0, -3));
-		pcLoadBtn.setBounds(765, 40, 18, 14);
+		pcLoadBtn.setBounds(719, 40, 18, 14);
 
 		marLoadBtn = new JButton("LD");
 		marLoadBtn.setMargin(new Insets(0, 0, 0, -3));
 		marLoadBtn.setFont(new Font("Tahoma", Font.PLAIN, 9));
-		marLoadBtn.setBounds(765, 70, 18, 14);
+		marLoadBtn.setBounds(719, 70, 18, 14);
 
 		irLoadBtn = new JButton("LD");
 		irLoadBtn.setMargin(new Insets(0, 0, 0, -3));
 		irLoadBtn.setFont(new Font("Tahoma", Font.PLAIN, 9));
-		irLoadBtn.setBounds(765, 100, 18, 14);
+		irLoadBtn.setBounds(719, 100, 18, 14);
 
 		helpBtn = new JButton("Help");
 		helpBtn.setMargin(new Insets(0, 0, 0, -3));
@@ -431,7 +490,7 @@ public class FrontPanel extends JFrame {
 		frame.getContentPane().add(gpr3Lbl);
 		frame.getContentPane().add(gpr3ValueLbl);
 
-		frame.getContentPane().add(loadBtn);
+		frame.getContentPane().add(fileLoadBtn);
 		frame.getContentPane().add(runBtn);
 
 		frame.getContentPane().add(oprInput);
@@ -483,6 +542,18 @@ public class FrontPanel extends JFrame {
 
 		frame.getContentPane().add(helpBtn);
 
+		JButton singleStepBtn = new JButton("Step");
+		singleStepBtn.setBounds(630, 347, 70, 25);
+		frame.getContentPane().add(singleStepBtn);
+
+		loadBtn = new JButton("Load");
+		loadBtn.setBounds(272, 331, 70, 25);
+		frame.getContentPane().add(loadBtn);
+
+		storeBtn = new JButton("Store");
+		storeBtn.setBounds(364, 331, 70, 25);
+		frame.getContentPane().add(storeBtn);
+
 		frame.setVisible(true);
 
 	}
@@ -510,17 +581,17 @@ public class FrontPanel extends JFrame {
 		prvlgValueLbl.setText(Constants.defaultSingleZero);
 	}
 
-	private static String LoadGPR() throws Exception {
-		try {
-			return new UserInputReader(oprInput.getText(), gprInput.getText(), ixrInput.getText(), indexInput.getText(),
-					addrInput.getText()).GetUserInput();
-		} catch (Exception e) {
-			throw new Exception(e.getMessage());
-		}
-	}
-
 	private static void ShowDialog(String message) {
 		new PopUps().ShowPop(message);
 	}
 
+	private static String LoadRegister(Registers registerName) throws Exception {
+		try {
+			UserInputReader reader = new UserInputReader(oprInput.getText(), gprInput.getText(), ixrInput.getText(),
+					indexInput.getText(), addrInput.getText());
+			return reader.GetValueForSpecificRegister(registerName);
+		} catch (Exception e) {
+			throw new Exception(e.getMessage());
+		}
+	}
 }

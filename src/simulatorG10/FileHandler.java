@@ -5,7 +5,7 @@ import java.io.*;
 
 
 public class FileHandler {
-	private final String filePath = "E:\\CSCI6461.10-F23-G10\\SupportFiles\\ProgramLoadFile.txt";
+	private final String filePath = "SupportFiles\\ProgramLoadFile.txt";
 	public static File inputfile;
 
 	public void LoadFile() throws FileNotFoundException {
