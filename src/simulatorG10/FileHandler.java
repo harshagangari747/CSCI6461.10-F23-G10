@@ -1,6 +1,5 @@
 package simulatorG10;
 
-import java.util.*;
 import java.io.*;
 
 
@@ -20,7 +19,6 @@ public class FileHandler {
 	}
 
 	public void ConvertTheFile() throws Exception {
-		ArrayList<InstructionWord> instructionArrayList = new ArrayList<InstructionWord>();
 		HexToBitConverter hexToBitConverter = HexToBitConverter.GetHexToBitConverterObj();
 		String line = "";
 		String[] lineArray;
@@ -30,12 +28,9 @@ public class FileHandler {
 			while ((currentLine = bufferedReader.readLine()) != null) {
 				line = currentLine;
 				lineArray = line.split(" ");
-				InstructionWord userInstructionWordLine;
 				String location = hexToBitConverter.ReturnBitsFromHex(lineArray[0]);
 				String address = hexToBitConverter.ReturnBitsFromHex(lineArray[1]);
-				userInstructionWordLine = new InstructionWord(location, address);
-				Memory.LoadIntoMemory(userInstructionWordLine);
-				instructionArrayList.add(userInstructionWordLine);
+				Memory.LoadIntoMemory(location,address);
 			}
 			bufferedReader.close();
 

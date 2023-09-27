@@ -30,4 +30,10 @@ public class UtilClass {
 		adjustedString.append(text);
 		return adjustedString.toString();
 	}
+	
+	public static String ReturnUnformattedString(String formattedText)
+	{
+		String []partialString = formattedText.split(" ");
+		return String.join("", partialString);
+	} 
 }
