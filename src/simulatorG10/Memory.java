@@ -10,10 +10,14 @@ import javax.naming.AuthenticationException;
 import javax.swing.DefaultRowSorter;
 import javax.swing.event.MenuDragMouseEvent;
 
+/*Class to store file contents into memory and 
+servers as the base to push or get instructions
+*/
 public class Memory {
-	public static Map<String, String> memory = new HashMap<String, String>();
+	public static Map<Integer, String> memory = new LinkedHashMap<Integer, String>();
 
-	public static void LoadIntoMemory(String loc, String addr) {
+	// Loads the content addr in to the location specified by loc in the memory
+	public static void LoadIntoMemory(int loc, String addr) {
 		try {
 			memory.put(loc, addr);
 			System.out.println("Loaded " + addr + " into the memory location " + loc);
@@ -23,11 +27,15 @@ public class Memory {
 		}
 	}
 
+	/*
+	 * Stores specified MBR value into the location MAR in the Memory Memory[MAR] =
+	 * MBR
+	 */
 	public static void StoreIntoMemory(String MAR, String MBR) throws Exception {
 		try {
 			int fullMarCode = Integer.parseInt(UtilClass.ReturnUnformattedString(MAR));
 			int fullMbrCode = Integer.parseInt(UtilClass.ReturnUnformattedString(MBR));
-			Memory.memory.put(String.valueOf(fullMarCode), String.valueOf(fullMbrCode));
+			Memory.memory.put(fullMarCode, String.valueOf(fullMbrCode));
 			System.out.println("Stored " + fullMbrCode + " into location " + fullMarCode);
 
 		} catch (Exception e) {
@@ -35,6 +43,10 @@ public class Memory {
 		}
 	}
 
+	/*
+	 * Get specified MBR value from the location MAR in the Memory MBR <-
+	 * Memory[MAR]
+	 */
 	public static String GetFromMemory(String MarText) {
 		String unformatterMarText = Integer.parseInt(UtilClass.ReturnUnformattedString(MarText), 10) + "";
 		String mbrValue = Memory.memory.get(unformatterMarText);
