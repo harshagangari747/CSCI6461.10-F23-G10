@@ -16,11 +16,15 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+//Main class that contains the Front Panel User Interface
 public class FrontPanel extends JFrame {
+
+	// Class constructor calling another method to initialize UI components
 	public FrontPanel() {
 		InitializeFrameComponents();
 	}
 
+	// Declaring the essential components of the UI
 	private static JFrame frame;
 	private static JTextField oprInput;
 	private static JTextField gprInput;
@@ -58,8 +62,8 @@ public class FrontPanel extends JFrame {
 	private static JButton ixr2LoadBtn;
 	private static JButton ixr3LoadBtn;
 
+	private static JButton singleStepBtn;
 	private static JButton helpBtn;
-	private static Map<String, String> gprInputMux = new HashMap();
 
 	private static JLabel pcLbl;
 	private static JLabel marLbl;
@@ -89,12 +93,12 @@ public class FrontPanel extends JFrame {
 	private static JButton loadBtn;
 	private static JButton storeBtn;
 
+	// Main method performing some tasks before the user can interact with the UI
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					InitializeFrameComponents();
-					SetMapValues();
 					SetDefaultValues();
 					SetActions();
 				} catch (Exception e) {
@@ -104,7 +108,14 @@ public class FrontPanel extends JFrame {
 		});
 	}
 
+	/*
+	 * Method to set actions for each of the buttons when they are clicked
+	 */
 	private static void SetActions() {
+		/*
+		 * ActionListener To perform file load operation when user clicked on the IPL
+		 * button
+		 */
 		fileLoadBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -118,6 +129,11 @@ public class FrontPanel extends JFrame {
 
 			}
 		});
+
+		/*
+		 * ActionListener To run the program in the loaded file when user clicked on the
+		 * run button
+		 */
 		runBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String gprUserInput = gprInput.getText();
@@ -143,6 +159,10 @@ public class FrontPanel extends JFrame {
 			}
 		});
 
+		/*
+		 * ActionListener To Load gpr0 Value when user clicked on the LD button next to
+		 * gpr0
+		 */
 		gpr0LoadBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -156,6 +176,10 @@ public class FrontPanel extends JFrame {
 			}
 		});
 
+		/*
+		 * ActionListener To Load gpr1 value when user clicked on the LD button next to
+		 * gpr1
+		 */
 		gpr1LoadBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -169,6 +193,10 @@ public class FrontPanel extends JFrame {
 			}
 		});
 
+		/*
+		 * ActionListener To Load gpr2 Value when user clicked on the LD button next to
+		 * gpr2
+		 */
 		gpr2LoadBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -182,6 +210,10 @@ public class FrontPanel extends JFrame {
 			}
 		});
 
+		/*
+		 * ActionListener To Load gpr3 Value when user clicked on the LD button next to
+		 * gpr3
+		 */
 		gpr3LoadBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -195,6 +227,10 @@ public class FrontPanel extends JFrame {
 			}
 		});
 
+		/*
+		 * ActionListener To show help instructions to run the simulator when user
+		 * clicked on the Help button
+		 */
 		helpBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new PopUps().ShowPop("some message");
@@ -214,6 +250,10 @@ public class FrontPanel extends JFrame {
 			}
 		});
 
+		/*
+		 * ActionListener To Load Index 1 when user clicked on the LD button next to
+		 * IXR1
+		 */
 		ixr1LoadBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -225,6 +265,11 @@ public class FrontPanel extends JFrame {
 				}
 			}
 		});
+
+		/*
+		 * ActionListener To Load Index 2 when user clicked on the LD button next to
+		 * IXR2
+		 */
 
 		ixr2LoadBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -250,6 +295,10 @@ public class FrontPanel extends JFrame {
 			}
 		});
 
+		/*
+		 * ActionListener To Load Index 2 when user clicked on the LD button next to
+		 * IXR2
+		 */
 		marLoadBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -263,6 +312,10 @@ public class FrontPanel extends JFrame {
 			}
 		});
 
+		/*
+		 * ActionListener To Load MBR value when user clicked on the LD button next to
+		 * MBR
+		 */
 		mbrLoadBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -275,6 +328,10 @@ public class FrontPanel extends JFrame {
 			}
 		});
 
+		/*
+		 * ActionListener To Load MBR value fetched from memory for the address
+		 * specified in MAR when user clicked on the Load button
+		 */
 		loadBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -287,18 +344,40 @@ public class FrontPanel extends JFrame {
 			}
 		});
 
+		/*
+		 * ActionListener To Store MBR value in to the Memory[MAR] when user clicked on
+		 * the Store button
+		 */
 		storeBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					Memory.StoreIntoMemory(marText, mbrText);
-
 				} catch (Exception e2) {
 
 				}
 			}
 		});
+
+		/*
+		 * ActionListener To Run program step by step (instruction by instruction) when
+		 * user clicked on the Step button
+		 */
+		singleStepBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Simulator step = new Simulator();
+				try {
+					step.StepIntoTheInstruction();
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
 	}
 
+	/*
+	 * Method to initialize the frame components i.e (creating objects for all the
+	 * components)
+	 */
 	private static void InitializeFrameComponents() {
 		frame = new JFrame("Group10");
 		frame.getContentPane().setBackground(SystemColor.activeCaption);
@@ -580,7 +659,11 @@ public class FrontPanel extends JFrame {
 
 		frame.getContentPane().add(helpBtn);
 
-		JButton singleStepBtn = new JButton("Step");
+		singleStepBtn = new JButton("Step");
+		singleStepBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		singleStepBtn.setBounds(630, 347, 70, 25);
 		frame.getContentPane().add(singleStepBtn);
 
@@ -598,13 +681,9 @@ public class FrontPanel extends JFrame {
 
 	}
 
-	private static void SetMapValues() {
-		gprInputMux.put("00", "gpr0ValueLbl");
-		gprInputMux.put("01", "gpr1ValueLbl");
-		gprInputMux.put("10", "gpr2ValueLbl");
-		gprInputMux.put("11", "gpr3ValueLbl");
-	}
-
+	/*
+	 * Set default values to the registers based on their address capacity
+	 */
 	private static void SetDefaultValues() {
 		gpr0ValueLbl.setText(Constants.default16Zeroes);
 		gpr1ValueLbl.setText(Constants.default16Zeroes);
@@ -625,6 +704,7 @@ public class FrontPanel extends JFrame {
 		new PopUps().ShowPop(message);
 	}
 
+	//Loads the specified register by reading the user input
 	public static String LoadRegister(Registers registerName) throws Exception {
 		try {
 			UserInputReader reader = new UserInputReader(oprInput.getText(), gprInput.getText(), ixrInput.getText(),
@@ -635,11 +715,70 @@ public class FrontPanel extends JFrame {
 		}
 	}
 
+	//Gets the address value from the Memory at the location
 	public static String LoadRegisterFromMemory() throws Exception {
 		try {
 			return Memory.GetFromMemory(marText);
 		} catch (Exception e) {
 			throw new Exception("Address " + marText + " not found");
 		}
+	}
+
+	/*
+	 * Set different registers with the value passed to the parameter "value"
+	 */
+	public static void SetRegister(Registers register, String value) {
+		try {
+			switch (register) {
+			case GPR0: {
+				gpr0ValueLbl.setText(value);
+			}
+				break;
+			case GPR1: {
+				gpr1ValueLbl.setText(value);
+			}
+				break;
+			case GPR2: {
+				gpr2ValueLbl.setText(value);
+			}
+				break;
+			case GPR3: {
+				gpr3ValueLbl.setText(value);
+			}
+				break;
+			case IXR1: {
+				ixr1ValueLbl.setText(value);
+			}
+				break;
+			case IXR2: {
+				ixr2ValueLbl.setText(value);
+			}
+			case IXR3: {
+				ixr3ValueLbl.setText(value);
+			}
+			case PC: {
+				pcValueLbl.setText(value);
+			}
+				break;
+			case MAR: {
+				marValueLbl.setText(value);
+			}
+				break;
+			case MBR: {
+				mbrValueLbl.setText(value);
+			}
+				break;
+			case IR: {
+				irValueLbl.setText(value);
+			}
+				break;
+
+			default:
+				throw new IllegalArgumentException("Unexpected value: " + register);
+			}
+		} catch (Exception e) {
+
+		}
+
 	}
 }

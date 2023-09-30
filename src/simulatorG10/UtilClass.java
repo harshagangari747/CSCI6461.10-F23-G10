@@ -1,6 +1,15 @@
 package simulatorG10;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+//Utility class to perform frequent operations
 public class UtilClass {
+
+	/*
+	 * Gets the string with format XXXX XXXX XXXX XXXX or XXXX XXXX XXXX or XXXX
+	 * XXXX to represent aesthetically and for better readability in the UI
+	 */
 	public static String GetStringFormat(String input) {
 
 		StringBuilder formattedString = new StringBuilder();
@@ -21,6 +30,10 @@ public class UtilClass {
 
 	}
 
+	/*
+	 * Gets the string with full digits as per specifications It appends zeroes at
+	 * the front to make the string 16,12,8,4,0 bits accordingly
+	 */
 	public static String ReturnWithAppendedZeroes(String text, int totalLength) {
 		int requiredLength = totalLength - text.length();
 		StringBuilder adjustedString = new StringBuilder();
@@ -30,10 +43,29 @@ public class UtilClass {
 		adjustedString.append(text);
 		return adjustedString.toString();
 	}
-	
-	public static String ReturnUnformattedString(String formattedText)
-	{
-		String []partialString = formattedText.split(" ");
+
+	/*
+	 * Gets the string by removing spaces from the format XXXX XXXX XXXX XXXX as
+	 * mentioned earlier
+	 */
+	public static String ReturnUnformattedString(String formattedText) {
+		String[] partialString = formattedText.split(" ");
 		return String.join("", partialString);
-	} 
+	}
+
+	/*
+	 * Regex Pattern to match the parts of instruction word. first 6 digits for
+	 * opcodes, next 2 digits for GPR next 2 digits for IXR next 1 digit for
+	 * Indirect Addressing next 5 digits for address
+	 */
+	public static Matcher GetGroups(String instruction) {
+
+		String regexPattern = "^(\\d{6})(\\d{2})(\\d{2})(\\d{1})(\\d{5})$";
+		Pattern pattern = Pattern.compile(regexPattern);
+		Matcher patternMatch = pattern.matcher(instruction);
+		if (patternMatch.matches())
+			return patternMatch;
+		else
+			return null;
+	}
 }
