@@ -7,8 +7,6 @@ import java.awt.Insets;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -233,10 +231,17 @@ public class FrontPanel extends JFrame {
 		 */
 		helpBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new PopUps().ShowPop("some message");
+				try {
+					new PopUps().ShowHelp();
+				} catch (Exception e1) {
+					ShowDialog(e1.getLocalizedMessage());
+				}
 			}
 		});
 
+		/*
+		 * ActionListener To Load PC Value when user clicked on the LD button next to PC
+		 */
 		pcLoadBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -282,6 +287,11 @@ public class FrontPanel extends JFrame {
 				}
 			}
 		});
+
+		/*
+		 * ActionListener To Load Index 3 when user clicked on the LD button next to
+		 * IXR3
+		 */
 
 		ixr3LoadBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -353,7 +363,7 @@ public class FrontPanel extends JFrame {
 				try {
 					Memory.StoreIntoMemory(marText, mbrText);
 				} catch (Exception e2) {
-
+					ShowDialog(e2.getLocalizedMessage());
 				}
 			}
 		});
@@ -368,10 +378,11 @@ public class FrontPanel extends JFrame {
 				try {
 					step.StepIntoTheInstruction();
 				} catch (Exception e1) {
-					e1.printStackTrace();
+					ShowDialog(e1.getLocalizedMessage());
 				}
 			}
 		});
+
 	}
 
 	/*
@@ -383,6 +394,7 @@ public class FrontPanel extends JFrame {
 		frame.getContentPane().setBackground(SystemColor.activeCaption);
 		frame.setSize(840, 460);
 		frame.getContentPane().setLayout(null);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		// Labels
 		gpr0Lbl = new JLabel("GPR0");
@@ -566,6 +578,7 @@ public class FrontPanel extends JFrame {
 
 		runBtn = new JButton("Run");
 		runBtn.setBounds(630, 307, 70, 25);
+		runBtn.setEnabled(false);
 
 		fileLoadBtn = new JButton("IPL");
 		fileLoadBtn.setBounds(630, 263, 70, 25);
@@ -589,9 +602,11 @@ public class FrontPanel extends JFrame {
 		mbrLoadBtn.setBounds(719, 100, 18, 14);
 
 		helpBtn = new JButton("Help");
+
 		helpBtn.setMargin(new Insets(0, 0, 0, -3));
 		helpBtn.setFont(new Font("Yu Gothic UI", Font.BOLD, 12));
 		helpBtn.setBounds(743, 387, 40, 23);
+		helpBtn.setEnabled(false);
 
 // 		  Add To Frame Here
 
@@ -704,18 +719,26 @@ public class FrontPanel extends JFrame {
 		new PopUps().ShowPop(message);
 	}
 
-	//Loads the specified register by reading the user input
+	private static void ShowHelp() {
+		try {
+			new PopUps().ShowHelp();
+		} catch (Exception e) {
+			ShowDialog(e.getLocalizedMessage());
+		}
+	}
+
+	// Loads the specified register by reading the user input
 	public static String LoadRegister(Registers registerName) throws Exception {
 		try {
 			UserInputReader reader = new UserInputReader(oprInput.getText(), gprInput.getText(), ixrInput.getText(),
 					indexInput.getText(), addrInput.getText());
 			return reader.GetValueForSpecificRegister(registerName);
 		} catch (Exception e) {
-			throw new Exception(e.getMessage());
+			throw new Exception(e.getLocalizedMessage());
 		}
 	}
 
-	//Gets the address value from the Memory at the location
+	// Gets the address value from the Memory at the location
 	public static String LoadRegisterFromMemory() throws Exception {
 		try {
 			return Memory.GetFromMemory(marText);

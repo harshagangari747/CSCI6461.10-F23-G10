@@ -7,7 +7,7 @@ import java.io.*;
  * */
 public class FileHandler {
 	private final String filePath = "SupportFiles\\ProgramLoadFile.txt";
-	public static File inputfile;
+	public File inputfile;
 
 	/*
 	 * Loads the input file "ProgramLoadFile.txt and loads it
@@ -21,6 +21,19 @@ public class FileHandler {
 		if (!inputfile.exists()) {
 			throw new FileNotFoundException("File does not exist: " + filePath);
 		}
+	}
+	
+	public File GetTextFromFile(String path) throws Exception
+	{
+		if (path == null || path.isEmpty()) {
+			throw new FileNotFoundException("File path is null or empty.");
+		}
+
+		inputfile = new File(path);
+		if (!inputfile.exists()) {
+			throw new FileNotFoundException("File does not exist: " + path);
+		}
+		return inputfile;
 	}
 
 	/*
@@ -37,7 +50,7 @@ public class FileHandler {
 			while ((currentLine = bufferedReader.readLine()) != null) {
 				line = currentLine;
 				lineArray = line.split(" ");
-				int location = Integer.parseInt(binaryOperation.ReturnBitsFromHex(lineArray[0]),10);
+				int location = Integer.parseInt(binaryOperation.ReturnBitsFromHex(lineArray[0]),2);
 				String address = binaryOperation.ReturnBitsFromHex(lineArray[1]);
 				Memory.LoadIntoMemory(location,address);
 			}

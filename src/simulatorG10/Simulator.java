@@ -1,15 +1,9 @@
 package simulatorG10;
 
-import java.lang.constant.ConstantDesc;
-import java.net.SecureCacheResponse;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 
-import javax.naming.BinaryRefAddr;
-import javax.sql.rowset.CachedRowSet;
-import javax.swing.event.MenuDragMouseEvent;
-import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
 
 /*Class to set,get, run instructions
  * Typically our CPU
@@ -39,7 +33,7 @@ public class Simulator {
 		String currentPc = FrontPanel.pcValueLbl.getText();
 		try {
 
-			int condensedCurrentPc = Integer.parseInt(UtilClass.ReturnUnformattedString(currentPc), 10);
+			int condensedCurrentPc = Integer.parseInt(UtilClass.ReturnUnformattedString(currentPc), 2);
 			index = -1;
 			while (iterator.hasNext()) {
 				if (address.contains(condensedCurrentPc)) {
@@ -62,17 +56,19 @@ public class Simulator {
 				// decode ir
 				DeCodeInstruction(formattedMbrValue);
 				// set those bits
-				int indexOfCurrentPc = address.indexOf(condensedCurrentPc);
+				//int indexOfCurrentPc = address.indexOf(condensedCurrentPc);
 
 				// increment PC
 				if (index < address.size()) {
-					String appendedPcValue = UtilClass.ReturnWithAppendedZeroes(address.get(++index).toString(), 12);
+					String nextPcaddr = Integer.toBinaryString(address.get(++index));
+					
+					String appendedPcValue = UtilClass.ReturnWithAppendedZeroes(nextPcaddr, 12);
 					FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(appendedPcValue));
 
 				}
 			}
 		} catch (Exception e) {
-			throw new Exception(e.getMessage());
+			throw new Exception(e.getLocalizedMessage());
 		}
 
 	}
@@ -88,6 +84,10 @@ public class Simulator {
 				instructionGroups.group(3), instructionGroups.group(4), instructionGroups.group(5));
 
 		switch (word.opCode) {
+		case HALT :
+		{
+			throw new Exception("HALT Triggered. Program Halted. End of the Program");
+		}
 		case LDR: {
 			LoadRegisterFromMemory(word);
 		}
@@ -109,7 +109,7 @@ public class Simulator {
 		}
 			break;
 		default:
-			throw new Exception("Can't perfrom operation. Opcode not found");
+			throw new Exception("Can't perfrom operation. Opcode not found or supported");
 		}
 
 	}
@@ -132,9 +132,9 @@ public class Simulator {
 	 * value : 000010
 	 */
 	private void StoreRegisterToMemory(InstructionWord word) throws Exception {
-		String eftAddr = calculateEffectiveAddress(word);
+		int eftAddr =Integer.parseInt( calculateEffectiveAddress(word),2);
 		String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
-		Memory.memory.put(Integer.parseInt(eftAddr, 10), gprValue);
+		Memory.memory.put(eftAddr, gprValue);
 		System.out.println("Stored " + gprValue + " into address " + eftAddr);
 
 	}
@@ -144,8 +144,13 @@ public class Simulator {
 	 * Ex : LDA 1,0,addr(18) opcode value : 000011
 	 */
 	private void LoadRegisterWithAddress(InstructionWord word) throws Exception {
-		String eftAddr = calculateEffectiveAddress(word);
-		SetGprOrIndex(eftAddr, word.gpRegister);
+		try {			
+			String eftAddr = UtilClass.ReturnWithAppendedZeroes(calculateEffectiveAddress(word), 16);
+			SetGprOrIndex(UtilClass.GetStringFormat(eftAddr) , word.gpRegister);
+		} catch (Exception e) {
+			throw new Exception(e.getLocalizedMessage());
+			
+		}
 	}
 
 	/*
@@ -164,9 +169,9 @@ public class Simulator {
 	 * 101010
 	 */
 	private void StoreIndexRegisterToMemory(InstructionWord word) throws Exception {
-		String eftAddr = calculateEffectiveAddress(word);
-		String ixrValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
-		Memory.memory.put(Integer.parseInt(eftAddr, 10), ixrValue);
+		int eftAddr = Integer.parseInt( calculateEffectiveAddress(word),2);
+		String ixrValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.ixRegister));
+		Memory.memory.put(eftAddr, ixrValue);
 		System.out.println("Stored " + ixrValue + " into address " + eftAddr);
 
 	}
@@ -177,9 +182,13 @@ public class Simulator {
 	private String calculateEffectiveAddress(InstructionWord word) {
 		StringBuffer effectiveAddress = new StringBuffer();
 		BinaryOperations bOperations = BinaryOperations.GetBinaryOperationsObj();
+		int addr = -1;
+		addr = Integer.parseInt(String.valueOf(word.address),2);
 		if (!word.indirectAddressing) {
 			if (word.ixRegister == Registers.IXR0)
-				effectiveAddress.append(Memory.memory.get(word.address));
+			{
+				effectiveAddress.append(Memory.memory.get(addr));
+			}
 			else {
 				String currentIxrValue = null;
 				if (word.ixRegister == Registers.IXR1)
@@ -189,12 +198,12 @@ public class Simulator {
 				else if (word.ixRegister == Registers.IXR3)
 					currentIxrValue = FrontPanel.ixr3ValueLbl.getText();
 				currentIxrValue = UtilClass.ReturnUnformattedString(currentIxrValue);
-				String addressString = bOperations.BinaryAddition(currentIxrValue, Memory.memory.get(word.address));
+				String addressString = bOperations.BinaryAddition(currentIxrValue, Memory.memory.get(addr));
 				effectiveAddress.append(UtilClass.ReturnWithAppendedZeroes(addressString, 16));
 			}
 		} else {
 			if (word.ixRegister == Registers.IXR0) {
-				String nextAddress = Memory.memory.get(word.address);
+				int nextAddress = Integer.parseInt( Memory.memory.get(addr),2);
 				effectiveAddress.append(Memory.memory.get(nextAddress));
 			} else {
 				String currentIxrValue = null;
@@ -205,8 +214,8 @@ public class Simulator {
 				else if (word.ixRegister == Registers.IXR3)
 					currentIxrValue = FrontPanel.ixr3ValueLbl.getText();
 				currentIxrValue = UtilClass.ReturnUnformattedString(currentIxrValue);
-				String addressString = bOperations.BinaryAddition(currentIxrValue, Memory.memory.get(word.address));
-				String finalEftAddress = Memory.memory.get(Integer.parseInt(addressString, 10));
+				String addressString = bOperations.BinaryAddition(currentIxrValue, Memory.memory.get(addr));
+				String finalEftAddress = Memory.memory.get(Integer.parseInt(addressString, 2));
 				effectiveAddress.append(UtilClass.ReturnWithAppendedZeroes(finalEftAddress, 16));
 
 			}

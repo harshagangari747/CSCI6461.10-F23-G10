@@ -33,9 +33,9 @@ public class Memory {
 	 */
 	public static void StoreIntoMemory(String MAR, String MBR) throws Exception {
 		try {
-			int fullMarCode = Integer.parseInt(UtilClass.ReturnUnformattedString(MAR));
-			int fullMbrCode = Integer.parseInt(UtilClass.ReturnUnformattedString(MBR));
-			Memory.memory.put(fullMarCode, String.valueOf(fullMbrCode));
+			int fullMarCode = Integer.parseInt(UtilClass.ReturnUnformattedString(MAR),2);
+			String fullMbrCode = UtilClass.ReturnUnformattedString(MBR);
+			Memory.memory.put(fullMarCode, fullMbrCode);
 			System.out.println("Stored " + fullMbrCode + " into location " + fullMarCode);
 
 		} catch (Exception e) {
@@ -48,7 +48,7 @@ public class Memory {
 	 * Memory[MAR]
 	 */
 	public static String GetFromMemory(String MarText) {
-		String unformatterMarText = Integer.parseInt(UtilClass.ReturnUnformattedString(MarText), 10) + "";
+		int unformatterMarText = Integer.parseInt(UtilClass.ReturnUnformattedString(MarText), 2);
 		String mbrValue = Memory.memory.get(unformatterMarText);
 		String fullMbrText = UtilClass.ReturnWithAppendedZeroes(mbrValue, 16);
 		return UtilClass.GetStringFormat(fullMbrText);
