@@ -25,7 +25,7 @@ public class UtilClass {
 			return formattedString.toString();
 
 		} catch (Exception e) {
-			throw new IllegalArgumentException("String must be 16 characters long.");
+			throw new IllegalArgumentException(" Instruction must be 16 characters long. PC/MBR must be 12 characters long.");
 		}
 
 	}
@@ -41,6 +41,8 @@ public class UtilClass {
 			adjustedString.append(Constants.defaultSingleZero);
 		}
 		adjustedString.append(text);
+		if(adjustedString.toString().length()>16)
+			return adjustedString.toString().substring(1);
 		return adjustedString.toString();
 	}
 
