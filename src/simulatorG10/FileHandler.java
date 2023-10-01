@@ -23,6 +23,9 @@ public class FileHandler {
 		}
 	}
 	
+	/*
+	 * Returns File instance after loading it to read file further
+	 * */
 	public File GetTextFromFile(String path) throws Exception
 	{
 		if (path == null || path.isEmpty()) {

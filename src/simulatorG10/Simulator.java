@@ -12,6 +12,7 @@ public class Simulator {
 	private static ArrayList<Integer> address;
 	private static Iterator<Integer> iterator;
 	private static int index;
+	private static OutputConsole opConsoleObj;
 
 	/*
 	 * Class constructor to set the address with keys of memory to iterate through
@@ -22,6 +23,7 @@ public class Simulator {
 			address = new ArrayList<Integer>(Memory.memory.keySet());
 
 		iterator = address.iterator();
+		opConsoleObj = OutputConsole.GetOutputConsoleObj();
 	}
 
 	/*
@@ -135,7 +137,7 @@ public class Simulator {
 		int eftAddr =Integer.parseInt( calculateEffectiveAddress(word),2);
 		String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
 		Memory.memory.put(eftAddr, gprValue);
-		System.out.println("Stored " + gprValue + " into address " + eftAddr);
+		opConsoleObj.WriteToOutputConsole("Stored " + gprValue + " into address " + eftAddr);
 
 	}
 
@@ -172,7 +174,7 @@ public class Simulator {
 		int eftAddr = Integer.parseInt( calculateEffectiveAddress(word),2);
 		String ixrValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.ixRegister));
 		Memory.memory.put(eftAddr, ixrValue);
-		System.out.println("Stored " + ixrValue + " into address " + eftAddr);
+	    opConsoleObj.WriteToOutputConsole("Stored " + ixrValue + " into address " + eftAddr);
 
 	}
 
@@ -262,6 +264,7 @@ public class Simulator {
 			throw new Exception("Can't set IXR0 Register!");
 		}
 		}
+		opConsoleObj.WriteToOutputConsole("Set "+ String.valueOf(GprInd)+" to "+addr);
 	}
 
 	/*

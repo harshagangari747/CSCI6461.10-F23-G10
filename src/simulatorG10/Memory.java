@@ -15,12 +15,13 @@ servers as the base to push or get instructions
 */
 public class Memory {
 	public static Map<Integer, String> memory = new LinkedHashMap<Integer, String>();
+	private static OutputConsole opConsoleObj = OutputConsole.GetOutputConsoleObj();
 
 	// Loads the content addr in to the location specified by loc in the memory
 	public static void LoadIntoMemory(int loc, String addr) {
 		try {
 			memory.put(loc, addr);
-			System.out.println("Loaded " + addr + " into the memory location " + loc);
+			opConsoleObj.WriteToOutputConsole("Loaded " + addr + " into the memory location " + loc);
 		} catch (Exception e) {
 			new PopUps().ShowPop("Can't Load the file into memory");
 
@@ -36,7 +37,7 @@ public class Memory {
 			int fullMarCode = Integer.parseInt(UtilClass.ReturnUnformattedString(MAR),2);
 			String fullMbrCode = UtilClass.ReturnUnformattedString(MBR);
 			Memory.memory.put(fullMarCode, fullMbrCode);
-			System.out.println("Stored " + fullMbrCode + " into location " + fullMarCode);
+			opConsoleObj.WriteToOutputConsole("Stored " + fullMbrCode + " into location " + fullMarCode);
 
 		} catch (Exception e) {
 			throw new Exception("Can't store the address in the the given location");
