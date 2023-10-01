@@ -91,6 +91,8 @@ public class FrontPanel extends JFrame {
 	private static JButton loadBtn;
 	private static JButton storeBtn;
 
+	private static OutputConsole opConsoleObj;
+
 	// Main method performing some tasks before the user can interact with the UI
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -99,8 +101,9 @@ public class FrontPanel extends JFrame {
 					InitializeFrameComponents();
 					SetDefaultValues();
 					SetActions();
+					opConsoleObj = OutputConsole.GetOutputConsoleObj();
 				} catch (Exception e) {
-					e.printStackTrace();
+					ShowDialog(e.getLocalizedMessage());
 				}
 			}
 		});
@@ -167,6 +170,8 @@ public class FrontPanel extends JFrame {
 				try {
 					gprText = LoadRegister(Registers.GPR0);
 					gpr0ValueLbl.setText(gprText);
+					opConsoleObj.WriteToOutputConsole("Loaded GPR0 with " + gprText);
+
 				} catch (Exception e1) {
 					gpr0ValueLbl.setText(Constants.default16Zeroes);
 					ShowDialog(e1.getMessage());
@@ -184,6 +189,7 @@ public class FrontPanel extends JFrame {
 				try {
 					gprText = LoadRegister(Registers.GPR1);
 					gpr1ValueLbl.setText(gprText);
+					opConsoleObj.WriteToOutputConsole("Loaded GPR1 with " + gprText);
 				} catch (Exception e1) {
 					gpr1ValueLbl.setText(Constants.default16Zeroes);
 					ShowDialog(e1.getMessage());
@@ -201,6 +207,7 @@ public class FrontPanel extends JFrame {
 				try {
 					gprText = LoadRegister(Registers.GPR2);
 					gpr2ValueLbl.setText(gprText);
+					opConsoleObj.WriteToOutputConsole("Loaded GPR2 with " + gprText);
 				} catch (Exception e1) {
 					gpr2ValueLbl.setText(Constants.default16Zeroes);
 					ShowDialog(e1.getMessage());
@@ -218,6 +225,7 @@ public class FrontPanel extends JFrame {
 				try {
 					gprText = LoadRegister(Registers.GPR3);
 					gpr3ValueLbl.setText(gprText);
+					opConsoleObj.WriteToOutputConsole("Loaded GPR3 with " + gprText);
 				} catch (Exception e1) {
 					gpr3ValueLbl.setText(Constants.default16Zeroes);
 					ShowDialog(e1.getMessage());
@@ -247,6 +255,7 @@ public class FrontPanel extends JFrame {
 				try {
 					pcText = LoadRegister(Registers.PC);
 					pcValueLbl.setText(pcText);
+					opConsoleObj.WriteToOutputConsole("Loaded PC with " + pcText);
 				} catch (Exception ex) {
 					pcValueLbl.setText(Constants.default12Zeroes);
 					ShowDialog(ex.getMessage());
@@ -264,6 +273,7 @@ public class FrontPanel extends JFrame {
 				try {
 					ixrText = LoadRegister(Registers.IXR1);
 					ixr1ValueLbl.setText(ixrText);
+					opConsoleObj.WriteToOutputConsole("Loaded IXR1 with " + ixrText);
 				} catch (Exception ex) {
 					pcValueLbl.setText(Constants.default16Zeroes);
 					ShowDialog(ex.getMessage());
@@ -281,6 +291,7 @@ public class FrontPanel extends JFrame {
 				try {
 					ixrText = LoadRegister(Registers.IXR2);
 					ixr2ValueLbl.setText(ixrText);
+					opConsoleObj.WriteToOutputConsole("Loaded IXR2 with " + ixrText);
 				} catch (Exception ex) {
 					pcValueLbl.setText(Constants.default16Zeroes);
 					ShowDialog(ex.getMessage());
@@ -298,6 +309,7 @@ public class FrontPanel extends JFrame {
 				try {
 					ixrText = LoadRegister(Registers.IXR3);
 					ixr3ValueLbl.setText(ixrText);
+					opConsoleObj.WriteToOutputConsole("Loaded IXR3 with " + ixrText);
 				} catch (Exception ex) {
 					pcValueLbl.setText(Constants.default16Zeroes);
 					ShowDialog(ex.getMessage());
@@ -314,7 +326,7 @@ public class FrontPanel extends JFrame {
 				try {
 					marText = LoadRegister(Registers.MAR);
 					marValueLbl.setText(marText);
-
+					opConsoleObj.WriteToOutputConsole("Set MAR to " + marText);
 				} catch (Exception ex) {
 					marValueLbl.setText(Constants.default12Zeroes);
 					ShowDialog(ex.getMessage());
@@ -331,6 +343,7 @@ public class FrontPanel extends JFrame {
 				try {
 					mbrText = LoadRegister(Registers.MBR);
 					mbrValueLbl.setText(mbrText);
+					opConsoleObj.WriteToOutputConsole("Set MBR to " + mbrText);
 				} catch (Exception ex) {
 					mbrValueLbl.setText(Constants.default16Zeroes);
 					ShowDialog(ex.getMessage());
@@ -347,6 +360,7 @@ public class FrontPanel extends JFrame {
 				try {
 					mbrText = LoadRegisterFromMemory();
 					mbrValueLbl.setText(mbrText);
+					opConsoleObj.WriteToOutputConsole("Set MBR to " + mbrText);
 				} catch (Exception ex) {
 					mbrValueLbl.setText(Constants.default16Zeroes);
 					ShowDialog(ex.getMessage());

@@ -26,7 +26,6 @@ public class PopUps {
 		popUpFrame.setSize(new Dimension(800, 250));
 		popUpFrame.getContentPane().setLayout(null);
 		popUpFrame.setVisible(true);
-		popUpFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 	}
 
@@ -47,6 +46,10 @@ public class PopUps {
 		SetText(message);
 	}
 
+	/*
+	 * Method to popup help area for the user - currently disabled for
+	 * project 1
+	 * */
 	public void ShowHelp() throws Exception {
 		File helpFile = new FileHandler().GetTextFromFile(helpTextFilePath);
 		StringBuffer helptext = new StringBuffer();
@@ -60,6 +63,9 @@ public class PopUps {
 		textArea.setText(helptext.toString());
 	}
 
+	/*
+	 * Method to show help pop up - currently disabled
+	 * */
 	private void SetupScrollPane() {
 		textArea = new JLabel();
 		scrollPane = new JScrollPane(textArea);
