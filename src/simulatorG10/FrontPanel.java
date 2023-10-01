@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.plaf.synth.SynthCheckBoxMenuItemUI;
 
 //Main class that contains the Front Panel User Interface
 public class FrontPanel extends JFrame {
@@ -137,24 +138,19 @@ public class FrontPanel extends JFrame {
 		 */
 		runBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String gprUserInput = gprInput.getText();
-				if (!gprUserInput.isEmpty()) {
-					SetDefaultValues();
-					switch (gprUserInput) {
-					case "00":
-						gpr0ValueLbl.setText(addrInput.getText());
-						break;
-					case "01":
-						gpr1ValueLbl.setText(addrInput.getText());
-						break;
-					case "10":
-						gpr2ValueLbl.setText(addrInput.getText());
-						break;
-					case "11":
-						gpr3ValueLbl.setText(addrInput.getText());
-						break;
-					default:
-						ShowDialog("Error in gpr input.");
+				Simulator step = new Simulator();
+				int memSize = -1;
+				while (memSize < Memory.memory.size()) {
+					try {
+						singleStepBtn.doClick();
+						if (!Simulator.haltTriggered) {
+							memSize++;
+						} else {
+							Simulator.haltTriggered = true;
+							memSize = Memory.memory.size();
+						}
+					} catch (Exception e1) {
+						ShowDialog(e1.getLocalizedMessage());
 					}
 				}
 			}
@@ -592,7 +588,7 @@ public class FrontPanel extends JFrame {
 
 		runBtn = new JButton("Run");
 		runBtn.setBounds(630, 307, 70, 25);
-		runBtn.setEnabled(false);
+		runBtn.setEnabled(true);
 
 		fileLoadBtn = new JButton("IPL");
 		fileLoadBtn.setBounds(630, 263, 70, 25);
