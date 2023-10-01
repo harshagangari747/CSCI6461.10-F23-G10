@@ -13,6 +13,7 @@ public class Simulator {
 	private static Iterator<Integer> iterator;
 	private static int index;
 	private static OutputConsole opConsoleObj;
+	public static boolean haltTriggered = false;
 
 	/*
 	 * Class constructor to set the address with keys of memory to iterate through
@@ -88,7 +89,11 @@ public class Simulator {
 		switch (word.opCode) {
 		case HALT :
 		{
-			throw new Exception("HALT Triggered. Program Halted. End of the Program");
+			if(!haltTriggered)
+			{
+				haltTriggered = true;
+				throw new Exception("HALT Triggered. Program Halted. End of the Program");
+			}
 		}
 		case LDR: {
 			LoadRegisterFromMemory(word);
