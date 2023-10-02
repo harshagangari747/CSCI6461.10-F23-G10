@@ -6,7 +6,7 @@ import java.io.*;
  * Class to perform file operations like read file content and store into memory
  * */
 public class FileHandler {
-	private final String filePath = "SupportFiles\\ProgramLoadFile.txt";
+	private final String filePath = "ProgramLoadFile.txt";
 	public File inputfile;
 
 	/*
