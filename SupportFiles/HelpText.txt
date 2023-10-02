@@ -1,5 +1,0 @@
-help
-text
-here
-for
-testing

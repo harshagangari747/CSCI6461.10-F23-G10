@@ -386,7 +386,9 @@ public class FrontPanel extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				Simulator step = new Simulator();
 				try {
-					step.StepIntoTheInstruction();
+					if (!Simulator.haltTriggered) {
+						step.StepIntoTheInstruction();
+					}
 				} catch (Exception e1) {
 					ShowDialog(e1.getLocalizedMessage());
 				}
@@ -551,65 +553,65 @@ public class FrontPanel extends JFrame {
 		// Buttons
 		gpr0LoadBtn = new JButton("LD");
 		gpr0LoadBtn.setFont(new Font("Tahoma", Font.PLAIN, 9));
-		gpr0LoadBtn.setBounds(300, 40, 18, 14);
+		gpr0LoadBtn.setBounds(348, 40, 18, 14);
 		gpr0LoadBtn.setMargin(new Insets(0, 0, 0, -3));
 
 		gpr1LoadBtn = new JButton("LD");
 		gpr1LoadBtn.setFont(new Font("Tahoma", Font.PLAIN, 9));
-		gpr1LoadBtn.setBounds(300, 70, 18, 14);
+		gpr1LoadBtn.setBounds(348, 70, 18, 14);
 		gpr1LoadBtn.setMargin(new Insets(0, 0, 0, -3));
 
 		gpr2LoadBtn = new JButton("LD");
 		gpr2LoadBtn.setFont(new Font("Tahoma", Font.PLAIN, 9));
-		gpr2LoadBtn.setBounds(300, 100, 18, 14);
+		gpr2LoadBtn.setBounds(348, 100, 18, 14);
 		gpr2LoadBtn.setMargin(new Insets(0, 0, 0, -3));
 
 		gpr3LoadBtn = new JButton("LD");
 		gpr3LoadBtn.setFont(new Font("Tahoma", Font.PLAIN, 9));
-		gpr3LoadBtn.setBounds(300, 130, 18, 14);
+		gpr3LoadBtn.setBounds(348, 130, 18, 14);
 		gpr3LoadBtn.setMargin(new Insets(0, 0, 0, -3));
 
 		ixr1LoadBtn = new JButton("LD");
 		ixr1LoadBtn.setFont(new Font("Tahoma", Font.PLAIN, 9));
-		ixr1LoadBtn.setBounds(300, 165, 18, 14);
+		ixr1LoadBtn.setBounds(348, 165, 18, 14);
 		ixr1LoadBtn.setMargin(new Insets(0, 0, 0, -3));
 
 		ixr2LoadBtn = new JButton("LD");
 
 		ixr2LoadBtn.setFont(new Font("Tahoma", Font.PLAIN, 9));
-		ixr2LoadBtn.setBounds(300, 195, 18, 14);
+		ixr2LoadBtn.setBounds(348, 195, 18, 14);
 		ixr2LoadBtn.setMargin(new Insets(0, 0, 0, -3));
 
 		ixr3LoadBtn = new JButton("LD");
 
 		ixr3LoadBtn.setFont(new Font("Tahoma", Font.PLAIN, 9));
-		ixr3LoadBtn.setBounds(300, 225, 18, 14);
+		ixr3LoadBtn.setBounds(348, 225, 18, 14);
 		ixr3LoadBtn.setMargin(new Insets(0, 0, 0, -3));
 
 		runBtn = new JButton("Run");
-		runBtn.setBounds(630, 307, 70, 25);
+		runBtn.setBounds(611, 333, 70, 25);
 		runBtn.setEnabled(true);
 
 		fileLoadBtn = new JButton("IPL");
-		fileLoadBtn.setBounds(630, 263, 70, 25);
+		fileLoadBtn.setBounds(451, 333, 70, 25);
 
 		pcLoadBtn = new JButton("LD");
 
 		pcLoadBtn.setFont(new Font("Tahoma", Font.PLAIN, 9));
 		pcLoadBtn.setMargin(new Insets(0, 0, 0, -3));
-		pcLoadBtn.setBounds(719, 40, 18, 14);
+		pcLoadBtn.setBounds(753, 40, 18, 14);
 
 		marLoadBtn = new JButton("LD");
 
 		marLoadBtn.setMargin(new Insets(0, 0, 0, -3));
 		marLoadBtn.setFont(new Font("Tahoma", Font.PLAIN, 9));
-		marLoadBtn.setBounds(719, 70, 18, 14);
+		marLoadBtn.setBounds(753, 70, 18, 14);
 
 		mbrLoadBtn = new JButton("LD");
 
 		mbrLoadBtn.setMargin(new Insets(0, 0, 0, -3));
 		mbrLoadBtn.setFont(new Font("Tahoma", Font.PLAIN, 9));
-		mbrLoadBtn.setBounds(719, 100, 18, 14);
+		mbrLoadBtn.setBounds(753, 100, 18, 14);
 
 		helpBtn = new JButton("Help");
 
@@ -689,17 +691,17 @@ public class FrontPanel extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
-		singleStepBtn.setBounds(630, 347, 70, 25);
+		singleStepBtn.setBounds(531, 333, 70, 25);
 		frame.getContentPane().add(singleStepBtn);
 
 		loadBtn = new JButton("Load");
 
-		loadBtn.setBounds(272, 331, 70, 25);
+		loadBtn.setBounds(451, 263, 70, 25);
 		frame.getContentPane().add(loadBtn);
 
 		storeBtn = new JButton("Store");
 
-		storeBtn.setBounds(364, 331, 70, 25);
+		storeBtn.setBounds(531, 263, 70, 25);
 		frame.getContentPane().add(storeBtn);
 
 		frame.setVisible(true);
