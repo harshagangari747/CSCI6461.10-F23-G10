@@ -7,6 +7,9 @@ import java.awt.Insets;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -94,6 +97,8 @@ public class FrontPanel extends JFrame {
 
 	private static OutputConsole opConsoleObj;
 
+	public static boolean conditionCode;
+
 	// Main method performing some tasks before the user can interact with the UI
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -123,8 +128,16 @@ public class FrontPanel extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				FileHandler newfileFileHandler = new FileHandler();
 				try {
-					newfileFileHandler.LoadFile();
+					// newfileFileHandler.LoadFile(FileTypes.JSON);
+					// newfileFileHandler.ReadJsonFile();
+					newfileFileHandler.LoadFile(FileTypes.IPLFile);
+					newfileFileHandler.LoadFile(FileTypes.HexFile);
 					newfileFileHandler.ConvertTheFile();
+					// ArrayList<String> inputFileArrayList = newfileFileHandler.ReadTextFile();
+					// Translator translateObj = new Translator();
+					// LinkedHashMap<String, String> getHexInputValues = (LinkedHashMap<String,
+					// String>) translateObj.TranslateIntoHexCode(inputFileArrayList);
+					// newfileFileHandler.WriteToHexFile(getHexInputValues);
 				} catch (Exception ex) {
 					ShowDialog(ex.getMessage());
 				}
@@ -415,7 +428,7 @@ public class FrontPanel extends JFrame {
 		gpr0Lbl.setBounds(86, 40, 33, 14);
 
 		gpr0ValueLbl = new JLabel(Constants.default16Zeroes);
-		gpr0ValueLbl.setBounds(130, 40, 173, 20);
+		gpr0ValueLbl.setBounds(130, 40, 208, 20);
 		gpr0ValueLbl.setForeground(SystemColor.activeCaptionText);
 		gpr0ValueLbl.setFont(new Font("Calibri", Font.BOLD, 18));
 
@@ -424,7 +437,7 @@ public class FrontPanel extends JFrame {
 		gpr1Lbl.setBounds(86, 70, 33, 14);
 
 		gpr1ValueLbl = new JLabel(Constants.default16Zeroes);
-		gpr1ValueLbl.setBounds(129, 70, 164, 20);
+		gpr1ValueLbl.setBounds(129, 70, 209, 20);
 		gpr1ValueLbl.setForeground(SystemColor.activeCaptionText);
 		gpr1ValueLbl.setFont(new Font("Calibri", Font.BOLD, 18));
 
@@ -433,7 +446,7 @@ public class FrontPanel extends JFrame {
 		gpr2Lbl.setForeground(Color.black);
 
 		gpr2ValueLbl = new JLabel(Constants.default16Zeroes);
-		gpr2ValueLbl.setBounds(129, 100, 164, 20);
+		gpr2ValueLbl.setBounds(129, 100, 209, 20);
 		gpr2ValueLbl.setForeground(SystemColor.activeCaptionText);
 		gpr2ValueLbl.setFont(new Font("Calibri", Font.BOLD, 18));
 
@@ -442,7 +455,7 @@ public class FrontPanel extends JFrame {
 		gpr3Lbl.setForeground(Color.black);
 
 		gpr3ValueLbl = new JLabel(Constants.default16Zeroes);
-		gpr3ValueLbl.setBounds(128, 130, 164, 20);
+		gpr3ValueLbl.setBounds(128, 130, 210, 20);
 		gpr3ValueLbl.setForeground(SystemColor.activeCaptionText);
 		gpr3ValueLbl.setFont(new Font("Calibri", Font.BOLD, 18));
 
@@ -459,17 +472,17 @@ public class FrontPanel extends JFrame {
 		ixr3Lbl.setForeground(Color.black);
 
 		ixr1ValueLbl = new JLabel(Constants.default16Zeroes);
-		ixr1ValueLbl.setBounds(129, 165, 164, 20);
+		ixr1ValueLbl.setBounds(129, 165, 209, 20);
 		ixr1ValueLbl.setForeground(SystemColor.activeCaptionText);
 		ixr1ValueLbl.setFont(new Font("Calibri", Font.BOLD, 18));
 
 		ixr2ValueLbl = new JLabel(Constants.default16Zeroes);
-		ixr2ValueLbl.setBounds(129, 195, 164, 20);
+		ixr2ValueLbl.setBounds(129, 195, 209, 20);
 		ixr2ValueLbl.setForeground(SystemColor.activeCaptionText);
 		ixr2ValueLbl.setFont(new Font("Calibri", Font.BOLD, 18));
 
 		ixr3ValueLbl = new JLabel(Constants.default16Zeroes);
-		ixr3ValueLbl.setBounds(129, 225, 164, 20);
+		ixr3ValueLbl.setBounds(129, 225, 209, 20);
 		ixr3ValueLbl.setForeground(SystemColor.activeCaptionText);
 		ixr3ValueLbl.setFont(new Font("Calibri", Font.BOLD, 18));
 
@@ -512,28 +525,28 @@ public class FrontPanel extends JFrame {
 		pcLbl.setBounds(475, 40, 46, 14);
 
 		pcValueLbl = new JLabel(Constants.default12Zeroes);
-		pcValueLbl.setBounds(545, 40, 164, 20);
+		pcValueLbl.setBounds(545, 40, 198, 20);
 		pcValueLbl.setFont(new Font("Calibri", Font.BOLD, 18));
 
 		marLbl = new JLabel("MAR");
 		marLbl.setBounds(475, 70, 46, 14);
 
 		marValueLbl = new JLabel(Constants.default12Zeroes);
-		marValueLbl.setBounds(545, 70, 164, 20);
+		marValueLbl.setBounds(545, 70, 198, 20);
 		marValueLbl.setFont(new Font("Calibri", Font.BOLD, 18));
 
 		mbrLbl = new JLabel("MBR");
 		mbrLbl.setBounds(475, 106, 46, 14);
 
 		mbrValueLbl = new JLabel(Constants.default16Zeroes);
-		mbrValueLbl.setBounds(545, 100, 164, 20);
+		mbrValueLbl.setBounds(545, 100, 198, 20);
 		mbrValueLbl.setFont(new Font("Calibri", Font.BOLD, 18));
 
 		irLbl = new JLabel("IR");
 		irLbl.setBounds(475, 136, 46, 14);
 
 		irValueLbl = new JLabel(Constants.default16Zeroes);
-		irValueLbl.setBounds(545, 130, 164, 20);
+		irValueLbl.setBounds(545, 130, 198, 20);
 		irValueLbl.setFont(new Font("Calibri", Font.BOLD, 18));
 
 		mfrLbl = new JLabel("MFR");

@@ -46,6 +46,10 @@ public class InstructionWord {
 		case "101010": {
 			return OpCodes.STX;
 		}
+		case "001010":
+		{
+			return OpCodes.JZ;
+		}
 
 		default:
 			throw new Exception("Opcode : " + opcode + " is currently not supported!");
