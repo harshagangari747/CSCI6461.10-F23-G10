@@ -1,5 +1,7 @@
 package simulatorG10;
 
+import java.awt.Color;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.regex.Matcher;
@@ -13,6 +15,7 @@ public class Simulator {
 	private static int index;
 	private static OutputConsole opConsoleObj;
 	public static boolean haltTriggered = false;
+	private BinaryOperations binaryOperationsObj;
 
 	/*
 	 * Class constructor to set the address with keys of memory to iterate through
@@ -24,6 +27,7 @@ public class Simulator {
 
 		iterator = address.iterator();
 		opConsoleObj = OutputConsole.GetOutputConsoleObj();
+		binaryOperationsObj = BinaryOperations.GetBinaryOperationsObj();
 	}
 
 	/*
@@ -83,6 +87,10 @@ public class Simulator {
 				instructionGroups.group(3), instructionGroups.group(4), instructionGroups.group(5));
 
 		switch (word.opCode) {
+		case LOC:
+		{
+			break;
+		}
 		case HALT: {
 			if (!haltTriggered) {
 				haltTriggered = true;
@@ -161,7 +169,7 @@ public class Simulator {
 		case TRR: {
 			break;
 		}
-		case ORR: {
+		case OR: {
 			break;
 		}
 		case AND: {
@@ -212,7 +220,7 @@ public class Simulator {
 		int eftAddr = Integer.parseInt(calculateEffectiveAddress(word), 2);
 		String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
 		Memory.memory.put(eftAddr, gprValue);
-		opConsoleObj.WriteToOutputConsole("Stored " + gprValue + " into address " + eftAddr);
+		opConsoleObj.WriteToOutputConsole("Stored " + gprValue + " into address " + eftAddr,Color.CYAN);
 
 	}
 
@@ -249,7 +257,7 @@ public class Simulator {
 		int eftAddr = Integer.parseInt(calculateEffectiveAddress(word), 2);
 		String ixrValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.ixRegister));
 		Memory.memory.put(eftAddr, ixrValue);
-		opConsoleObj.WriteToOutputConsole("Stored " + ixrValue + " into address " + eftAddr);
+		opConsoleObj.WriteToOutputConsole("Stored " + ixrValue + " into address " + eftAddr,Color.CYAN);
 
 	}
 
@@ -337,7 +345,7 @@ public class Simulator {
 			throw new Exception("Can't set IXR0 Register!");
 		}
 		}
-		opConsoleObj.WriteToOutputConsole("Set " + String.valueOf(GprInd) + " to " + addr);
+		opConsoleObj.WriteToOutputConsole("Set " + String.valueOf(GprInd) + " to " + addr,Color.CYAN);
 	}
 
 	/*
@@ -394,6 +402,8 @@ public class Simulator {
 		if ((isZero && gprIntValue == 0) || (!isZero && gprIntValue != 0) || isCCbit
 				|| (isGreater && gprIntValue > 0)) {
 			String pcString = String.valueOf(eftAddr);
+			FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(pcString));
+
 		} else {
 			IncrementPC();
 		}
@@ -402,7 +412,14 @@ public class Simulator {
 
 	private void SubtractOneAndBranch(InstructionWord word) throws Exception {
 		String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
-		
+		String result = UtilClass.ReturnWithAppendedZeroes(binaryOperationsObj.BinarySubstraction(gprValue, "1"), 16);
+		FrontPanel.SetRegister(word.gpRegister, UtilClass.GetStringFormat(result));
+		if (binaryOperationsObj.ReturnDecimalFromBinary(result) > 0) {
+			String pcString = calculateEffectiveAddress(word);
+			FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(pcString));
+		} else {
+			IncrementPC();
+		}
 
 	}
 

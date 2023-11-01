@@ -1,5 +1,6 @@
 package simulatorG10;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -21,7 +22,7 @@ public class Memory {
 	public static void LoadIntoMemory(int loc, String addr) {
 		try {
 			memory.put(loc, addr);
-			opConsoleObj.WriteToOutputConsole("Loaded " + addr + " into the memory location " + loc);
+			opConsoleObj.WriteToOutputConsole("Loaded " + addr + " into the memory location " + loc,Color.CYAN);
 		} catch (Exception e) {
 			new PopUps().ShowPop("Can't Load the file into memory");
 
@@ -37,7 +38,7 @@ public class Memory {
 			int fullMarCode = Integer.parseInt(UtilClass.ReturnUnformattedString(MAR),2);
 			String fullMbrCode = UtilClass.ReturnUnformattedString(MBR);
 			Memory.memory.put(fullMarCode, fullMbrCode);
-			opConsoleObj.WriteToOutputConsole("Stored " + fullMbrCode + " into location " + fullMarCode);
+			opConsoleObj.WriteToOutputConsole("Stored " + fullMbrCode + " into location " + fullMarCode,Color.CYAN);
 
 		} catch (Exception e) {
 			throw new Exception("Can't store the address in the the given location");
