@@ -1,20 +1,20 @@
 package simulatorG10;
 
-import java.awt.SecondaryLoop;
-import java.security.spec.EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
+
 import java.util.Map;
 
 public class Translator {
 	private Map<String, String> inputToWrite = new LinkedHashMap<String, String>();
-	private boolean lockPC = false;
+	// private boolean lockPC = false;
 	private int tempPC = 0;
-	private BinaryOperations binaryOperationsObj = BinaryOperations.GetBinaryOperationsObj();
+	// private BinaryOperations binaryOperationsObj =
+	// BinaryOperations.GetBinaryOperationsObj();
 	private ArrayList<String> readInputFileData;
+	private Map<Integer, String> endValue = new LinkedHashMap<Integer, String>();
 
-	public Map<String, String> TranslateIntoHexCode(ArrayList<String> splitLines) {
+	public Map<String, String> TranslateIntoHexCode(ArrayList<String> splitLines) throws Exception {
 		readInputFileData = splitLines;
 
 		String[] lineArray;
@@ -22,13 +22,18 @@ public class Translator {
 			lineArray = line.split(" ");
 			String operation = lineArray[0].replaceAll(":", "");
 			String[] registersInformation = lineArray[1].split(",");
-			Decode(operation, registersInformation);
+			try {
+				Decode(operation, registersInformation);
+			} catch (Exception e) {
+				throw new Exception(e.getLocalizedMessage());
+			}
 
 		}
+		FillUpEndValues();
 		return inputToWrite;
 	}
 
-	private void Decode(String opCode, String[] byteInfo) {
+	private void Decode(String opCode, String[] byteInfo) throws Exception {
 		InstructionMetaData instruction;
 		if (byteInfo.length == 1) {
 			instruction = InstructionMetaData.instructionMetaData.get(1).get(OpCodes.valueOf(opCode));
@@ -52,87 +57,88 @@ public class Translator {
 	}
 
 	private void DecodeSingleRegInfoIntoHex(InstructionMetaData insMetaData, String[] byteInfo) {
+		int parsedByteInfo = -1;
+		String parsedByteInfoString = null;
+		try {
+			parsedByteInfo = Integer.parseInt(byteInfo[0]);
+		} catch (Exception e) {
+			parsedByteInfoString = byteInfo[0];
+		}
+		String first = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(parsedByteInfo), 2);
+
 		switch (insMetaData.opCode) {
 		case LOC: {
-			tempPC = lockPC ? tempPC : Integer.parseInt(byteInfo[0]);
+			tempPC = parsedByteInfo;
 			break;
 		}
 		case Data: {
 			if (byteInfo[0].equals("End")) {
-				int ind = readInputFileData.lastIndexOf("LOC");
-				byteInfo[0] = readInputFileData.get(ind);
+				endValue.put(tempPC, null);
+			} else {
+				inputToWrite.put(Integer.toBinaryString(tempPC++), first);
 			}
-			String binaryByteInfo = Integer.toBinaryString(Integer.parseInt(byteInfo[0]));
-			inputToWrite.put(Integer.toBinaryString(tempPC++), binaryByteInfo);
 			break;
 		}
 		case RFS: {
+
 			break;
 		}
 		case NOT: {
+			StringBuffer bytePatternString = new StringBuffer(insMetaData.bytePattern);
+			bytePatternString.replace(6, 8, first);
 			break;
 		}
 		case End: {
+			inputToWrite.put(Integer.toBinaryString(tempPC++), OpCodes.HALT.GetValue());
 			break;
 		}
 		default:
-			throw new IllegalArgumentException("Unexpected value: " + insMetaData);
+			throw new IllegalArgumentException(
+					"Opcode" + insMetaData.opCode + " is currently not supported for conversion ");
 		}
 	}
 
-	private void DecodeDoubleRegInfoIntoHex(InstructionMetaData insMetaData, String[] byteInfo) {
+	private void DecodeDoubleRegInfoIntoHex(InstructionMetaData insMetaData, String[] byteInfo) throws Exception {
 		String first = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(Integer.parseInt(byteInfo[0])), 2);
 		String second = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(Integer.parseInt(byteInfo[1])), 5);
+		StringBuffer bytePatternString = new StringBuffer(insMetaData.bytePattern);
 		switch (insMetaData.opCode) {
-		case LDX: {
-			StringBuffer bytePatternString = new StringBuffer(insMetaData.bytePattern);
+		case LDX:
+		case STX:
+		case JMA:
+		case JSR: {
 			bytePatternString.replace(8, 10, first);
 			bytePatternString.replace(11, 16, second);
 			inputToWrite.put(Integer.toBinaryString(tempPC++), bytePatternString.toString());
 
 			break;
 		}
-		case STX: {
-			break;
-		}
-		case JMA: {
-			break;
-		}
-		case JSR: {
-			break;
-		}
-		case AIR: {
-			break;
-		}
+
+		case AIR:
 		case SIR: {
+			bytePatternString.replace(6, 8, first);
+			bytePatternString.replace(11, 16, second);
+			inputToWrite.put(Integer.toBinaryString(tempPC++), bytePatternString.toString());
 			break;
 		}
-		case MLT: {
+		case MLT:
+		case DVD:
+		case TRR:
+		case AND:
+		case OR: {
+			bytePatternString.replace(6, 8, first);
+			bytePatternString.replace(8, 10, second.substring(3, 5));
+			inputToWrite.put(Integer.toBinaryString(tempPC++), bytePatternString.toString());
 			break;
 		}
-		case DVD: {
-			break;
-		}
-		case TRR: {
-			break;
-		}
-		case AND: {
-			break;
-		}
-		case ORR: {
-			break;
-		}
-		case IN: {
-			break;
-		}
-		case OUT: {
-			break;
-		}
+		case IN:
+		case OUT:
 		case CHK: {
-			break;
+			throw new Exception("");
 		}
 		default:
-			throw new IllegalArgumentException("Unexpected value: " + insMetaData);
+			throw new IllegalArgumentException(
+					"Opcode" + insMetaData.opCode + " is currently not supported for conversion ");
 		}
 	}
 
@@ -140,6 +146,7 @@ public class Translator {
 		String first = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(Integer.parseInt(byteInfo[0])), 2);
 		String second = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(Integer.parseInt(byteInfo[1])), 2);
 		String third = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(Integer.parseInt(byteInfo[2])), 5);
+		StringBuffer bytePatternString = new StringBuffer(insMetaData.bytePattern);
 		switch (insMetaData.opCode) {
 
 		case LDR:
@@ -151,7 +158,6 @@ public class Translator {
 		case JGE:
 		case AMR:
 		case SMR: {
-			StringBuffer bytePatternString = new StringBuffer(insMetaData.bytePattern);
 			bytePatternString.replace(6, 8, first);
 			bytePatternString.replace(8, 10, second);
 			bytePatternString.replace(11, 16, third);
@@ -163,25 +169,21 @@ public class Translator {
 		case JCC: {
 			break;
 		}
-		case SRC: {
-			break;
-		}
-		case RRC: {
-			break;
-		}
+
 		default:
-			throw new IllegalArgumentException("Unexpected value: " + insMetaData);
+			throw new IllegalArgumentException(
+					"Opcode" + insMetaData.opCode + " is currently not supported for conversion ");
 		}
 	}
 
 	private void DecodeQuadrapleRegInfoIntoHex(InstructionMetaData insMetaData, String[] byteInfo) {
 		String first = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(Integer.parseInt(byteInfo[0])), 2);
-		String second = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(Integer.parseInt(byteInfo[1])), 2);
-		String third = byteInfo[3];
-		String four = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(Integer.parseInt(byteInfo[2])), 5);
+		StringBuffer bytePatternString = new StringBuffer(insMetaData.bytePattern);
 		switch (insMetaData.opCode) {
 		case LDR: {
-			StringBuffer bytePatternString = new StringBuffer(insMetaData.bytePattern);
+			String second = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(Integer.parseInt(byteInfo[1])), 2);
+			String third = byteInfo[3];
+			String four = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(Integer.parseInt(byteInfo[2])), 5);
 			bytePatternString.replace(6, 8, first);
 			bytePatternString.replace(8, 10, second);
 			bytePatternString.replace(10, 11, third);
@@ -190,9 +192,30 @@ public class Translator {
 			break;
 
 		}
-		default:
-			throw new IllegalArgumentException("Unexpected value: " + insMetaData);
+		case SRC:
+		case RRC: {
+			String four = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(Integer.parseInt(byteInfo[1])), 4);
+			String third = byteInfo[2];
+			String second = byteInfo[3];
+			bytePatternString.replace(6, 8, first);
+			bytePatternString.replace(8, 9, second);
+			bytePatternString.replace(9, 10, third);
+			bytePatternString.replace(12, 16, four);
+			inputToWrite.put(Integer.toBinaryString(tempPC++), bytePatternString.toString());
+
+			break;
 		}
+		default:
+			throw new IllegalArgumentException(
+					"Opcode" + insMetaData.opCode + " is currently not supported for conversion ");
+		}
+	}
+
+	private void FillUpEndValues() {
+		for (int i : endValue.keySet()) {
+			inputToWrite.put(Integer.toBinaryString(i), Integer.toBinaryString(tempPC-1));
+		}
+
 	}
 
 }

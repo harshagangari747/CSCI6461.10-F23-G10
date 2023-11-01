@@ -99,6 +99,11 @@ public class FrontPanel extends JFrame {
 
 	public static boolean conditionCode;
 
+	private static JLabel ccLabel;
+	private static JButton ccLoadBtn;
+	public static JLabel ccValueLbl;
+	private static String ccText;
+
 	// Main method performing some tasks before the user can interact with the UI
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -128,16 +133,21 @@ public class FrontPanel extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				FileHandler newfileFileHandler = new FileHandler();
 				try {
-					// newfileFileHandler.LoadFile(FileTypes.JSON);
-					// newfileFileHandler.ReadJsonFile();
+					opConsoleObj.WriteToOutputConsole("Interpreting Json File", Color.MAGENTA);
+					newfileFileHandler.LoadFile(FileTypes.JSONFile);
+					newfileFileHandler.ReadJsonFile();
+					opConsoleObj.WriteToOutputConsole("Comprehending the inputfile. Translation in process...",
+							Color.MAGENTA);
 					newfileFileHandler.LoadFile(FileTypes.IPLFile);
+					opConsoleObj.WriteToOutputConsole("Conversion Succeeded!. Now reading translated file",
+							Color.GREEN);
+					ArrayList<String> inputFileArrayList = newfileFileHandler.ReadTextFile();
+					Translator translateObj = new Translator();
+					LinkedHashMap<String, String> getHexInputValues = (LinkedHashMap<String, String>) translateObj
+							.TranslateIntoHexCode(inputFileArrayList);
 					newfileFileHandler.LoadFile(FileTypes.HexFile);
+					newfileFileHandler.WriteToHexFile(getHexInputValues);
 					newfileFileHandler.ConvertTheFile();
-					// ArrayList<String> inputFileArrayList = newfileFileHandler.ReadTextFile();
-					// Translator translateObj = new Translator();
-					// LinkedHashMap<String, String> getHexInputValues = (LinkedHashMap<String,
-					// String>) translateObj.TranslateIntoHexCode(inputFileArrayList);
-					// newfileFileHandler.WriteToHexFile(getHexInputValues);
 				} catch (Exception ex) {
 					ShowDialog(ex.getMessage());
 				}
@@ -179,7 +189,7 @@ public class FrontPanel extends JFrame {
 				try {
 					gprText = LoadRegister(Registers.GPR0);
 					gpr0ValueLbl.setText(gprText);
-					opConsoleObj.WriteToOutputConsole("Loaded GPR0 with " + gprText);
+					opConsoleObj.WriteToOutputConsole("Loaded GPR0 with " + gprText, Color.WHITE);
 
 				} catch (Exception e1) {
 					gpr0ValueLbl.setText(Constants.default16Zeroes);
@@ -198,7 +208,7 @@ public class FrontPanel extends JFrame {
 				try {
 					gprText = LoadRegister(Registers.GPR1);
 					gpr1ValueLbl.setText(gprText);
-					opConsoleObj.WriteToOutputConsole("Loaded GPR1 with " + gprText);
+					opConsoleObj.WriteToOutputConsole("Loaded GPR1 with " + gprText, Color.white);
 				} catch (Exception e1) {
 					gpr1ValueLbl.setText(Constants.default16Zeroes);
 					ShowDialog(e1.getMessage());
@@ -216,7 +226,7 @@ public class FrontPanel extends JFrame {
 				try {
 					gprText = LoadRegister(Registers.GPR2);
 					gpr2ValueLbl.setText(gprText);
-					opConsoleObj.WriteToOutputConsole("Loaded GPR2 with " + gprText);
+					opConsoleObj.WriteToOutputConsole("Loaded GPR2 with " + gprText, Color.WHITE);
 				} catch (Exception e1) {
 					gpr2ValueLbl.setText(Constants.default16Zeroes);
 					ShowDialog(e1.getMessage());
@@ -234,7 +244,7 @@ public class FrontPanel extends JFrame {
 				try {
 					gprText = LoadRegister(Registers.GPR3);
 					gpr3ValueLbl.setText(gprText);
-					opConsoleObj.WriteToOutputConsole("Loaded GPR3 with " + gprText);
+					opConsoleObj.WriteToOutputConsole("Loaded GPR3 with " + gprText, Color.WHITE);
 				} catch (Exception e1) {
 					gpr3ValueLbl.setText(Constants.default16Zeroes);
 					ShowDialog(e1.getMessage());
@@ -264,7 +274,7 @@ public class FrontPanel extends JFrame {
 				try {
 					pcText = LoadRegister(Registers.PC);
 					pcValueLbl.setText(pcText);
-					opConsoleObj.WriteToOutputConsole("Loaded PC with " + pcText);
+					opConsoleObj.WriteToOutputConsole("Loaded PC with " + pcText, Color.WHITE);
 				} catch (Exception ex) {
 					pcValueLbl.setText(Constants.default12Zeroes);
 					ShowDialog(ex.getMessage());
@@ -282,7 +292,7 @@ public class FrontPanel extends JFrame {
 				try {
 					ixrText = LoadRegister(Registers.IXR1);
 					ixr1ValueLbl.setText(ixrText);
-					opConsoleObj.WriteToOutputConsole("Loaded IXR1 with " + ixrText);
+					opConsoleObj.WriteToOutputConsole("Loaded IXR1 with " + ixrText, Color.WHITE);
 				} catch (Exception ex) {
 					pcValueLbl.setText(Constants.default16Zeroes);
 					ShowDialog(ex.getMessage());
@@ -300,7 +310,7 @@ public class FrontPanel extends JFrame {
 				try {
 					ixrText = LoadRegister(Registers.IXR2);
 					ixr2ValueLbl.setText(ixrText);
-					opConsoleObj.WriteToOutputConsole("Loaded IXR2 with " + ixrText);
+					opConsoleObj.WriteToOutputConsole("Loaded IXR2 with " + ixrText, Color.WHITE);
 				} catch (Exception ex) {
 					pcValueLbl.setText(Constants.default16Zeroes);
 					ShowDialog(ex.getMessage());
@@ -318,7 +328,7 @@ public class FrontPanel extends JFrame {
 				try {
 					ixrText = LoadRegister(Registers.IXR3);
 					ixr3ValueLbl.setText(ixrText);
-					opConsoleObj.WriteToOutputConsole("Loaded IXR3 with " + ixrText);
+					opConsoleObj.WriteToOutputConsole("Loaded IXR3 with " + ixrText, Color.WHITE);
 				} catch (Exception ex) {
 					pcValueLbl.setText(Constants.default16Zeroes);
 					ShowDialog(ex.getMessage());
@@ -335,7 +345,7 @@ public class FrontPanel extends JFrame {
 				try {
 					marText = LoadRegister(Registers.MAR);
 					marValueLbl.setText(marText);
-					opConsoleObj.WriteToOutputConsole("Set MAR to " + marText);
+					opConsoleObj.WriteToOutputConsole("Set MAR to " + marText, Color.WHITE);
 				} catch (Exception ex) {
 					marValueLbl.setText(Constants.default12Zeroes);
 					ShowDialog(ex.getMessage());
@@ -352,7 +362,7 @@ public class FrontPanel extends JFrame {
 				try {
 					mbrText = LoadRegister(Registers.MBR);
 					mbrValueLbl.setText(mbrText);
-					opConsoleObj.WriteToOutputConsole("Set MBR to " + mbrText);
+					opConsoleObj.WriteToOutputConsole("Set MBR to " + mbrText, Color.WHITE);
 				} catch (Exception ex) {
 					mbrValueLbl.setText(Constants.default16Zeroes);
 					ShowDialog(ex.getMessage());
@@ -369,7 +379,7 @@ public class FrontPanel extends JFrame {
 				try {
 					mbrText = LoadRegisterFromMemory();
 					mbrValueLbl.setText(mbrText);
-					opConsoleObj.WriteToOutputConsole("Set MBR to " + mbrText);
+					opConsoleObj.WriteToOutputConsole("Set MBR to " + mbrText, Color.WHITE);
 				} catch (Exception ex) {
 					mbrValueLbl.setText(Constants.default16Zeroes);
 					ShowDialog(ex.getMessage());
@@ -404,6 +414,20 @@ public class FrontPanel extends JFrame {
 					}
 				} catch (Exception e1) {
 					ShowDialog(e1.getLocalizedMessage());
+				}
+			}
+		});
+
+		ccLoadBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					ccText = LoadRegister(Registers.CC);
+					ccValueLbl.setText(ccText);
+					opConsoleObj.WriteToOutputConsole("Loaded CC with " + ccText, Color.WHITE);
+
+				} catch (Exception e2) {
+					ccValueLbl.setText(Constants.default4Zeroes);
+					ShowDialog(e2.getLocalizedMessage());
 				}
 			}
 		});
@@ -716,6 +740,22 @@ public class FrontPanel extends JFrame {
 
 		storeBtn.setBounds(531, 263, 70, 25);
 		frame.getContentPane().add(storeBtn);
+
+		ccLabel = new JLabel("CC");
+		ccLabel.setBounds(475, 225, 46, 14);
+		frame.getContentPane().add(ccLabel);
+
+		ccValueLbl = new JLabel("0000");
+		ccValueLbl.setFont(new Font("Calibri", Font.BOLD, 18));
+		ccValueLbl.setBounds(545, 223, 86, 20);
+		frame.getContentPane().add(ccValueLbl);
+
+		ccLoadBtn = new JButton("LD");
+		ccLoadBtn.setFont(new Font("Tahoma", Font.PLAIN, 9));
+
+		ccLoadBtn.setMargin(new Insets(0, 0, 0, -3));
+		ccLoadBtn.setBounds(753, 221, 18, 14);
+		frame.getContentPane().add(ccLoadBtn);
 
 		frame.setVisible(true);
 
