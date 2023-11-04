@@ -1,9 +1,10 @@
 package simulatorG10;
 
+import java.awt.Color;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.regex.Matcher;
-
 
 /*Class to set,get, run instructions
  * Typically our CPU
@@ -14,6 +15,7 @@ public class Simulator {
 	private static int index;
 	private static OutputConsole opConsoleObj;
 	public static boolean haltTriggered = false;
+	private BinaryOperations binaryOperationsObj;
 
 	/*
 	 * Class constructor to set the address with keys of memory to iterate through
@@ -25,6 +27,7 @@ public class Simulator {
 
 		iterator = address.iterator();
 		opConsoleObj = OutputConsole.GetOutputConsoleObj();
+		binaryOperationsObj = BinaryOperations.GetBinaryOperationsObj();
 	}
 
 	/*
@@ -59,14 +62,11 @@ public class Simulator {
 				// decode ir
 				DeCodeInstruction(formattedMbrValue);
 				// set those bits
-				//int indexOfCurrentPc = address.indexOf(condensedCurrentPc);
+				// int indexOfCurrentPc = address.indexOf(condensedCurrentPc);
 
 				// increment PC
 				if (index < address.size()) {
-					String nextPcaddr = Integer.toBinaryString(address.get(++index));
-					
-					String appendedPcValue = UtilClass.ReturnWithAppendedZeroes(nextPcaddr, 12);
-					FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(appendedPcValue));
+					IncrementPC();
 
 				}
 			}
@@ -87,34 +87,111 @@ public class Simulator {
 				instructionGroups.group(3), instructionGroups.group(4), instructionGroups.group(5));
 
 		switch (word.opCode) {
-		case HALT :
-		{
-			if(!haltTriggered)
-			{
+		case LOC: {
+			break;
+		}
+		case HALT: {
+			if (!haltTriggered) {
 				haltTriggered = true;
 				throw new Exception("HALT Triggered. Program Halted. End of the Program");
 			}
 		}
 		case LDR: {
 			LoadRegisterFromMemory(word);
-		}
 			break;
+		}
 		case STR: {
 			StoreRegisterToMemory(word);
-		}
 			break;
+		}
 		case LDA: {
 			LoadRegisterWithAddress(word);
-		}
 			break;
+		}
 		case LDX: {
 			LoadIndexRegisterFromMemory(word);
-		}
 			break;
+		}
 		case STX: {
 			StoreIndexRegisterToMemory(word);
-		}
 			break;
+		}
+		case JZ: {
+			Jump(word, true, false, false);
+			break;
+		}
+		case JNE: {
+			Jump(word, false, false, false);
+			break;
+		}
+		case JCC: {
+			Jump(word, false, true, false);
+			break;
+		}
+		case JMA: {
+			String eftAddr = UtilClass.ReturnWithAppendedZeroes(calculateEffectiveAddress(word), 16);
+			FrontPanel.pcValueLbl.setText(UtilClass.GetStringFormat(eftAddr));
+			break;
+		}
+		case JGE: {
+			Jump(word, false, false, true);
+			break;
+		}
+		case JSR: {
+			break;
+		}
+		case RFS: {
+			break;
+		}
+		case SOB: {
+			SubtractOneAndBranch(word);
+			break;
+		}
+		case AMR: {
+			break;
+		}
+		case SMR: {
+			break;
+		}
+		case AIR: {
+			break;
+		}
+		case SIR: {
+			break;
+		}
+		case MLT: {
+			break;
+		}
+		case DVD: {
+			break;
+		}
+		case TRR: {
+			break;
+		}
+		case ORR: {
+			break;
+		}
+		case AND: {
+			break;
+		}
+		case SRC: {
+			break;
+		}
+		case NOT: {
+			break;
+		}
+		case RRC: {
+			break;
+		}
+		case IN: {
+			break;
+		}
+		case OUT: {
+			break;
+		}
+		case CHK: {
+			break;
+		}
 		default:
 			throw new Exception("Can't perfrom operation. Opcode not found or supported");
 		}
@@ -139,10 +216,10 @@ public class Simulator {
 	 * value : 000010
 	 */
 	private void StoreRegisterToMemory(InstructionWord word) throws Exception {
-		int eftAddr =Integer.parseInt( calculateEffectiveAddress(word),2);
+		int eftAddr = Integer.parseInt(calculateEffectiveAddress(word), 2);
 		String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
 		Memory.memory.put(eftAddr, gprValue);
-		opConsoleObj.WriteToOutputConsole("Stored " + gprValue + " into address " + eftAddr);
+		opConsoleObj.WriteToOutputConsole("Stored " + gprValue + " into address " + eftAddr, Color.CYAN);
 
 	}
 
@@ -151,12 +228,12 @@ public class Simulator {
 	 * Ex : LDA 1,0,addr(18) opcode value : 000011
 	 */
 	private void LoadRegisterWithAddress(InstructionWord word) throws Exception {
-		try {			
+		try {
 			String eftAddr = UtilClass.ReturnWithAppendedZeroes(calculateEffectiveAddress(word), 16);
-			SetGprOrIndex(UtilClass.GetStringFormat(eftAddr) , word.gpRegister);
+			SetGprOrIndex(UtilClass.GetStringFormat(eftAddr), word.gpRegister);
 		} catch (Exception e) {
 			throw new Exception(e.getLocalizedMessage());
-			
+
 		}
 	}
 
@@ -176,10 +253,10 @@ public class Simulator {
 	 * 101010
 	 */
 	private void StoreIndexRegisterToMemory(InstructionWord word) throws Exception {
-		int eftAddr = Integer.parseInt( calculateEffectiveAddress(word),2);
+		int eftAddr = Integer.parseInt(calculateEffectiveAddress(word), 2);
 		String ixrValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.ixRegister));
 		Memory.memory.put(eftAddr, ixrValue);
-	    opConsoleObj.WriteToOutputConsole("Stored " + ixrValue + " into address " + eftAddr);
+		opConsoleObj.WriteToOutputConsole("Stored " + ixrValue + " into address " + eftAddr, Color.CYAN);
 
 	}
 
@@ -190,13 +267,11 @@ public class Simulator {
 		StringBuffer effectiveAddress = new StringBuffer();
 		BinaryOperations bOperations = BinaryOperations.GetBinaryOperationsObj();
 		int addr = -1;
-		addr = Integer.parseInt(String.valueOf(word.address),2);
+		addr = Integer.parseInt(String.valueOf(word.address), 2);
 		if (!word.indirectAddressing) {
-			if (word.ixRegister == Registers.IXR0)
-			{
+			if (word.ixRegister == Registers.IXR0) {
 				effectiveAddress.append(Memory.memory.get(addr));
-			}
-			else {
+			} else {
 				String currentIxrValue = null;
 				if (word.ixRegister == Registers.IXR1)
 					currentIxrValue = FrontPanel.ixr1ValueLbl.getText();
@@ -210,7 +285,7 @@ public class Simulator {
 			}
 		} else {
 			if (word.ixRegister == Registers.IXR0) {
-				int nextAddress = Integer.parseInt( Memory.memory.get(addr),2);
+				int nextAddress = Integer.parseInt(Memory.memory.get(addr), 2);
 				effectiveAddress.append(Memory.memory.get(nextAddress));
 			} else {
 				String currentIxrValue = null;
@@ -269,7 +344,7 @@ public class Simulator {
 			throw new Exception("Can't set IXR0 Register!");
 		}
 		}
-		opConsoleObj.WriteToOutputConsole("Set "+ String.valueOf(GprInd)+" to "+addr);
+		opConsoleObj.WriteToOutputConsole("Set " + String.valueOf(GprInd) + " to " + addr, Color.CYAN);
 	}
 
 	/*
@@ -311,6 +386,43 @@ public class Simulator {
 		}
 		}
 		return gprContent.toString();
+	}
+
+	/* This method is used to perform operations when we increment the PC */
+	private void IncrementPC() {
+		String nextPcaddr = Integer.toBinaryString(address.get(++index));
+		String appendedPcValue = UtilClass.ReturnWithAppendedZeroes(nextPcaddr, 12);
+		FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(appendedPcValue));
+	}
+
+	/* This method is used to perform various Jump operations */
+	private void Jump(InstructionWord word, boolean isZero, boolean isCCbit, boolean isGreater) throws Exception {
+		int eftAddr = Integer.parseInt(calculateEffectiveAddress(word), 2);
+		String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
+		int gprIntValue = Integer.parseInt(gprValue);
+		if ((isZero && gprIntValue == 0) || (!isZero && gprIntValue != 0) || isCCbit
+				|| (isGreater && gprIntValue > 0)) {
+			String pcString = String.valueOf(eftAddr);
+			FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(pcString));
+
+		} else {
+			IncrementPC();
+		}
+
+	}
+
+	/* This method is used to perform SOB operation */
+	private void SubtractOneAndBranch(InstructionWord word) throws Exception {
+		String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
+		String result = UtilClass.ReturnWithAppendedZeroes(binaryOperationsObj.BinarySubstraction(gprValue, "1"), 16);
+		FrontPanel.SetRegister(word.gpRegister, UtilClass.GetStringFormat(result));
+		if (binaryOperationsObj.ReturnDecimalFromBinary(result) > 0) {
+			String pcString = calculateEffectiveAddress(word);
+			FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(pcString));
+		} else {
+			IncrementPC();
+		}
+
 	}
 
 }

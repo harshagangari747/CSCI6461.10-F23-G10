@@ -78,17 +78,21 @@ public class UserInputReader {
 			case IXR2:
 			case IXR3: {
 				textForRegister = GetCompleteUserInput();
-			}
 				break;
+			}
 			case MAR: {
 				String fullMarCode = UtilClass.ReturnWithAppendedZeroes(this.addrCode, 12);
 				textForRegister = UtilClass.GetStringFormat(fullMarCode);
-			}
 				break;
+			}
 			case MBR: {
 				textForRegister = GetCompleteUserInput();
-			}
 				break;
+			}
+			case CC: {
+				textForRegister = GetCCInput();
+				break;
+			}
 
 			default:
 				throw new IllegalArgumentException("Unexpected value: " + registerText);
@@ -99,10 +103,18 @@ public class UserInputReader {
 	}
 
 	/*
-	 * Assembles 16 bit instruction word from the user input
-	 * from the different text fields
-	 * */
+	 * Assembles 16 bit instruction word from the user input from the different text
+	 * fields
+	 */
 	private String GetCompleteUserInput() {
 		return UtilClass.GetStringFormat(opCode + gprCode + ixrCode + indexCode + addrCode);
+	}
+
+	/*
+	 * Calculates what value to set for CC register. Typically gpr register + index
+	 * register
+	 */
+	private String GetCCInput() {
+		return UtilClass.GetStringFormat(gprCode + ixrCode);
 	}
 }

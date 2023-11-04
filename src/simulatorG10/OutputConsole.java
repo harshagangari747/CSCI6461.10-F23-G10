@@ -2,6 +2,7 @@ package simulatorG10;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.io.Console;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -47,15 +48,17 @@ public class OutputConsole {
             outputConsole.pack(); // Automatically adjust size
             outputConsole.setLocationRelativeTo(null); // Center on the screen
             outputConsole.setVisible(true);
+            outputConsole.setResizable(false);
         });
     }
 	
 	/*
 	 * Updates the textarea with the instruction actions
 	 * */
-	public void WriteToOutputConsole(String message)
+	public void WriteToOutputConsole(String message, Color color)
 	{
 		textBuffer.append(message+"\n");
+		outputText.setSelectedTextColor(color);
 		outputText.setText(textBuffer.toString());
 	}
 

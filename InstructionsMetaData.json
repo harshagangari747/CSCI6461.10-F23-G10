@@ -1,0 +1,227 @@
+[
+	{
+		"instructionParts": 1,
+		"bytePattern": "00110100000-----",
+		"opCode": "RFS"
+	},
+	{
+		"instructionParts": 1,
+		"bytePattern": "010101--00000000",
+		"opCode": "NOT"
+	},
+	{
+		"instructionParts": 1,
+		"bytePattern": "",
+		"opCode": "LOC"
+	},
+	{
+		"instructionParts": 1,
+		"bytePattern": "",
+		"opCode": "Data"
+	},
+	{
+		"instructionParts": 1,
+		"bytePattern": "",
+		"opCode": "End"
+	},
+	{
+		"instructionParts": 2,
+		"bytePattern": "00101100--0-----",
+		"opCode": "JMA"
+	},
+	{
+		"instructionParts": 2,
+		"bytePattern": "00110000--0-----",
+		"opCode": "JSR"
+	},
+	{
+		"instructionParts": 2,
+		"bytePattern": "000110--000-----",
+		"opCode": "AIR"
+	},
+	{
+		"instructionParts": 2,
+		"bytePattern": "000111--000-----",
+		"opCode": "SIR"
+	},
+	{
+		"instructionParts": 2,
+		"bytePattern": "010000----000000",
+		"opCode": "MLT"
+	},
+	{
+		"instructionParts": 2,
+		"bytePattern": "010001----000000",
+		"opCode": "DVD"
+	},
+	{
+		"instructionParts": 2,
+		"bytePattern": "010010----000000",
+		"opCode": "TRR"
+	},
+	{
+		"instructionParts": 2,
+		"bytePattern": "010011----000000",
+		"opCode": "AND"
+	},
+	{
+		"instructionParts": 2,
+		"bytePattern": "010100----000000",
+		"opCode": "ORR"
+	},
+	{
+		"instructionParts": 2,
+		"bytePattern": "110001--000-----",
+		"opCode": "IN"
+	},
+	{
+		"instructionParts": 2,
+		"bytePattern": "110010--000-----",
+		"opCode": "OUT"
+	},
+	{
+		"instructionParts": 2,
+		"bytePattern": "110011--000-----",
+		"opCode": "CHK"
+	},
+	{
+		"instructionParts": 2,
+		"bytePattern": "10001000--0-----",
+		"opCode": "STX"
+	},
+	{
+		"instructionParts": 2,
+		"bytePattern": "10000100--0-----",
+		"opCode": "LDX"
+	},
+	{
+		"instructionParts": 3,
+		"bytePattern": "000001----0-----",
+		"opCode": "LDR"
+	},
+	{
+		"instructionParts": 3,
+		"bytePattern": "000010----0-----",
+		"opCode": "STR"
+	},
+	{
+		"instructionParts": 3,
+		"bytePattern": "000011----0-----",
+		"opCode": "LDA"
+	},
+	{
+		"instructionParts": 3,
+		"bytePattern": "001000----0-----",
+		"opCode": "JZ"
+	},
+	{
+		"instructionParts": 3,
+		"bytePattern": "001001----0-----",
+		"opCode": "JNE"
+	},
+	{
+		"instructionParts": 3,
+		"bytePattern": "001010----0-----",
+		"opCode": "JCC"
+	},
+	{
+		"instructionParts": 3,
+		"bytePattern": "001111----0-----",
+		"opCode": "JGE"
+	},
+	{
+		"instructionParts": 3,
+		"bytePattern": "000100----0-----",
+		"opCode": "AMR"
+	},
+	{
+		"instructionParts": 3,
+		"bytePattern": "000101----0-----",
+		"opCode": "SMR"
+	},
+	{
+		"instructionParts": 3,
+		"bytePattern": "00101100--------",
+		"opCode": "JMA"
+	},
+	{
+		"instructionParts": 3,
+		"bytePattern": "00110000--------",
+		"opCode": "JSR"
+	},
+	{
+		"instructionParts": 3,
+		"bytePattern": "10000100--------",
+		"opCode": "LDX"
+	},
+	{
+		"instructionParts": 3,
+		"bytePattern": "001110----0-----",
+		"opCode": "SOB"
+	},
+	{
+		"instructionParts": 3,
+		"bytePattern": "10001000--------",
+		"opCode": "STX"
+	},
+	{
+		"instructionParts": 4,
+		"bytePattern": "011001----00----",
+		"opCode": "SRC"
+	},
+	{
+		"instructionParts": 4,
+		"bytePattern": "011010----00----",
+		"opCode": "RRC"
+	},
+	{
+		"instructionParts": 4,
+		"bytePattern": "000010----------",
+		"opCode": "STR"
+	},
+	{
+		"instructionParts": 4,
+		"bytePattern": "000001----------",
+		"opCode": "LDR"
+	},
+	{
+		"instructionParts": 4,
+		"bytePattern": "000100----------",
+		"opCode": "AMR"
+	},
+	{
+		"instructionParts": 4,
+		"bytePattern": "000101----------",
+		"opCode": "SMR"
+	},
+	{
+		"instructionParts": 4,
+		"bytePattern": "001000----------",
+		"opCode": "JZ"
+	},
+	{
+		"instructionParts": 4,
+		"bytePattern": "001001----------",
+		"opCode": "JNE"
+	},
+	{
+		"instructionParts": 4,
+		"bytePattern": "000011----------",
+		"opCode": "LDA"
+	},
+	{
+		"instructionParts": 4,
+		"bytePattern": "001010----------",
+		"opCode": "JCC"
+	},
+	{
+		"instructionParts": 4,
+		"bytePattern": "001110----------",
+		"opCode": "SOB"
+	},
+	{
+		"instructionParts": 4,
+		"bytePattern": "001111----------",
+		"opCode": "JGE"
+	}
+]

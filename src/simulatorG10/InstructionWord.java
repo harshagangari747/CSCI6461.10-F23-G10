@@ -28,8 +28,8 @@ public class InstructionWord {
 	 */
 	private OpCodes GetOpcode(String opcode) throws Exception {
 		switch (opcode) {
-		case "000000": {
-			return OpCodes.HALT;
+		case "": {
+			return OpCodes.LOC;
 		}
 		case "000001": {
 			return opCode.LDR;
@@ -40,11 +40,44 @@ public class InstructionWord {
 		case "000011": {
 			return OpCodes.LDA;
 		}
-		case "101001": {
+		case "100001": {
 			return OpCodes.LDX;
 		}
-		case "101010": {
+		case "100010": {
 			return OpCodes.STX;
+		}
+		case "001000":
+		{
+			return OpCodes.JZ;
+		}
+		//Write all opcodes here
+		case "001001":
+		{
+			return opCode.JNE;
+		}
+		case "001010":
+		{
+			return opCode.JCC;
+		}
+		case "001011":
+		{
+			return opCode.JMA;
+		}
+		case "001100":
+		{
+			return opCode.JSR;
+		}
+		case "001101":
+		{
+			return opCode.RFS;
+		}
+		case "001110":
+		{
+			return opCode.SOB;
+		}
+		case "001111":
+		{
+			return opCode.JGE;
 		}
 
 		default:
@@ -76,7 +109,7 @@ public class InstructionWord {
 		}
 		case "11": {
 			if (isGPR)
-				return Registers.GPR2;
+				return Registers.GPR3;
 			return Registers.IXR2;
 		}
 		default:
