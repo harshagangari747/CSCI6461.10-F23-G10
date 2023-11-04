@@ -46,11 +46,39 @@ public class InstructionWord {
 		case "100010": {
 			return OpCodes.STX;
 		}
-		case "001010":
+		case "001000":
 		{
 			return OpCodes.JZ;
 		}
 		//Write all opcodes here
+		case "001001":
+		{
+			return opCode.JNE;
+		}
+		case "001010":
+		{
+			return opCode.JCC;
+		}
+		case "001011":
+		{
+			return opCode.JMA;
+		}
+		case "001100":
+		{
+			return opCode.JSR;
+		}
+		case "001101":
+		{
+			return opCode.RFS;
+		}
+		case "001110":
+		{
+			return opCode.SOB;
+		}
+		case "001111":
+		{
+			return opCode.JGE;
+		}
 
 		default:
 			throw new Exception("Opcode : " + opcode + " is currently not supported!");

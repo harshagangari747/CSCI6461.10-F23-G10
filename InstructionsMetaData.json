@@ -1,7 +1,7 @@
 [
 	{
 		"instructionParts": 1,
-		"bytePattern": "001111",
+		"bytePattern": "001101--000-----",
 		"opCode": "RFS"
 	},
 	{
@@ -26,12 +26,12 @@
 	},
 	{
 		"instructionParts": 2,
-		"bytePattern": "00110100--0-----",
+		"bytePattern": "00101100--0-----",
 		"opCode": "JMA"
 	},
 	{
 		"instructionParts": 2,
-		"bytePattern": "00111000--0-----",
+		"bytePattern": "00110000--0-----",
 		"opCode": "JSR"
 	},
 	{
@@ -71,17 +71,17 @@
 	},
 	{
 		"instructionParts": 2,
-		"bytePattern": "111101",
+		"bytePattern": "110001--000-----",
 		"opCode": "IN"
 	},
 	{
 		"instructionParts": 2,
-		"bytePattern": "111110",
+		"bytePattern": "110010--000-----",
 		"opCode": "OUT"
 	},
 	{
 		"instructionParts": 2,
-		"bytePattern": "111111",
+		"bytePattern": "110011--000-----",
 		"opCode": "CHK"
 	},
 	{
@@ -116,7 +116,7 @@
 	},
 	{
 		"instructionParts": 3,
-		"bytePattern": "001011----0-----",
+		"bytePattern": "001001----0-----",
 		"opCode": "JNE"
 	},
 	{
@@ -140,6 +140,31 @@
 		"opCode": "SMR"
 	},
 	{
+		"instructionParts": 3,
+		"bytePattern": "00110100--------",
+		"opCode": "JMA"
+	},
+	{
+		"instructionParts": 3,
+		"bytePattern": "00110000--------",
+		"opCode": "JSR"
+	},
+	{
+		"instructionParts": 3,
+		"bytePattern": "10000100--------",
+		"opCode": "LDX"
+	},
+	{
+		"instructionParts": 3,
+		"bytePattern": "001110----0-----",
+		"opCode": "SOB"
+	},
+	{
+		"instructionParts": 3,
+		"bytePattern": "10001000--------",
+		"opCode": "STX"
+	},
+	{
 		"instructionParts": 4,
 		"bytePattern": "011001----00----",
 		"opCode": "SRC"
@@ -158,5 +183,45 @@
 		"instructionParts": 4,
 		"bytePattern": "000001----------",
 		"opCode": "LDR"
+	},
+	{
+		"instructionParts": 4,
+		"bytePattern": "000100----------",
+		"opCode": "AMR"
+	},
+	{
+		"instructionParts": 4,
+		"bytePattern": "000101----------",
+		"opCode": "SMR"
+	},
+	{
+		"instructionParts": 4,
+		"bytePattern": "001000----------",
+		"opCode": "JZ"
+	},
+	{
+		"instructionParts": 4,
+		"bytePattern": "001001----------",
+		"opCode": "JNE"
+	},
+	{
+		"instructionParts": 4,
+		"bytePattern": "000011----------",
+		"opCode": "LDA"
+	},
+	{
+		"instructionParts": 4,
+		"bytePattern": "001100----------",
+		"opCode": "JCC"
+	},
+	{
+		"instructionParts": 4,
+		"bytePattern": "001110----------",
+		"opCode": "SOB"
+	},
+	{
+		"instructionParts": 4,
+		"bytePattern": "010001----------",
+		"opCode": "JGE"
 	}
 ]

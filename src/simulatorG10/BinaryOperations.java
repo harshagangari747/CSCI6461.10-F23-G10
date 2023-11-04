@@ -46,19 +46,28 @@ public class BinaryOperations {
 		return Integer.toBinaryString(addition);
 	}
 
+	/*
+	 * Returns Bytecode from hex code
+	 */
 	public String ReturnHexFromByteCode(String binaryString) {
 		int integerValue = Integer.parseInt(binaryString, 2);
 		String hexString = Integer.toHexString(integerValue);
 		return hexString;
 	}
 
+	/*
+	 * Returns binary string by taking to values
+	 */
 	public String BinarySubstraction(String value1, String value2) {
 		int substractionValue = Integer.parseInt(value1) - Integer.parseInt(value2);
 		return Integer.toBinaryString(substractionValue);
 	}
 
+	/*
+	 * Returns hex code from decimal
+	 */
 	public String GetHexCodeFromDecimal(String value) {
-		String hexEquivalentValue = Integer.toHexString(Integer.parseInt(value,2));
+		String hexEquivalentValue = Integer.toHexString(Integer.parseInt(value, 2));
 		return hexEquivalentValue;
 
 	}
