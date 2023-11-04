@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
+/*This class is a template for InstructionMetaData.json file*/
 public class InstructionMetaData {
 	public int instructionParts;
 	public String bytePattern;
@@ -14,6 +15,11 @@ public class InstructionMetaData {
 	private static LinkedHashMap<OpCodes, InstructionMetaData> threepartsHashMap;
 	private static LinkedHashMap<OpCodes, InstructionMetaData> fourpartsHashMap;
 
+	/*
+	 * This is constructor that performs object initialization operations where each
+	 * LinkedHashMap is stored together with number of parameters that the opcode
+	 * has
+	 */
 	public InstructionMetaData() {
 		instructionMetaData = new LinkedHashMap<Integer, LinkedHashMap<OpCodes, InstructionMetaData>>();
 		onePartsHashMap = new LinkedHashMap();
@@ -27,18 +33,21 @@ public class InstructionMetaData {
 
 	}
 
-	public static void Store(ArrayList<InstructionMetaData> loadedInstructionMetaData)
-	{
-		for(InstructionMetaData instMetaData : loadedInstructionMetaData){
-			if(instMetaData.instructionParts == 1)
+	/*
+	 * This method stores the opcodes while interpreting the
+	 * InstructionsMetaData.json file
+	 */
+	public static void Store(ArrayList<InstructionMetaData> loadedInstructionMetaData) {
+		for (InstructionMetaData instMetaData : loadedInstructionMetaData) {
+			if (instMetaData.instructionParts == 1)
 				onePartsHashMap.put(instMetaData.opCode, instMetaData);
-			if(instMetaData.instructionParts == 2)
+			if (instMetaData.instructionParts == 2)
 				twoPartsHashMap.put(instMetaData.opCode, instMetaData);
-			if(instMetaData.instructionParts == 3)
+			if (instMetaData.instructionParts == 3)
 				threepartsHashMap.put(instMetaData.opCode, instMetaData);
-			if(instMetaData.instructionParts == 4)
+			if (instMetaData.instructionParts == 4)
 				fourpartsHashMap.put(instMetaData.opCode, instMetaData);
-			 
+
 		}
 	}
 }

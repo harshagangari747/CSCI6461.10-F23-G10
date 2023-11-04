@@ -31,15 +31,12 @@ public class FileHandler {
 				throw new FileNotFoundException("File path is null or empty.");
 			}
 			inputfile = new File(jsonFilePath);
-		}
-		else if (fileTypes == FileTypes.IPLFile) {
+		} else if (fileTypes == FileTypes.IPLFile) {
 			if (inputTextFilePath == null || inputTextFilePath.isEmpty()) {
 				throw new FileNotFoundException("File path is null or empty.");
 			}
 			inputfile = new File(inputTextFilePath);
-		}
-		else if(fileTypes == fileTypes.HexFile)
-		{
+		} else if (fileTypes == fileTypes.HexFile) {
 			if (inputTextFilePath == null || inputTextFilePath.isEmpty()) {
 				throw new FileNotFoundException("File path is null or empty.");
 			}
@@ -94,6 +91,7 @@ public class FileHandler {
 		return;
 	}
 
+	/* This method reads the json metadata file and stores in the memory */
 	public void ReadJsonFile() throws Exception {
 		JSONParser parser = new JSONParser();
 		org.json.simple.JSONArray jsonArray = (org.json.simple.JSONArray) parser.parse(new FileReader(inputfile));
@@ -118,6 +116,7 @@ public class FileHandler {
 		InstructionMetaData.Store(metaDataArrayList);
 	}
 
+	/* This method is used to read input file and user file */
 	public ArrayList<String> ReadTextFile() throws Exception {
 		ArrayList<String> textFileInputHashMap = new ArrayList<String>();
 		String line = "";
@@ -135,17 +134,20 @@ public class FileHandler {
 		return textFileInputHashMap;
 	}
 
+	/*
+	 * This method writes the decoded high-level codes as hexacodes in HexFile.txt
+	 */
 	public void WriteToHexFile(LinkedHashMap<String, String> inputHexData) throws Exception {
 		BinaryOperations binOperationsObj = BinaryOperations.GetBinaryOperationsObj();
 		FileWriter fileWriterObj = new FileWriter(hexFilePath);
 		for (String line : inputHexData.keySet()) {
 			String locationHexValue = binOperationsObj.GetHexCodeFromDecimal(line);
 			String addressHexValue = binOperationsObj.GetHexCodeFromDecimal(inputHexData.get(line));
-			fileWriterObj.write(locationHexValue+Constants.SINGLESPACE_STRING+addressHexValue+"\n");
+			fileWriterObj.write(locationHexValue + Constants.SINGLESPACE_STRING + addressHexValue + "\n");
 
 		}
 		fileWriterObj.close();
-		
+
 	}
 
 }

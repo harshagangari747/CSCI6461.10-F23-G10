@@ -87,8 +87,7 @@ public class Simulator {
 				instructionGroups.group(3), instructionGroups.group(4), instructionGroups.group(5));
 
 		switch (word.opCode) {
-		case LOC:
-		{
+		case LOC: {
 			break;
 		}
 		case HALT: {
@@ -220,7 +219,7 @@ public class Simulator {
 		int eftAddr = Integer.parseInt(calculateEffectiveAddress(word), 2);
 		String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
 		Memory.memory.put(eftAddr, gprValue);
-		opConsoleObj.WriteToOutputConsole("Stored " + gprValue + " into address " + eftAddr,Color.CYAN);
+		opConsoleObj.WriteToOutputConsole("Stored " + gprValue + " into address " + eftAddr, Color.CYAN);
 
 	}
 
@@ -257,7 +256,7 @@ public class Simulator {
 		int eftAddr = Integer.parseInt(calculateEffectiveAddress(word), 2);
 		String ixrValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.ixRegister));
 		Memory.memory.put(eftAddr, ixrValue);
-		opConsoleObj.WriteToOutputConsole("Stored " + ixrValue + " into address " + eftAddr,Color.CYAN);
+		opConsoleObj.WriteToOutputConsole("Stored " + ixrValue + " into address " + eftAddr, Color.CYAN);
 
 	}
 
@@ -345,7 +344,7 @@ public class Simulator {
 			throw new Exception("Can't set IXR0 Register!");
 		}
 		}
-		opConsoleObj.WriteToOutputConsole("Set " + String.valueOf(GprInd) + " to " + addr,Color.CYAN);
+		opConsoleObj.WriteToOutputConsole("Set " + String.valueOf(GprInd) + " to " + addr, Color.CYAN);
 	}
 
 	/*
@@ -389,12 +388,14 @@ public class Simulator {
 		return gprContent.toString();
 	}
 
+	/* This method is used to perform operations when we increment the PC */
 	private void IncrementPC() {
 		String nextPcaddr = Integer.toBinaryString(address.get(++index));
 		String appendedPcValue = UtilClass.ReturnWithAppendedZeroes(nextPcaddr, 12);
 		FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(appendedPcValue));
 	}
 
+	/* This method is used to perform various Jump operations */
 	private void Jump(InstructionWord word, boolean isZero, boolean isCCbit, boolean isGreater) throws Exception {
 		int eftAddr = Integer.parseInt(calculateEffectiveAddress(word), 2);
 		String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
@@ -410,6 +411,7 @@ public class Simulator {
 
 	}
 
+	/* This method is used to perform SOB operation */
 	private void SubtractOneAndBranch(InstructionWord word) throws Exception {
 		String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
 		String result = UtilClass.ReturnWithAppendedZeroes(binaryOperationsObj.BinarySubstraction(gprValue, "1"), 16);

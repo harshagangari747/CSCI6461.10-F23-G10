@@ -418,6 +418,7 @@ public class FrontPanel extends JFrame {
 			}
 		});
 
+		/* CC bit-yet to complete in Project phase 3 */
 		ccLoadBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {

@@ -14,5 +14,6 @@ public class Constants {
 	//To set privilege to one zero bit by default
 	public  static final String defaultSingleZero = "0";
 	
+	//To use for framing errors / exceptions
 	public static final String SINGLESPACE_STRING = " ";
 }

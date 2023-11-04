@@ -14,6 +14,11 @@ public class Translator {
 	private ArrayList<String> readInputFileData;
 	private Map<Integer, String> endValue = new LinkedHashMap<Integer, String>();
 
+	/*
+	 * This method takes array of input file string where each line is one element.
+	 * And passes this information to further decoding by splitting by commas and
+	 * spaces.
+	 */
 	public Map<String, String> TranslateIntoHexCode(ArrayList<String> splitLines) throws Exception {
 		readInputFileData = splitLines;
 
@@ -33,6 +38,10 @@ public class Translator {
 		return inputToWrite;
 	}
 
+	/*
+	 * This method takes the split instructions and matches the length of the
+	 * address part and accordingly sends the information for further processing
+	 */
 	private void Decode(String opCode, String[] byteInfo) throws Exception {
 		InstructionMetaData instruction;
 		if (byteInfo.length == 1) {
@@ -56,6 +65,7 @@ public class Translator {
 
 	}
 
+	/* This method decodes instructions with single parameter */
 	private void DecodeSingleRegInfoIntoHex(InstructionMetaData insMetaData, String[] byteInfo) {
 		int parsedByteInfo = -1;
 		String parsedByteInfoString = null;
@@ -86,6 +96,7 @@ public class Translator {
 		case NOT: {
 			StringBuffer bytePatternString = new StringBuffer(insMetaData.bytePattern);
 			bytePatternString.replace(6, 8, first);
+			inputToWrite.put(Integer.toBinaryString(tempPC++), bytePatternString.toString());
 			break;
 		}
 		case End: {
@@ -98,6 +109,7 @@ public class Translator {
 		}
 	}
 
+	/* This method decodes instructions with two parameters */
 	private void DecodeDoubleRegInfoIntoHex(InstructionMetaData insMetaData, String[] byteInfo) throws Exception {
 		String first = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(Integer.parseInt(byteInfo[0])), 2);
 		String second = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(Integer.parseInt(byteInfo[1])), 5);
@@ -115,7 +127,10 @@ public class Translator {
 		}
 
 		case AIR:
-		case SIR: {
+		case SIR:
+		case IN:
+		case OUT:
+		case CHK: {
 			bytePatternString.replace(6, 8, first);
 			bytePatternString.replace(11, 16, second);
 			inputToWrite.put(Integer.toBinaryString(tempPC++), bytePatternString.toString());
@@ -131,24 +146,19 @@ public class Translator {
 			inputToWrite.put(Integer.toBinaryString(tempPC++), bytePatternString.toString());
 			break;
 		}
-		case IN:
-		case OUT:
-		case CHK: {
-			throw new Exception("");
-		}
+
 		default:
 			throw new IllegalArgumentException(
 					"Opcode" + insMetaData.opCode + " is currently not supported for conversion ");
 		}
 	}
 
-	private void DecodeTripleRegInfoIntoHex(InstructionMetaData insMetaData, String[] byteInfo) {
-		String first = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(Integer.parseInt(byteInfo[0])), 2);
-		String second = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(Integer.parseInt(byteInfo[1])), 2);
-		String third = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(Integer.parseInt(byteInfo[2])), 5);
+	/* This method decodes instructions with three parameters */
+	private void DecodeTripleRegInfoIntoHex(InstructionMetaData insMetaData, String[] byteInfo) throws Exception {
+		String gprOrInd = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(Integer.parseInt(byteInfo[0])), 2);
 		StringBuffer bytePatternString = new StringBuffer(insMetaData.bytePattern);
+		Exception exceptio = new Exception();
 		switch (insMetaData.opCode) {
-
 		case LDR:
 		case LDA:
 		case STR:
@@ -157,50 +167,87 @@ public class Translator {
 		case SOB:
 		case JGE:
 		case AMR:
-		case SMR: {
-			bytePatternString.replace(6, 8, first);
-			bytePatternString.replace(8, 10, second);
-			bytePatternString.replace(11, 16, third);
+		case SMR:
+		case JCC: {
+			String indexReg = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(Integer.parseInt(byteInfo[1])),
+					2);
+			String address = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(Integer.parseInt(byteInfo[2])),
+					5);
+			bytePatternString.replace(6, 8, gprOrInd);
+			bytePatternString.replace(8, 10, indexReg);
+			bytePatternString.replace(11, 16, address);
 			inputToWrite.put(Integer.toBinaryString(tempPC++), bytePatternString.toString());
 
 			break;
 
 		}
-		case JCC: {
+		case JMA:
+		case JSR: {
+			String address = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(Integer.parseInt(byteInfo[1])),
+					5);
+			String index = byteInfo[2];
+			bytePatternString.replace(8, 10, gprOrInd);
+			bytePatternString.replace(10, 11, index);
+			bytePatternString.replace(11, 16, address);
+			inputToWrite.put(Integer.toBinaryString(tempPC++), bytePatternString.toString());
+			break;
+
+		}
+		case LDX:
+		case STX: {
+			String indirect = byteInfo[2];
+			String address = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(Integer.parseInt(byteInfo[1])),
+					5);
+			bytePatternString.replace(8, 10, gprOrInd);
+			bytePatternString.replace(10, 11, indirect);
+			bytePatternString.replace(11, 16, address);
+			inputToWrite.put(Integer.toBinaryString(tempPC++), bytePatternString.toString());
 			break;
 		}
 
 		default:
-			throw new IllegalArgumentException(
-					"Opcode" + insMetaData.opCode + " is currently not supported for conversion ");
+			throw new Exception("Opcode" + insMetaData.opCode + " is currently not supported for conversion");
+
 		}
 	}
 
+	/* This method decodes instructions with four parameters */
 	private void DecodeQuadrapleRegInfoIntoHex(InstructionMetaData insMetaData, String[] byteInfo) {
-		String first = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(Integer.parseInt(byteInfo[0])), 2);
+		String gpr = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(Integer.parseInt(byteInfo[0])), 2);
 		StringBuffer bytePatternString = new StringBuffer(insMetaData.bytePattern);
 		switch (insMetaData.opCode) {
-		case LDR: {
-			String second = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(Integer.parseInt(byteInfo[1])), 2);
-			String third = byteInfo[3];
-			String four = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(Integer.parseInt(byteInfo[2])), 5);
-			bytePatternString.replace(6, 8, first);
-			bytePatternString.replace(8, 10, second);
-			bytePatternString.replace(10, 11, third);
-			bytePatternString.replace(11, 16, four);
+		case LDA:
+		case LDR:
+		case STR:
+		case AMR:
+		case SMR:
+		case JGE:
+		case SOB:
+		case JZ:
+		case JNE:
+		case JCC: {
+			String indexReg = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(Integer.parseInt(byteInfo[1])),
+					2);
+			String indirect = byteInfo[3];
+			String address = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(Integer.parseInt(byteInfo[2])),
+					5);
+			bytePatternString.replace(6, 8, gpr);
+			bytePatternString.replace(8, 10, indexReg);
+			bytePatternString.replace(10, 11, indirect);
+			bytePatternString.replace(11, 16, address);
 			inputToWrite.put(Integer.toBinaryString(tempPC++), bytePatternString.toString());
 			break;
 
 		}
 		case SRC:
 		case RRC: {
-			String four = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(Integer.parseInt(byteInfo[1])), 4);
-			String third = byteInfo[2];
-			String second = byteInfo[3];
-			bytePatternString.replace(6, 8, first);
-			bytePatternString.replace(8, 9, second);
-			bytePatternString.replace(9, 10, third);
-			bytePatternString.replace(12, 16, four);
+			String count = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(Integer.parseInt(byteInfo[1])), 4);
+			String lr = byteInfo[2];
+			String al = byteInfo[3];
+			bytePatternString.replace(6, 8, gpr);
+			bytePatternString.replace(8, 9, al);
+			bytePatternString.replace(9, 10, lr);
+			bytePatternString.replace(12, 16, count);
 			inputToWrite.put(Integer.toBinaryString(tempPC++), bytePatternString.toString());
 
 			break;
@@ -211,9 +258,12 @@ public class Translator {
 		}
 	}
 
+	/*
+	 * This method is used to fill the values with address of End. For ex: Data End
+	 */
 	private void FillUpEndValues() {
 		for (int i : endValue.keySet()) {
-			inputToWrite.put(Integer.toBinaryString(i), Integer.toBinaryString(tempPC-1));
+			inputToWrite.put(Integer.toBinaryString(i), Integer.toBinaryString(tempPC - 1));
 		}
 
 	}
