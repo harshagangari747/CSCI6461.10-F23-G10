@@ -48,6 +48,7 @@ public class OutputConsole {
             outputConsole.pack(); // Automatically adjust size
             outputConsole.setLocationRelativeTo(null); // Center on the screen
             outputConsole.setVisible(true);
+            outputConsole.setResizable(false);
         });
     }
 	

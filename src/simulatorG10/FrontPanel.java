@@ -453,7 +453,7 @@ public class FrontPanel extends JFrame {
 		gpr0Lbl.setBounds(86, 40, 33, 14);
 
 		gpr0ValueLbl = new JLabel(Constants.default16Zeroes);
-		gpr0ValueLbl.setBounds(130, 40, 208, 20);
+		gpr0ValueLbl.setBounds(130, 40, 259, 20);
 		gpr0ValueLbl.setForeground(SystemColor.activeCaptionText);
 		gpr0ValueLbl.setFont(new Font("Calibri", Font.BOLD, 18));
 
@@ -462,7 +462,7 @@ public class FrontPanel extends JFrame {
 		gpr1Lbl.setBounds(86, 70, 33, 14);
 
 		gpr1ValueLbl = new JLabel(Constants.default16Zeroes);
-		gpr1ValueLbl.setBounds(129, 70, 209, 20);
+		gpr1ValueLbl.setBounds(129, 70, 260, 20);
 		gpr1ValueLbl.setForeground(SystemColor.activeCaptionText);
 		gpr1ValueLbl.setFont(new Font("Calibri", Font.BOLD, 18));
 
@@ -471,7 +471,7 @@ public class FrontPanel extends JFrame {
 		gpr2Lbl.setForeground(Color.black);
 
 		gpr2ValueLbl = new JLabel(Constants.default16Zeroes);
-		gpr2ValueLbl.setBounds(129, 100, 209, 20);
+		gpr2ValueLbl.setBounds(129, 100, 260, 20);
 		gpr2ValueLbl.setForeground(SystemColor.activeCaptionText);
 		gpr2ValueLbl.setFont(new Font("Calibri", Font.BOLD, 18));
 
@@ -480,7 +480,7 @@ public class FrontPanel extends JFrame {
 		gpr3Lbl.setForeground(Color.black);
 
 		gpr3ValueLbl = new JLabel(Constants.default16Zeroes);
-		gpr3ValueLbl.setBounds(128, 130, 210, 20);
+		gpr3ValueLbl.setBounds(128, 130, 261, 20);
 		gpr3ValueLbl.setForeground(SystemColor.activeCaptionText);
 		gpr3ValueLbl.setFont(new Font("Calibri", Font.BOLD, 18));
 
@@ -497,17 +497,17 @@ public class FrontPanel extends JFrame {
 		ixr3Lbl.setForeground(Color.black);
 
 		ixr1ValueLbl = new JLabel(Constants.default16Zeroes);
-		ixr1ValueLbl.setBounds(129, 165, 209, 20);
+		ixr1ValueLbl.setBounds(129, 165, 260, 20);
 		ixr1ValueLbl.setForeground(SystemColor.activeCaptionText);
 		ixr1ValueLbl.setFont(new Font("Calibri", Font.BOLD, 18));
 
 		ixr2ValueLbl = new JLabel(Constants.default16Zeroes);
-		ixr2ValueLbl.setBounds(129, 195, 209, 20);
+		ixr2ValueLbl.setBounds(129, 195, 260, 20);
 		ixr2ValueLbl.setForeground(SystemColor.activeCaptionText);
 		ixr2ValueLbl.setFont(new Font("Calibri", Font.BOLD, 18));
 
 		ixr3ValueLbl = new JLabel(Constants.default16Zeroes);
-		ixr3ValueLbl.setBounds(129, 225, 209, 20);
+		ixr3ValueLbl.setBounds(129, 225, 260, 20);
 		ixr3ValueLbl.setForeground(SystemColor.activeCaptionText);
 		ixr3ValueLbl.setFont(new Font("Calibri", Font.BOLD, 18));
 
@@ -564,21 +564,21 @@ public class FrontPanel extends JFrame {
 		mbrLbl.setBounds(475, 106, 46, 14);
 
 		mbrValueLbl = new JLabel(Constants.default16Zeroes);
-		mbrValueLbl.setBounds(545, 100, 198, 20);
+		mbrValueLbl.setBounds(545, 100, 241, 20);
 		mbrValueLbl.setFont(new Font("Calibri", Font.BOLD, 18));
 
 		irLbl = new JLabel("IR");
 		irLbl.setBounds(475, 136, 46, 14);
 
 		irValueLbl = new JLabel(Constants.default16Zeroes);
-		irValueLbl.setBounds(545, 130, 198, 20);
+		irValueLbl.setBounds(545, 130, 241, 20);
 		irValueLbl.setFont(new Font("Calibri", Font.BOLD, 18));
 
 		mfrLbl = new JLabel("MFR");
 		mfrLbl.setBounds(475, 160, 46, 14);
 
 		mfrValueLbl = new JLabel(Constants.default4Zeroes);
-		mfrValueLbl.setBounds(545, 160, 46, 20);
+		mfrValueLbl.setBounds(545, 160, 241, 20);
 		mfrValueLbl.setFont(new Font("Calibri", Font.BOLD, 18));
 
 		prvlgLbl = new JLabel("Privliged");
@@ -591,39 +591,39 @@ public class FrontPanel extends JFrame {
 		// Buttons
 		gpr0LoadBtn = new JButton("LD");
 		gpr0LoadBtn.setFont(new Font("Tahoma", Font.PLAIN, 9));
-		gpr0LoadBtn.setBounds(348, 40, 18, 14);
+		gpr0LoadBtn.setBounds(371, 40, 18, 14);
 		gpr0LoadBtn.setMargin(new Insets(0, 0, 0, -3));
 
 		gpr1LoadBtn = new JButton("LD");
 		gpr1LoadBtn.setFont(new Font("Tahoma", Font.PLAIN, 9));
-		gpr1LoadBtn.setBounds(348, 70, 18, 14);
+		gpr1LoadBtn.setBounds(371, 70, 18, 14);
 		gpr1LoadBtn.setMargin(new Insets(0, 0, 0, -3));
 
 		gpr2LoadBtn = new JButton("LD");
 		gpr2LoadBtn.setFont(new Font("Tahoma", Font.PLAIN, 9));
-		gpr2LoadBtn.setBounds(348, 100, 18, 14);
+		gpr2LoadBtn.setBounds(371, 100, 18, 14);
 		gpr2LoadBtn.setMargin(new Insets(0, 0, 0, -3));
 
 		gpr3LoadBtn = new JButton("LD");
 		gpr3LoadBtn.setFont(new Font("Tahoma", Font.PLAIN, 9));
-		gpr3LoadBtn.setBounds(348, 130, 18, 14);
+		gpr3LoadBtn.setBounds(371, 130, 18, 14);
 		gpr3LoadBtn.setMargin(new Insets(0, 0, 0, -3));
 
 		ixr1LoadBtn = new JButton("LD");
 		ixr1LoadBtn.setFont(new Font("Tahoma", Font.PLAIN, 9));
-		ixr1LoadBtn.setBounds(348, 165, 18, 14);
+		ixr1LoadBtn.setBounds(371, 165, 18, 14);
 		ixr1LoadBtn.setMargin(new Insets(0, 0, 0, -3));
 
 		ixr2LoadBtn = new JButton("LD");
 
 		ixr2LoadBtn.setFont(new Font("Tahoma", Font.PLAIN, 9));
-		ixr2LoadBtn.setBounds(348, 195, 18, 14);
+		ixr2LoadBtn.setBounds(371, 195, 18, 14);
 		ixr2LoadBtn.setMargin(new Insets(0, 0, 0, -3));
 
 		ixr3LoadBtn = new JButton("LD");
 
 		ixr3LoadBtn.setFont(new Font("Tahoma", Font.PLAIN, 9));
-		ixr3LoadBtn.setBounds(348, 225, 18, 14);
+		ixr3LoadBtn.setBounds(371, 225, 18, 14);
 		ixr3LoadBtn.setMargin(new Insets(0, 0, 0, -3));
 
 		runBtn = new JButton("Run");
@@ -637,19 +637,19 @@ public class FrontPanel extends JFrame {
 
 		pcLoadBtn.setFont(new Font("Tahoma", Font.PLAIN, 9));
 		pcLoadBtn.setMargin(new Insets(0, 0, 0, -3));
-		pcLoadBtn.setBounds(753, 40, 18, 14);
+		pcLoadBtn.setBounds(778, 40, 18, 14);
 
 		marLoadBtn = new JButton("LD");
 
 		marLoadBtn.setMargin(new Insets(0, 0, 0, -3));
 		marLoadBtn.setFont(new Font("Tahoma", Font.PLAIN, 9));
-		marLoadBtn.setBounds(753, 70, 18, 14);
+		marLoadBtn.setBounds(778, 70, 18, 14);
 
 		mbrLoadBtn = new JButton("LD");
 
 		mbrLoadBtn.setMargin(new Insets(0, 0, 0, -3));
 		mbrLoadBtn.setFont(new Font("Tahoma", Font.PLAIN, 9));
-		mbrLoadBtn.setBounds(753, 100, 18, 14);
+		mbrLoadBtn.setBounds(778, 100, 18, 14);
 
 		helpBtn = new JButton("Help");
 
@@ -755,10 +755,11 @@ public class FrontPanel extends JFrame {
 		ccLoadBtn.setFont(new Font("Tahoma", Font.PLAIN, 9));
 
 		ccLoadBtn.setMargin(new Insets(0, 0, 0, -3));
-		ccLoadBtn.setBounds(753, 221, 18, 14);
+		ccLoadBtn.setBounds(778, 225, 18, 14);
 		frame.getContentPane().add(ccLoadBtn);
 
 		frame.setVisible(true);
+		frame.setResizable(false);
 
 	}
 

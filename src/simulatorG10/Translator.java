@@ -24,7 +24,7 @@ public class Translator {
 
 		String[] lineArray;
 		for (String line : readInputFileData) {
-			lineArray = line.split(" ");
+			lineArray = line.trim().split(" ");
 			String operation = lineArray[0].replaceAll(":", "");
 			String[] registersInformation = lineArray[1].split(",");
 			try {
@@ -90,6 +90,11 @@ public class Translator {
 			break;
 		}
 		case RFS: {
+			StringBuffer bytePatternString = new StringBuffer(insMetaData.bytePattern);
+			String address = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(parsedByteInfo), 5);
+			bytePatternString.replace(11, 16, address);
+			inputToWrite.put(Integer.toBinaryString(tempPC++), bytePatternString.toString());
+			
 
 			break;
 		}
@@ -140,7 +145,7 @@ public class Translator {
 		case DVD:
 		case TRR:
 		case AND:
-		case OR: {
+		case ORR: {
 			bytePatternString.replace(6, 8, first);
 			bytePatternString.replace(8, 10, second.substring(3, 5));
 			inputToWrite.put(Integer.toBinaryString(tempPC++), bytePatternString.toString());
