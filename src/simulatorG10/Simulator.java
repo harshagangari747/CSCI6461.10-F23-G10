@@ -168,7 +168,7 @@ public class Simulator {
 		case TRR: {
 			break;
 		}
-		case OR: {
+		case ORR: {
 			break;
 		}
 		case AND: {

@@ -1,7 +1,7 @@
 [
 	{
 		"instructionParts": 1,
-		"bytePattern": "001101--000-----",
+		"bytePattern": "00110100000-----",
 		"opCode": "RFS"
 	},
 	{
@@ -67,7 +67,7 @@
 	{
 		"instructionParts": 2,
 		"bytePattern": "010100----000000",
-		"opCode": "OR"
+		"opCode": "ORR"
 	},
 	{
 		"instructionParts": 2,
@@ -121,12 +121,12 @@
 	},
 	{
 		"instructionParts": 3,
-		"bytePattern": "001100----0-----",
+		"bytePattern": "001010----0-----",
 		"opCode": "JCC"
 	},
 	{
 		"instructionParts": 3,
-		"bytePattern": "010001----0-----",
+		"bytePattern": "001111----0-----",
 		"opCode": "JGE"
 	},
 	{
@@ -141,7 +141,7 @@
 	},
 	{
 		"instructionParts": 3,
-		"bytePattern": "00110100--------",
+		"bytePattern": "00101100--------",
 		"opCode": "JMA"
 	},
 	{
@@ -211,7 +211,7 @@
 	},
 	{
 		"instructionParts": 4,
-		"bytePattern": "001100----------",
+		"bytePattern": "001010----------",
 		"opCode": "JCC"
 	},
 	{
@@ -221,7 +221,7 @@
 	},
 	{
 		"instructionParts": 4,
-		"bytePattern": "010001----------",
+		"bytePattern": "001111----------",
 		"opCode": "JGE"
 	}
 ]
