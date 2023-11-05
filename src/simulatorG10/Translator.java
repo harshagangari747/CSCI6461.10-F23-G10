@@ -84,6 +84,7 @@ public class Translator {
 		case Data: {
 			if (byteInfo[0].equals("End")) {
 				endValue.put(tempPC, null);
+				inputToWrite.put(Integer.toBinaryString(tempPC++), null);
 			} else {
 				inputToWrite.put(Integer.toBinaryString(tempPC++), first);
 			}
