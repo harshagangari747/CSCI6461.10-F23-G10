@@ -1,50 +1,18 @@
 LOC 6
- Data 5
- Data 10
- Data 12
- Data 17
- Data 1
- Data 8
- LDX 1,9
- JZ 2,1,6
- JZ 2,1,7,1
- JSR 1,20
- JSR 1,21,1
- JMA 2,35,1
- JMA 2,24
- JNE 0,1,31
- JNE 0,2,14,1
- JMA 2,25
- JMA 1,24,1
- AMR 3,0,10
- SMR 2,0,5
- AMR 3,1,10,1
- SMR 2,1,5,1
- AIR 1,7
- SIR 2,3
- MLT 0,2
- DVD 2,0
- TRR 1,2
- AND 0,2
- ORR 0,1
- NOT 3
- SRC 1,2,1,1
- RRC 0,1,0,1
- IN 2,15
- OUT 1,30
- CHK 2,29
- LDX 0,18,1
- STR 1,1,15,1
- STR 1,0,20
- LDA 0,1,0,1
- JCC 0,3,31
- JCC 3,0,13,1
- RFS 17
- SOB 1,0,17,1
- SOB 3,3,18
- JGE 1,1,30,1
- JGE 3,3,1,1
- STX 0,18,1
- STX 0,6
- LOC 1024
+Data 10
+Data 3
+Data End
+Data 0
+Data 12
+Data 9
+Data 18
+Data 12
+LDX 2,7
+LDR 3,0,10
+LDR 2,2,10
+LDR 1,2,10,1
+LDA 0,0,0
+LDX 1,9
+JZ 0,1,0
+LOC 1024
 End: HLT
