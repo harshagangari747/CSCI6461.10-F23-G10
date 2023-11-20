@@ -79,6 +79,22 @@ public class InstructionWord {
 		{
 			return opCode.JGE;
 		}
+		case "000100":
+		{
+			return opCode.AMR;
+		}
+		case "000101":
+		{
+			return opCode.SMR;
+		}
+		case "000110":
+		{
+			return opCode.AIR;
+		}
+		case "000111":
+		{
+			return opCode.SIR;
+		}
 
 		default:
 			throw new Exception("Opcode : " + opcode + " is currently not supported!");

@@ -59,7 +59,7 @@ public class BinaryOperations {
 	 * Returns binary string by taking to values
 	 */
 	public String BinarySubstraction(String value1, String value2) {
-		int substractionValue = Integer.parseInt(value1) - Integer.parseInt(value2);
+		int substractionValue = Integer.parseInt(value1,2) - Integer.parseInt(value2,2);
 		return Integer.toBinaryString(substractionValue);
 	}
 
@@ -71,4 +71,20 @@ public class BinaryOperations {
 		return hexEquivalentValue;
 
 	}
+	
+	public String BinaryMultiplication(String rx, String ry)
+	{
+		long result = Integer.parseInt(rx,2)*Integer.parseInt(ry,2);
+		return Long.toBinaryString(result);
+	}
+	
+	public String BinaryDivision(String rx, String ry)
+	{
+		int numerator = Integer.parseInt(rx,2);
+		int denomenator = Integer.parseInt(ry,2);
+		int remainder = numerator % denomenator;
+		int quoteint = numerator/denomenator;
+		return remainder+"&"+quoteint;
+	}
+	
 }
