@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 
+import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
+
 /*Class to set,get, run instructions
  * Typically our CPU
  * */
@@ -16,6 +18,7 @@ public class Simulator {
 	private static OutputConsole opConsoleObj;
 	public static boolean haltTriggered = false;
 	private BinaryOperations binaryOperationsObj;
+	private boolean isJumpInst = false;
 
 	/*
 	 * Class constructor to set the address with keys of memory to iterate through
@@ -65,7 +68,7 @@ public class Simulator {
 				// int indexOfCurrentPc = address.indexOf(condensedCurrentPc);
 
 				// increment PC
-				if (index < address.size()) {
+				if (index < address.size() && !isJumpInst) {
 					IncrementPC();
 
 				}
@@ -148,21 +151,27 @@ public class Simulator {
 			break;
 		}
 		case AMR: {
+			AddOrSubtractMemoryToRegister(word,true);
 			break;
 		}
 		case SMR: {
+			AddOrSubtractMemoryToRegister(word, false);
 			break;
 		}
 		case AIR: {
+			AddOrSubtractImmediate(word, true);
 			break;
 		}
 		case SIR: {
+			AddOrSubtractImmediate(word, false);
 			break;
 		}
 		case MLT: {
+			MultiplyOrDivide(word,true);
 			break;
 		}
 		case DVD: {
+			MultiplyOrDivide(word,true);
 			break;
 		}
 		case TRR: {
@@ -401,9 +410,10 @@ public class Simulator {
 		String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
 		int gprIntValue = Integer.parseInt(gprValue);
 		if ((isZero && gprIntValue == 0) || (!isZero && gprIntValue != 0) || isCCbit
-				|| (isGreater && gprIntValue > 0)) {
-			String pcString = String.valueOf(eftAddr);
+				|| (isGreater && gprIntValue >= 0)) {
+			String pcString = Integer.toBinaryString(eftAddr);
 			FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(pcString));
+			isJump(true);
 
 		} else {
 			IncrementPC();
@@ -419,10 +429,62 @@ public class Simulator {
 		if (binaryOperationsObj.ReturnDecimalFromBinary(result) > 0) {
 			String pcString = calculateEffectiveAddress(word);
 			FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(pcString));
+			isJump(true);
 		} else {
 			IncrementPC();
 		}
 
 	}
+	
+	private void AddOrSubtractMemoryToRegister(InstructionWord word, boolean isAddition) throws Exception
+	{
+		String eftAddr = calculateEffectiveAddress(word);
+		String result = null;
+		String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
+		if(isAddition)
+		{
+			result = binaryOperationsObj.BinaryAddition(gprValue, eftAddr);			
+		}
+		else 
+			result = binaryOperationsObj.BinarySubstraction(gprValue, eftAddr);
+		String paddedResult = UtilClass.ReturnWithAppendedZeroes(result, 16);
+		String formattedResult = UtilClass.GetStringFormat(paddedResult.substring(paddedResult.length()-16));
+		FrontPanel.SetRegister(word.gpRegister, formattedResult);
+		isJump(false);
+	}
+	
+	private  void  AddOrSubtractImmediate(InstructionWord word,boolean isAddition) throws Exception
+	{
+		String result = null;
+		String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
+		String immValue = String.valueOf( word.address);
+		if(isAddition)
+			result = binaryOperationsObj.BinaryAddition(gprValue, immValue);
+		else
+			result = binaryOperationsObj.BinarySubstraction(gprValue, immValue);
+		String paddedResult = UtilClass.ReturnWithAppendedZeroes(result, 16);
+		String formattedResult = UtilClass.GetStringFormat(paddedResult.substring(paddedResult.length()-16));
+		FrontPanel.SetRegister(word.gpRegister, formattedResult);
+		isJump(false);	
+	}
+	
+	private void MultiplyOrDivide(InstructionWord word, boolean isMulOp) throws Exception
+	{
+		String rx = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
+		Registers ryReg = word.gpRegister == Registers.GPR0 ? Registers.GPR2 : Registers.GPR0;
+		String ry = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(ryReg));
+		String result = null;
+		if(isMulOp)
+			result = binaryOperationsObj.BinaryMultiplication(rx,ry);
+		else
+			result = binaryOperationsObj.BinaryDivision(rx,ry);
+		
+	}
+	
+	private void isJump(boolean isJumpInstruction)
+	{
+		isJumpInst = isJumpInstruction;
+	}
+	
 
 }
