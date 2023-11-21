@@ -2,6 +2,7 @@ package simulatorG10;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.geom.PathIterator;
 import java.io.Console;
 
 import javax.swing.JFrame;
@@ -40,7 +41,8 @@ public class OutputConsole {
             textBuffer = new StringBuffer();
             outputJPanel = new JPanel();
             outputJPanel.add(new JScrollPane(outputText));
-            outputText.setEnabled(false);
+            //outputText.setEnabled(false);
+            outputText.setEditable(false);
             outputText.setForeground(Color.white);
             outputText.setBackground(Color.black);
             outputConsole.getContentPane().add(outputJPanel);

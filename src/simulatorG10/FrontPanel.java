@@ -7,6 +7,7 @@ import java.awt.Insets;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -817,58 +818,69 @@ public class FrontPanel extends JFrame {
 	/*
 	 * Set different registers with the value passed to the parameter "value"
 	 */
-	public static void SetRegister(Registers register, String value) {
-		try {
-			switch (register) {
-			case GPR0: {
-				gpr0ValueLbl.setText(value);
-			}
-				break;
-			case GPR1: {
-				gpr1ValueLbl.setText(value);
-			}
-				break;
-			case GPR2: {
-				gpr2ValueLbl.setText(value);
-			}
-				break;
-			case GPR3: {
-				gpr3ValueLbl.setText(value);
-			}
-				break;
-			case IXR1: {
-				ixr1ValueLbl.setText(value);
-			}
-				break;
-			case IXR2: {
-				ixr2ValueLbl.setText(value);
-			}
-			case IXR3: {
-				ixr3ValueLbl.setText(value);
-			}
-			case PC: {
-				pcValueLbl.setText(value);
-			}
-				break;
-			case MAR: {
-				marValueLbl.setText(value);
-			}
-				break;
-			case MBR: {
-				mbrValueLbl.setText(value);
-			}
-				break;
-			case IR: {
-				irValueLbl.setText(value);
-			}
-				break;
-
-			default:
-				throw new IllegalArgumentException("Unexpected value: " + register);
-			}
-		} catch (Exception e) {
-
+	public static void SetRegister(Registers register, String value) throws Exception {
+		String outputText = "Set " + register + " to value :" + value;
+		switch (register) {
+		case GPR0: {
+			gpr0ValueLbl.setText(value);
+			opConsoleObj.WriteToOutputConsole(outputText, null);
 		}
+			break;
+		case GPR1: {
+			gpr1ValueLbl.setText(value);
+			opConsoleObj.WriteToOutputConsole(outputText, null);
+		}
+			break;
+		case GPR2: {
+			gpr2ValueLbl.setText(value);
+			opConsoleObj.WriteToOutputConsole(outputText, null);
+		}
+			break;
+		case GPR3: {
+			gpr3ValueLbl.setText(value);
+			opConsoleObj.WriteToOutputConsole(outputText, null);
+		}
+			break;
+		case IXR1: {
+			ixr1ValueLbl.setText(value);
+			opConsoleObj.WriteToOutputConsole(outputText, null);
+		}
+			break;
+		case IXR2: {
+			ixr2ValueLbl.setText(value);
+			opConsoleObj.WriteToOutputConsole(outputText, null);
+		}
+		case IXR3: {
+			ixr3ValueLbl.setText(value);
+			opConsoleObj.WriteToOutputConsole(outputText, null);
+		}
+		case PC: {
+			pcValueLbl.setText(value);
+		}
+			break;
+		case MAR: {
+			marValueLbl.setText(value);
+		}
+			break;
+		case MBR: {
+			mbrValueLbl.setText(value);
+		}
+			break;
+		case IR: {
+			irValueLbl.setText(value);
+		}
+			break;
+
+		default:
+			throw new IllegalArgumentException("Unexpected value: " + register);
+		}
+	}
+
+	public static void SetCCRegister(int position, boolean flag) {
+		StringBuffer prevCCLable = new StringBuffer(ccValueLbl.getText());
+		prevCCLable.replace(position - 1, position, flag ? "1" : "0");
+		ccValueLbl.setText(prevCCLable.toString());
+		opConsoleObj.WriteToOutputConsole("Set CC[" + position + "] to " + flag, null);
 
 	}
 }

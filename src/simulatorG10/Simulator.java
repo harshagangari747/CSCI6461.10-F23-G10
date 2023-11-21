@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 
+import javax.swing.text.WrappedPlainView;
 import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
 
 /*Class to set,get, run instructions
@@ -175,18 +176,22 @@ public class Simulator {
 			break;
 		}
 		case TRR: {
+			RelationalOperatoinsOnBit(word);
 			break;
 		}
 		case ORR: {
+			RelationalOperatoinsOnBit(word);
 			break;
 		}
 		case AND: {
+			RelationalOperatoinsOnBit(word);
 			break;
 		}
 		case SRC: {
 			break;
 		}
 		case NOT: {
+			RelationalOperatoinsOnBit(word);
 			break;
 		}
 		case RRC: {
@@ -398,7 +403,7 @@ public class Simulator {
 	}
 
 	/* This method is used to perform operations when we increment the PC */
-	private void IncrementPC() {
+	private void IncrementPC() throws Exception {
 		String nextPcaddr = Integer.toBinaryString(address.get(++index));
 		String appendedPcValue = UtilClass.ReturnWithAppendedZeroes(nextPcaddr, 12);
 		FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(appendedPcValue));
@@ -464,49 +469,90 @@ public class Simulator {
 		isJump(false);
 	}
 
-	private void MultiplyOrDivide(InstructionWord word, boolean isMulOp) throws Exception
-	{
-		if(word.gpRegister == Registers.GPR1 || word.ixRegister == Registers.IXR3 || word.gpRegister == Registers.GPR3 || word.ixRegister == Registers.IXR1)
-		{
+	private void MultiplyOrDivide(InstructionWord word, boolean isMulOp) throws Exception {
+		if (word.gpRegister == Registers.GPR1 || word.ixRegister == Registers.IXR3 || word.gpRegister == Registers.GPR3
+				|| word.ixRegister == Registers.IXR1) {
 			throw new Exception("Opearands must be stored in GPR0 or GPR2.");
 		}
 		String rx = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
 		Registers ryReg = word.gpRegister == Registers.GPR0 ? Registers.GPR2 : Registers.GPR0;
 		String ry = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(ryReg));
-		Registers resRx,resRy;
-		String result = null,res0=null,res1=null;
-		if(isMulOp)
-		{
-			result = binaryOperationsObj.BinaryMultiplication(rx,ry);
-			if(result.length()>32)
-			{
-				//set cc bit;
+		Registers resRx, resRy;
+		String result = null, res0 = null, res1 = null;
+		if (isMulOp) {
+			result = binaryOperationsObj.BinaryMultiplication(rx, ry);
+			if (result.length() > 32) {
+				// set cc bit;
 			}
 			String paddedResult = UtilClass.ReturnWithAppendedZeroes(result, 32);
-			res0 =  paddedResult.substring(0,16);
-			res1 =  paddedResult.substring(16,32);
-		}
-		else
-		{
-			result = binaryOperationsObj.BinaryDivision(rx,ry);
-			String []divResult = result.split("&");
+			res0 = paddedResult.substring(0, 16);
+			res1 = paddedResult.substring(16, 32);
+		} else {
+			result = binaryOperationsObj.BinaryDivision(rx, ry);
+			String[] divResult = result.split("&");
 			res0 = UtilClass.ReturnWithAppendedZeroes(divResult[0], 16);
 			res1 = UtilClass.ReturnWithAppendedZeroes(divResult[1], 16);
-			
+
 		}
-		if(word.gpRegister == Registers.GPR0)
-		{
+		if (word.gpRegister == Registers.GPR0) {
 			resRx = Registers.GPR0;
 			resRy = Registers.GPR1;
-		}
-		else {
+		} else {
 			resRx = Registers.GPR2;
 			resRy = Registers.GPR3;
 		}
 		FrontPanel.SetRegister(resRx, UtilClass.GetStringFormat(res0));
 		FrontPanel.SetRegister(resRy, UtilClass.GetStringFormat(res1));
 		isJump(false);
-		
+
+	}
+
+	private void RelationalOperatoinsOnBit(InstructionWord word) throws Exception {
+		String rx = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
+		Registers ryReg;
+		switch (word.ixRegister) {
+		case IXR0: {
+			ryReg = Registers.GPR0;
+			break;
+		}
+		case IXR1: {
+			ryReg = Registers.GPR1;
+			break;
+		}
+		case IXR2: {
+			ryReg = Registers.GPR2;
+			break;
+		}
+		case IXR3: {
+			ryReg = Registers.GPR3;
+			break;
+		}
+
+		default:
+			throw new IllegalArgumentException("Register ID " + word.gpRegister + " or " + word.ixRegister
+					+ " not found. Only 0,1,2,3 are supported ");
+		}
+
+		String ry = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(ryReg));
+		boolean areEqual = false;
+		String result = "";
+		if (word.opCode == OpCodes.TRR) {
+
+			areEqual = binaryOperationsObj.AreRegistersEqual(rx, ry);
+			if (areEqual) {
+				FrontPanel.SetCCRegister(4, true);
+			} else {
+				FrontPanel.SetCCRegister(4, false);
+			}
+			return;
+		} else if (word.opCode == OpCodes.ORR) {
+			result = binaryOperationsObj.LogicalOr(rx, ry);
+		} else if (word.opCode == OpCodes.AND) {
+			result = binaryOperationsObj.LogicalAnd(rx, ry);
+		} else if (word.opCode == OpCodes.NOT) {
+			result = binaryOperationsObj.binaryNot(rx);
+		}
+		FrontPanel.SetRegister(word.gpRegister, UtilClass.GetStringFormat(result));
 	}
 
 	private void isJump(boolean isJumpInstruction) {

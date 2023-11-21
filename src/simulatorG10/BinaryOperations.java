@@ -59,7 +59,7 @@ public class BinaryOperations {
 	 * Returns binary string by taking to values
 	 */
 	public String BinarySubstraction(String value1, String value2) {
-		int substractionValue = Integer.parseInt(value1,2) - Integer.parseInt(value2,2);
+		int substractionValue = Integer.parseInt(value1, 2) - Integer.parseInt(value2, 2);
 		return Integer.toBinaryString(substractionValue);
 	}
 
@@ -71,20 +71,74 @@ public class BinaryOperations {
 		return hexEquivalentValue;
 
 	}
-	
-	public String BinaryMultiplication(String rx, String ry)
-	{
-		long result = Integer.parseInt(rx,2)*Integer.parseInt(ry,2);
+
+	public String BinaryMultiplication(String rx, String ry) {
+		long result = Integer.parseInt(rx, 2) * Integer.parseInt(ry, 2);
 		return Long.toBinaryString(result);
 	}
-	
-	public String BinaryDivision(String rx, String ry)
-	{
-		int numerator = Integer.parseInt(rx,2);
-		int denomenator = Integer.parseInt(ry,2);
+
+	public String BinaryDivision(String rx, String ry) {
+		int numerator = Integer.parseInt(rx, 2);
+		int denomenator = Integer.parseInt(ry, 2);
 		int remainder = numerator % denomenator;
-		int quoteint = numerator/denomenator;
-		return Integer.toBinaryString(quoteint)+"&"+ Integer.toBinaryString(remainder);
+		int quoteint = numerator / denomenator;
+		return Integer.toBinaryString(quoteint) + "&" + Integer.toBinaryString(remainder);
 	}
-	
+
+	public boolean AreRegistersEqual(String rx, String ry) {
+		char bit1,bit2;
+		for (int i = 0; i < 16; i++) {
+			bit1 = rx.charAt(i);
+			bit2 = ry.charAt(i);
+
+			if (bit1 != bit2) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public String LogicalAnd(String rx, String ry) {
+		String result = "";
+		char bit1,bit2;
+		for (int i = 0; i < 16; i++) {
+			bit1 = rx.charAt(i);
+			bit2 = ry.charAt(i);
+
+			if (bit1 == '1' && bit2 == '1') {
+				result += '1';
+			} else {
+				result += '0';
+			}
+		}
+		return result;
+	}
+
+	public String LogicalOr(String rx, String ry) {
+		String result = "";
+		char bit1,bit2;
+		for (int i = 0; i < 16; i++) {
+			bit1 = rx.charAt(i);
+			bit2 = ry.charAt(i);
+
+			if (bit1 == '0' && bit2 == '0') {
+				result += '0';
+			} else {
+				result += '1';
+			}
+		}
+		return result;
+	}
+
+	public String binaryNot(String rx) {
+		String result = "";
+		for (int i = 0; i < 16; i++) {
+			char bit = rx.charAt(i);
+			if (bit == '1')
+				result += '0';
+			else
+				result += '1';
+		}
+		return result;
+	}
 }
