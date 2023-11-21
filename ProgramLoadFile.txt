@@ -6,7 +6,14 @@ LOC 1
  Data 1
  Data 8
  Data 6
- LDX 1,9
+ Data 12
+ LDX 3,1
+ LDR 2,0,3
+ LDR 3,0,4
+ ORR 2,3
+ AND 3,2
+ NOT 2
+ TRR 2,3
  LDR 0,0,1
  LDR 2,0,7
  MLT 2,0

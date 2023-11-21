@@ -103,6 +103,22 @@ public class InstructionWord {
 		{
 			return opCode.DVD;
 		}
+		case "010010":
+		{
+			return opCode.TRR;
+		}
+		case "010100":
+		{
+			return opCode.ORR;
+		}
+		case "010011":
+		{
+			return opCode.AND;
+		}
+		case "010101":
+		{
+			return opCode.NOT;
+		}
 
 		default:
 			throw new Exception("Opcode : " + opcode + " is currently not supported!");
@@ -134,7 +150,7 @@ public class InstructionWord {
 		case "11": {
 			if (isGPR)
 				return Registers.GPR3;
-			return Registers.IXR2;
+			return Registers.IXR3;
 		}
 		default:
 			throw new IllegalArgumentException("Unexpected value: " + register);
