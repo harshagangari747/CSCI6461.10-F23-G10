@@ -41,7 +41,7 @@ public class UtilClass {
 			adjustedString.append(Constants.defaultSingleZero);
 		}
 		adjustedString.append(text);
-		if(adjustedString.toString().length()>16)
+		if(adjustedString.toString().length()>16 && adjustedString.toString().length()!=32)
 			return adjustedString.toString().substring(1);
 		return adjustedString.toString();
 	}

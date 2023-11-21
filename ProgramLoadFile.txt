@@ -5,14 +5,20 @@ LOC 1
  Data 17
  Data 1
  Data 8
+ Data 6
  LDX 1,9
+ LDR 0,0,1
+ LDR 2,0,7
+ MLT 2,0
+ LDR 2,0,2
+ LDR 0,0,1
+ DVD 0,2
  SIR 2,5
- STR 1,0,4
  AMR 1,0,3
  SMR 1,0,4
  AIR 2,10
  SIR 2,3
+ STR 1,0,4
  JZ 2,1,6
- LOC 20
  LDR 0,0,1
 End: HLT

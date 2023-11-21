@@ -95,6 +95,14 @@ public class InstructionWord {
 		{
 			return opCode.SIR;
 		}
+		case "010000":
+		{
+			return opCode.MLT;
+		}
+		case "010001":
+		{
+			return opCode.DVD;
+		}
 
 		default:
 			throw new Exception("Opcode : " + opcode + " is currently not supported!");

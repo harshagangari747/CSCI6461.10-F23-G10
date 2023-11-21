@@ -151,7 +151,7 @@ public class Simulator {
 			break;
 		}
 		case AMR: {
-			AddOrSubtractMemoryToRegister(word,true);
+			AddOrSubtractMemoryToRegister(word, true);
 			break;
 		}
 		case SMR: {
@@ -167,11 +167,11 @@ public class Simulator {
 			break;
 		}
 		case MLT: {
-			MultiplyOrDivide(word,true);
+			MultiplyOrDivide(word, true);
 			break;
 		}
 		case DVD: {
-			MultiplyOrDivide(word,true);
+			MultiplyOrDivide(word, false);
 			break;
 		}
 		case TRR: {
@@ -435,56 +435,82 @@ public class Simulator {
 		}
 
 	}
-	
-	private void AddOrSubtractMemoryToRegister(InstructionWord word, boolean isAddition) throws Exception
-	{
+
+	private void AddOrSubtractMemoryToRegister(InstructionWord word, boolean isAddition) throws Exception {
 		String eftAddr = calculateEffectiveAddress(word);
 		String result = null;
 		String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
-		if(isAddition)
-		{
-			result = binaryOperationsObj.BinaryAddition(gprValue, eftAddr);			
-		}
-		else 
+		if (isAddition) {
+			result = binaryOperationsObj.BinaryAddition(gprValue, eftAddr);
+		} else
 			result = binaryOperationsObj.BinarySubstraction(gprValue, eftAddr);
 		String paddedResult = UtilClass.ReturnWithAppendedZeroes(result, 16);
-		String formattedResult = UtilClass.GetStringFormat(paddedResult.substring(paddedResult.length()-16));
+		String formattedResult = UtilClass.GetStringFormat(paddedResult.substring(paddedResult.length() - 16));
 		FrontPanel.SetRegister(word.gpRegister, formattedResult);
 		isJump(false);
 	}
-	
-	private  void  AddOrSubtractImmediate(InstructionWord word,boolean isAddition) throws Exception
-	{
+
+	private void AddOrSubtractImmediate(InstructionWord word, boolean isAddition) throws Exception {
 		String result = null;
 		String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
-		String immValue = String.valueOf( word.address);
-		if(isAddition)
+		String immValue = String.valueOf(word.address);
+		if (isAddition)
 			result = binaryOperationsObj.BinaryAddition(gprValue, immValue);
 		else
 			result = binaryOperationsObj.BinarySubstraction(gprValue, immValue);
 		String paddedResult = UtilClass.ReturnWithAppendedZeroes(result, 16);
-		String formattedResult = UtilClass.GetStringFormat(paddedResult.substring(paddedResult.length()-16));
+		String formattedResult = UtilClass.GetStringFormat(paddedResult.substring(paddedResult.length() - 16));
 		FrontPanel.SetRegister(word.gpRegister, formattedResult);
-		isJump(false);	
+		isJump(false);
 	}
-	
+
 	private void MultiplyOrDivide(InstructionWord word, boolean isMulOp) throws Exception
 	{
+		if(word.gpRegister == Registers.GPR1 || word.ixRegister == Registers.IXR3 || word.gpRegister == Registers.GPR3 || word.ixRegister == Registers.IXR1)
+		{
+			throw new Exception("Opearands must be stored in GPR0 or GPR2.");
+		}
 		String rx = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
 		Registers ryReg = word.gpRegister == Registers.GPR0 ? Registers.GPR2 : Registers.GPR0;
 		String ry = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(ryReg));
-		String result = null;
+		Registers resRx,resRy;
+		String result = null,res0=null,res1=null;
 		if(isMulOp)
+		{
 			result = binaryOperationsObj.BinaryMultiplication(rx,ry);
+			if(result.length()>32)
+			{
+				//set cc bit;
+			}
+			String paddedResult = UtilClass.ReturnWithAppendedZeroes(result, 32);
+			res0 =  paddedResult.substring(0,16);
+			res1 =  paddedResult.substring(16,32);
+		}
 		else
+		{
 			result = binaryOperationsObj.BinaryDivision(rx,ry);
+			String []divResult = result.split("&");
+			res0 = UtilClass.ReturnWithAppendedZeroes(divResult[0], 16);
+			res1 = UtilClass.ReturnWithAppendedZeroes(divResult[1], 16);
+			
+		}
+		if(word.gpRegister == Registers.GPR0)
+		{
+			resRx = Registers.GPR0;
+			resRy = Registers.GPR1;
+		}
+		else {
+			resRx = Registers.GPR2;
+			resRy = Registers.GPR3;
+		}
+		FrontPanel.SetRegister(resRx, UtilClass.GetStringFormat(res0));
+		FrontPanel.SetRegister(resRy, UtilClass.GetStringFormat(res1));
+		isJump(false);
 		
 	}
-	
-	private void isJump(boolean isJumpInstruction)
-	{
+
+	private void isJump(boolean isJumpInstruction) {
 		isJumpInst = isJumpInstruction;
 	}
-	
 
 }

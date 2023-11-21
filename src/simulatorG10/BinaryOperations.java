@@ -84,7 +84,7 @@ public class BinaryOperations {
 		int denomenator = Integer.parseInt(ry,2);
 		int remainder = numerator % denomenator;
 		int quoteint = numerator/denomenator;
-		return remainder+"&"+quoteint;
+		return Integer.toBinaryString(quoteint)+"&"+ Integer.toBinaryString(remainder);
 	}
 	
 }
