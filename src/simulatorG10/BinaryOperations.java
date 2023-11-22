@@ -87,7 +87,7 @@ public class BinaryOperations {
 	}
 
 	public boolean AreRegistersEqual(String rx, String ry) {
-		char bit1,bit2;
+		char bit1, bit2;
 		for (int i = 0; i < 16; i++) {
 			bit1 = rx.charAt(i);
 			bit2 = ry.charAt(i);
@@ -101,7 +101,7 @@ public class BinaryOperations {
 
 	public String LogicalAnd(String rx, String ry) {
 		String result = "";
-		char bit1,bit2;
+		char bit1, bit2;
 		for (int i = 0; i < 16; i++) {
 			bit1 = rx.charAt(i);
 			bit2 = ry.charAt(i);
@@ -117,7 +117,7 @@ public class BinaryOperations {
 
 	public String LogicalOr(String rx, String ry) {
 		String result = "";
-		char bit1,bit2;
+		char bit1, bit2;
 		for (int i = 0; i < 16; i++) {
 			bit1 = rx.charAt(i);
 			bit2 = ry.charAt(i);
@@ -142,28 +142,65 @@ public class BinaryOperations {
 		}
 		return result;
 	}
-	
-	public String DoLogicalShift(String rx, int count,boolean isLeftShift)
-	{
+
+	public String DoLogicalShift(String rx, int count, boolean isLeftShift) {
 		String paddingZeroes = new String("0").repeat(count);
 		String buffer = rx;
 		String result;
-		if(isLeftShift)
-		{
+		if (isLeftShift) {
 			buffer = buffer.substring(count, rx.length());
 			buffer += paddingZeroes;
 			result = buffer;
-		}
-		else {
-			buffer = buffer.substring(0,rx.length()-count);
-			paddingZeroes+=buffer;
+		} else {
+			buffer = buffer.substring(0, rx.length() - count);
+			paddingZeroes += buffer;
 			result = paddingZeroes;
 		}
 		return result;
 	}
-	
-	public String DoArithmeticShift(String rx, int count,boolean isLeftShift)
-	{
-		return null;
+
+	public String DoArithmeticShift(String rx, int count, boolean isLeftShift) {
+		String padding;
+		String buffer = rx;
+		String result;
+		if (isLeftShift) {
+			padding = new String("0").repeat(count);
+			buffer = buffer.substring(count, rx.length());
+			buffer += padding;
+			result = buffer;
+		} else {
+			if (rx.charAt(0) == '0')
+				padding = new String("0");
+			else
+				padding = new String("1");
+			int i = 1;
+			while (i <= count) {
+				padding += buffer.substring(0, rx.length() - 1);
+				buffer = padding;
+				padding = String.valueOf(buffer.charAt(0));
+				i++;
+			}
+
+			result = buffer;
+		}
+		return result;
 	}
+
+	public String DoLogicalRotate(String rx, int count, boolean isLeftRotate) {
+		StringBuffer buffer = new StringBuffer(rx);
+		String result;
+		String bitsToRotate;
+		if (isLeftRotate) {
+			bitsToRotate = rx.substring(0, count);
+			buffer.replace(0, count, "");
+			buffer.append(bitsToRotate);
+		} else {
+			bitsToRotate = rx.substring(rx.length() - count, rx.length());
+			buffer.replace(rx.length() - count, rx.length(), "");
+			buffer.insert(0, bitsToRotate);
+		}
+		result = buffer.toString();
+		return result;
+	}
+
 }
