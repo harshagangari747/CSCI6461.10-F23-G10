@@ -187,14 +187,16 @@ public class Simulator {
 			RelationalOperatoinsOnBit(word);
 			break;
 		}
-		case SRC: {
-			break;
-		}
 		case NOT: {
 			RelationalOperatoinsOnBit(word);
 			break;
 		}
+		case SRC: {
+			ShiftBits(word);
+			break;
+		}
 		case RRC: {
+			ShiftBits(word);
 			break;
 		}
 		case IN: {
@@ -551,6 +553,21 @@ public class Simulator {
 			result = binaryOperationsObj.LogicalAnd(rx, ry);
 		} else if (word.opCode == OpCodes.NOT) {
 			result = binaryOperationsObj.binaryNot(rx);
+		}
+		FrontPanel.SetRegister(word.gpRegister, UtilClass.GetStringFormat(result));
+	}
+
+	private void ShiftBits(InstructionWord word) throws Exception {
+		String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
+		String indexInfo = UtilClass.ReturnRegisterEncoding(word.ixRegister);
+		boolean isLogicalShift = (indexInfo.charAt(0) == '1') ? true : false;
+		boolean isLeftShift = (indexInfo.charAt(1) == '1') ? true : false;
+		int count = Integer.parseInt(String.valueOf(word.address),2);
+		String result;
+		if (isLogicalShift) {
+			result = binaryOperationsObj.DoLogicalShift(gprValue, count, isLeftShift);
+		} else {
+			result = binaryOperationsObj.DoArithmeticShift(gprValue,count,isLeftShift);
 		}
 		FrontPanel.SetRegister(word.gpRegister, UtilClass.GetStringFormat(result));
 	}

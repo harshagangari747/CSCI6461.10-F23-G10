@@ -70,4 +70,15 @@ public class UtilClass {
 		else
 			return null;
 	}
+	
+	public static String ReturnRegisterEncoding(Registers register)
+	{
+		if(register == Registers.IXR0)
+			return "00";
+		else if(register == Registers.IXR1)
+			return "01";
+		else if(register == Registers.IXR2)
+			return "10";
+		return "11";
+	}
 }

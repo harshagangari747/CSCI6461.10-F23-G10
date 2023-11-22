@@ -119,6 +119,14 @@ public class InstructionWord {
 		{
 			return opCode.NOT;
 		}
+		case "011001":
+		{
+			return opCode.SRC;
+		}
+		case "011010":
+		{
+			return opCode.RRC;
+		}
 
 		default:
 			throw new Exception("Opcode : " + opcode + " is currently not supported!");

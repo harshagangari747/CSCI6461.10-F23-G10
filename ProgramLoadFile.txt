@@ -7,6 +7,9 @@ LOC 1
  Data 8
  Data 6
  Data 12
+ SRC 0,10,0,1
+ SRC 2,3,1,1
+ SRC 1,4,0,1
  LDX 3,1
  LDR 2,0,3
  LDR 3,0,4
