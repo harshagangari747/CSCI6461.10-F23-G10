@@ -1,6 +1,7 @@
 package simulatorG10;
 
 import java.lang.*;
+import java.security.interfaces.RSAKey;
 import java.util.*;
 
 //Class to perform binary operations and conversion - follows singleton pattern
@@ -140,5 +141,29 @@ public class BinaryOperations {
 				result += '1';
 		}
 		return result;
+	}
+	
+	public String DoLogicalShift(String rx, int count,boolean isLeftShift)
+	{
+		String paddingZeroes = new String("0").repeat(count);
+		String buffer = rx;
+		String result;
+		if(isLeftShift)
+		{
+			buffer = buffer.substring(count, rx.length());
+			buffer += paddingZeroes;
+			result = buffer;
+		}
+		else {
+			buffer = buffer.substring(0,rx.length()-count);
+			paddingZeroes+=buffer;
+			result = paddingZeroes;
+		}
+		return result;
+	}
+	
+	public String DoArithmeticShift(String rx, int count,boolean isLeftShift)
+	{
+		return null;
 	}
 }
