@@ -34,7 +34,7 @@ public class BinaryOperations {
 	 * Returns decimal form (base 10) from binary string (base 2)
 	 */
 	public int ReturnDecimalFromBinary(String binaryString) {
-		int decimalEquivalent = Integer.parseInt(binaryString, 10);
+		int decimalEquivalent = Integer.parseInt(binaryString, 2);
 		return decimalEquivalent;
 	}
 

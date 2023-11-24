@@ -1,7 +1,5 @@
 package simulatorG10;
 
-import javax.xml.stream.events.EndDocument;
-
 //Enum for identifying the opcodes
 public enum OpCodes {
 

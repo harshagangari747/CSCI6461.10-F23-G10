@@ -20,6 +20,7 @@ public class Simulator {
 	public static boolean haltTriggered = false;
 	private BinaryOperations binaryOperationsObj;
 	private boolean isJumpInst = false;
+	private int condensedCurrentPc;
 
 	/*
 	 * Class constructor to set the address with keys of memory to iterate through
@@ -43,7 +44,7 @@ public class Simulator {
 		String currentPc = FrontPanel.pcValueLbl.getText();
 		try {
 
-			int condensedCurrentPc = Integer.parseInt(UtilClass.ReturnUnformattedString(currentPc), 2);
+			condensedCurrentPc = Integer.parseInt(UtilClass.ReturnUnformattedString(currentPc), 2);
 			index = -1;
 			while (iterator.hasNext()) {
 				if (address.contains(condensedCurrentPc)) {
@@ -142,6 +143,7 @@ public class Simulator {
 			break;
 		}
 		case JSR: {
+			JumpAndSaveReturn(word);
 			break;
 		}
 		case RFS: {
@@ -415,16 +417,24 @@ public class Simulator {
 	private void Jump(InstructionWord word, boolean isZero, boolean isCCbit, boolean isGreater) throws Exception {
 		int eftAddr = Integer.parseInt(calculateEffectiveAddress(word), 2);
 		String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
-		int gprIntValue = Integer.parseInt(gprValue);
-		if ((isZero && gprIntValue == 0) || (!isZero && gprIntValue != 0) || isCCbit
-				|| (isGreater && gprIntValue >= 0)) {
-			String pcString = Integer.toBinaryString(eftAddr);
+		int gprIntValue = Integer.parseInt(gprValue, 2);
+		if (isCCbit) {
+			String ccBit = FrontPanel.ccValueLbl.getText();
+			int registerId = Integer.parseInt(word.gpRegister.GetValue(), 2);
+			if (ccBit.charAt(registerId) == '1') {
+				String pcString = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(eftAddr), 12);
+				FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(pcString));
+			} else {
+				IncrementPC();
+			}
+		}
+		else if ((isZero && gprIntValue == 0) || (!isZero && gprIntValue != 0) || (isGreater && gprIntValue >= 0)) {
+			String pcString = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(eftAddr), 12);
 			FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(pcString));
-			isJump(true);
-
 		} else {
 			IncrementPC();
 		}
+		isJump(true);
 
 	}
 
@@ -434,7 +444,8 @@ public class Simulator {
 		String result = UtilClass.ReturnWithAppendedZeroes(binaryOperationsObj.BinarySubstraction(gprValue, "1"), 16);
 		FrontPanel.SetRegister(word.gpRegister, UtilClass.GetStringFormat(result));
 		if (binaryOperationsObj.ReturnDecimalFromBinary(result) > 0) {
-			String pcString = calculateEffectiveAddress(word);
+			int eftAddr = Integer.parseInt(calculateEffectiveAddress(word), 2);
+			String pcString = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(eftAddr), 12);
 			FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(pcString));
 			isJump(true);
 		} else {
@@ -555,6 +566,7 @@ public class Simulator {
 			result = binaryOperationsObj.binaryNot(rx);
 		}
 		FrontPanel.SetRegister(word.gpRegister, UtilClass.GetStringFormat(result));
+		isJump(false);
 	}
 
 	private void ShiftBits(InstructionWord word) throws Exception {
@@ -562,27 +574,27 @@ public class Simulator {
 		String indexInfo = UtilClass.ReturnRegisterEncoding(word.ixRegister);
 		boolean isLogicalShift = (indexInfo.charAt(0) == '1') ? true : false;
 		boolean isLeftShift = (indexInfo.charAt(1) == '1') ? true : false;
-		int count = Integer.parseInt(String.valueOf(word.address),2);
+		int count = Integer.parseInt(String.valueOf(word.address), 2);
 		String result;
 		if (isLogicalShift) {
 			result = binaryOperationsObj.DoLogicalShift(gprValue, count, isLeftShift);
 		} else {
-			result = binaryOperationsObj.DoArithmeticShift(gprValue,count,isLeftShift);
+			result = binaryOperationsObj.DoArithmeticShift(gprValue, count, isLeftShift);
 		}
 		FrontPanel.SetRegister(word.gpRegister, UtilClass.GetStringFormat(result));
+		isJump(false);
 	}
 
 	private void isJump(boolean isJumpInstruction) {
 		isJumpInst = isJumpInstruction;
 	}
-	
-	private void RotateBits(InstructionWord word) throws Exception
-	{
+
+	private void RotateBits(InstructionWord word) throws Exception {
 		String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
 		String indexInfo = UtilClass.ReturnRegisterEncoding(word.ixRegister);
 		boolean isLogicalShift = (indexInfo.charAt(0) == '1') ? true : false;
 		boolean isLeftShift = (indexInfo.charAt(1) == '1') ? true : false;
-		int count = Integer.parseInt(String.valueOf(word.address),2);
+		int count = Integer.parseInt(String.valueOf(word.address), 2);
 		String result;
 		if (isLogicalShift) {
 			result = binaryOperationsObj.DoLogicalRotate(gprValue, count, isLeftShift);
@@ -590,7 +602,16 @@ public class Simulator {
 			throw new Exception("Arithmetic Rotation of bits is not supported!");
 		}
 		FrontPanel.SetRegister(word.gpRegister, UtilClass.GetStringFormat(result));
-		
+		isJump(false);
+
+	}
+
+	private void JumpAndSaveReturn(InstructionWord word) throws Exception {
+		int eftAddr = Integer.parseInt(calculateEffectiveAddress(word), 2);
+		String nextPc = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(condensedCurrentPc + 1), 16);
+		FrontPanel.SetRegister(Registers.GPR3, UtilClass.GetStringFormat(nextPc));
+		String pcString = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(eftAddr), 12);
+		FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(pcString));
 	}
 
 }
