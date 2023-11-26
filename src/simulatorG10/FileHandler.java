@@ -11,6 +11,8 @@ import org.json.simple.*;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import simulatorG10.Exceptions.FileException;
+
 /*
  * Class to perform file operations like read file content and store into memory
  * */
@@ -23,7 +25,7 @@ public class FileHandler {
 	/*
 	 * Loads the input file "ProgramLoadFile.txt and loads it
 	 */
-	public void LoadFile(FileTypes fileTypes) throws FileNotFoundException {
+	public void LoadFile(FileTypes fileTypes) throws Exception {
 
 		if (fileTypes == FileTypes.JSONFile) {
 
@@ -44,7 +46,7 @@ public class FileHandler {
 		}
 
 		if (!inputfile.exists()) {
-			throw new FileNotFoundException(
+			throw new FileException(
 					"One of the files does not exist: " + jsonFilePath + " or " + inputTextFilePath);
 		}
 	}
@@ -54,12 +56,12 @@ public class FileHandler {
 	 */
 	public File GetTextFromFile(String path) throws Exception {
 		if (path == null || path.isEmpty()) {
-			throw new FileNotFoundException("File path is null or empty.");
+			throw new FileException("File path is null or empty.");
 		}
 
 		inputfile = new File(path);
 		if (!inputfile.exists()) {
-			throw new FileNotFoundException("File does not exist: " + path);
+			throw new FileException("File does not exist: " + path);
 		}
 		return inputfile;
 	}
@@ -85,7 +87,7 @@ public class FileHandler {
 			bufferedReader.close();
 
 		} catch (FileNotFoundException e) {
-			throw new IOException(e.getLocalizedMessage());
+			throw new FileException(e.getLocalizedMessage());
 		}
 
 		return;
@@ -109,7 +111,7 @@ public class FileHandler {
 			}
 
 		} catch (Exception e) {
-			throw new Exception(e);
+			throw new FileException(e.getLocalizedMessage());
 
 		}
 
@@ -129,7 +131,7 @@ public class FileHandler {
 			}
 			bufferedReader.close();
 		} catch (Exception e) {
-			throw new Exception("Can't read generated input file : \"ProgramLoadFile.txt\"");
+			throw new FileException("Can't read generated input file : \"ProgramLoadFile.txt\"");
 		}
 		return textFileInputHashMap;
 	}

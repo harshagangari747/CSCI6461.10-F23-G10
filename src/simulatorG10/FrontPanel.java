@@ -14,6 +14,10 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+
+import simulatorG10.Exceptions.InstructionFormatException;
+import simulatorG10.Exceptions.MemoryFaultException;
+
 import javax.swing.JTextArea;
 
 //Main class that contains the Front Panel User Interface
@@ -108,6 +112,9 @@ public class FrontPanel extends JFrame {
 	public static JLabel helpTextLabel;
 
 	public static boolean faultTriggered;
+
+	private static JLabel keyboardNameLbl;
+	private static JLabel printerNameLbl;
 
 	// Main method performing some tasks before the user can interact with the UI
 	public static void main(String[] args) {
@@ -660,7 +667,7 @@ public class FrontPanel extends JFrame {
 
 		helpBtn.setMargin(new Insets(0, 0, 0, -3));
 		helpBtn.setFont(new Font("Yu Gothic UI", Font.BOLD, 12));
-		helpBtn.setBounds(743, 387, 40, 23);
+		helpBtn.setBounds(756, 487, 40, 23);
 		helpBtn.setEnabled(false);
 
 // 		  Add To Frame Here
@@ -776,6 +783,14 @@ public class FrontPanel extends JFrame {
 		helpTextLabel.setBounds(451, 392, 274, 18);
 		frame.getContentPane().add(helpTextLabel);
 
+		keyboardNameLbl = new JLabel("Keyboard");
+		keyboardNameLbl.setBounds(109, 459, 70, 14);
+		frame.getContentPane().add(keyboardNameLbl);
+
+		printerNameLbl = new JLabel("Printer");
+		printerNameLbl.setBounds(324, 459, 46, 14);
+		frame.getContentPane().add(printerNameLbl);
+
 		frame.setVisible(true);
 		frame.setResizable(false);
 
@@ -828,7 +843,7 @@ public class FrontPanel extends JFrame {
 		try {
 			return Memory.GetFromMemory(marText);
 		} catch (Exception e) {
-			throw new Exception("Address " + marText + " not found");
+			throw new MemoryFaultException("Address " + marText + " not found");
 		}
 	}
 
@@ -889,7 +904,7 @@ public class FrontPanel extends JFrame {
 			break;
 
 		default:
-			throw new IllegalArgumentException("Unexpected value: " + register);
+			throw new InstructionFormatException("Unexpected value: " + register);
 		}
 	}
 
@@ -911,5 +926,4 @@ public class FrontPanel extends JFrame {
 	public static String GetKeyboardInput() {
 		return FrontPanel.keyboardArea.getText();
 	}
-
 }
