@@ -3,31 +3,34 @@ LOC 1
  Data 1
  Data 6
  Data 14
- Data 60
+ Data 50
  Data 12
  Data 9
+ Data 39
  Data 27
- Data 8
  Data 10
  Data 7
  Data 80
  Data 90
- Data 11
  Data 4
+ Data 60
  Data 31
  Data 3
+ IN 2,0
+ OUT 2,1
  LDX 1,7
- SRC 3,2,1,1
- JNE 3,0,8
- SRC 0,3,1,1
+ SRC 0,2,1,1
+ JNE 0,0,9
+ SRC 3,3,1,1
  LOC 27
- SOB 3,1,16
+ SOB 0,1,8
  SRC 1,4,0,1
  LDX 3,1
  LOC 39
  LDX 2,6
  LDR 2,0,3
  LDR 3,0,4
+ OUT 0,1
  ORR 2,3
  RRC 2,2,0,1
  AND 3,2
@@ -40,13 +43,14 @@ LOC 1
  LDR 2,0,7
  MLT 2,0
  SRC 0,14,0,1
- JGE 2,3,5
+ JGE 2,0,15
  LOC 60
  LDR 2,0,2
  LDR 0,0,1
  DVD 0,2
  SIR 2,5
  SRC 2,2,0,0
+ OUT 2,1
  LDX 1,6
  JMA 1,2
  AMR 1,0,3
