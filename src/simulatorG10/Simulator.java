@@ -2,13 +2,9 @@ package simulatorG10;
 
 import simulatorG10.Exceptions.*;
 import java.awt.Color;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.regex.Matcher;
-
-import javax.swing.text.WrappedPlainView;
-import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
 
 /*Class to set,get, run instructions
  * Typically our CPU
@@ -23,6 +19,7 @@ public class Simulator {
 	private boolean isJumpInst = false;
 	private int condensedCurrentPc;
 	private String keyboardInput = null;
+	private static boolean isInteger;
 
 	/*
 	 * Class constructor to set the address with keys of memory to iterate through
@@ -231,7 +228,7 @@ public class Simulator {
 			SetGprOrIndex(gprContent, word.gpRegister);
 
 		} catch (Exception e) {
-			throw new InstFailedExecutionException(word, condensedCurrentPc);
+			throw new InstFailedExecutionException(word, condensedCurrentPc, null);
 
 		}
 	}
@@ -248,7 +245,7 @@ public class Simulator {
 			Memory.memory.put(eftAddr, gprValue);
 			opConsoleObj.WriteToOutputConsole("Stored " + gprValue + " into address " + eftAddr, Color.CYAN);
 		} catch (Exception e) {
-			throw new InstFailedExecutionException(word, condensedCurrentPc);
+			throw new InstFailedExecutionException(word, condensedCurrentPc, null);
 		}
 	}
 
@@ -276,7 +273,7 @@ public class Simulator {
 			String eftAddr = UtilClass.GetStringFormat(calculateEffectiveAddress(word));
 			SetGprOrIndex(eftAddr, word.ixRegister);
 		} catch (Exception e) {
-			throw new InstFailedExecutionException(word, condensedCurrentPc);
+			throw new InstFailedExecutionException(word, condensedCurrentPc, null);
 		}
 	}
 
@@ -292,7 +289,7 @@ public class Simulator {
 			Memory.memory.put(eftAddr, ixrValue);
 			opConsoleObj.WriteToOutputConsole("Stored " + ixrValue + " into address " + eftAddr, Color.CYAN);
 		} catch (Exception e) {
-			throw new InstFailedExecutionException(word, condensedCurrentPc);
+			throw new InstFailedExecutionException(word, condensedCurrentPc, null);
 		}
 	}
 
@@ -455,7 +452,7 @@ public class Simulator {
 			}
 			isJump(true);
 		} catch (Exception e) {
-			throw new InstFailedExecutionException(word, condensedCurrentPc);
+			throw new InstFailedExecutionException(word, condensedCurrentPc, null);
 		}
 	}
 
@@ -476,7 +473,7 @@ public class Simulator {
 			}
 
 		} catch (Exception e) {
-			throw new InstFailedExecutionException(word, condensedCurrentPc);
+			throw new InstFailedExecutionException(word, condensedCurrentPc, null);
 		}
 	}
 
@@ -495,7 +492,7 @@ public class Simulator {
 			FrontPanel.SetRegister(word.gpRegister, formattedResult);
 			isJump(false);
 		} catch (Exception e) {
-			throw new InstFailedExecutionException(word, condensedCurrentPc);
+			throw new InstFailedExecutionException(word, condensedCurrentPc, null);
 		}
 	}
 
@@ -514,7 +511,7 @@ public class Simulator {
 			FrontPanel.SetRegister(word.gpRegister, formattedResult);
 			isJump(false);
 		} catch (Exception e) {
-			throw new InstFailedExecutionException(word, condensedCurrentPc);
+			throw new InstFailedExecutionException(word, condensedCurrentPc, null);
 		}
 	}
 
@@ -560,7 +557,7 @@ public class Simulator {
 			FrontPanel.SetRegister(resRy, UtilClass.GetStringFormat(res1));
 			isJump(false);
 		} catch (Exception e) {
-			throw new InstFailedExecutionException(word, condensedCurrentPc);
+			throw new InstFailedExecutionException(word, condensedCurrentPc, null);
 		}
 	}
 
@@ -614,7 +611,7 @@ public class Simulator {
 			FrontPanel.SetRegister(word.gpRegister, UtilClass.GetStringFormat(result));
 			isJump(false);
 		} catch (Exception e) {
-			throw new InstFailedExecutionException(word, condensedCurrentPc);
+			throw new InstFailedExecutionException(word, condensedCurrentPc, null);
 		}
 	}
 
@@ -635,7 +632,7 @@ public class Simulator {
 			FrontPanel.SetRegister(word.gpRegister, UtilClass.GetStringFormat(result));
 			isJump(false);
 		} catch (Exception e) {
-			throw new InstFailedExecutionException(word, condensedCurrentPc);
+			throw new InstFailedExecutionException(word, condensedCurrentPc, null);
 		}
 	}
 
@@ -664,7 +661,7 @@ public class Simulator {
 			FrontPanel.SetRegister(word.gpRegister, UtilClass.GetStringFormat(result));
 			isJump(false);
 		} catch (Exception e) {
-			throw new InstFailedExecutionException(word, condensedCurrentPc);
+			throw new InstFailedExecutionException(word, condensedCurrentPc, null);
 		}
 	}
 
@@ -677,7 +674,7 @@ public class Simulator {
 			String pcString = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(eftAddr), 12);
 			FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(pcString));
 		} catch (Exception e) {
-			throw new InstFailedExecutionException(word, condensedCurrentPc);
+			throw new InstFailedExecutionException(word, condensedCurrentPc, null);
 		}
 	}
 
@@ -686,23 +683,43 @@ public class Simulator {
 		try {
 			FrontPanel.helpTextLabel.setText("Enter any character in the keyboard");
 			String inputText = FrontPanel.GetKeyboardInput();
-			if (inputText == null || inputText.isEmpty() || inputText.length() != 1) {
-				throw new Exception(
+			char singleChar;
+			int number = 0, res = 0;
+			if (inputText == null || inputText.isEmpty()) {
+				throw new InstructionFormatException(
 						"IN instruction triggerd : Input must be only one character long or no input text found");
 			}
-			// String gprValue =
-			// UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
 			int deviceId = Integer.parseInt(String.valueOf(word.address), 2);
 			if (deviceId != 0) {
-				throw new Exception("Device id :" + deviceId + " is not supported. Try to set device id to 1");
+				throw new InstructionFormatException(
+						"Device id :" + deviceId + " is not supported. Try to set device id to 1");
 			}
-			keyboardInput = UtilClass
-					.ReturnWithAppendedZeroes(binaryOperationsObj.ConvertCharToBinaryString(inputText.charAt(0)), 16);
+			if (inputText.length() == 1 && !Character.isDigit(inputText.charAt(0))) {
+				singleChar = inputText.charAt(0);
+				keyboardInput = UtilClass
+						.ReturnWithAppendedZeroes(binaryOperationsObj.ConvertCharToBinaryString(singleChar), 16);
+				isInteger = false;
+			}
+			if (inputText.length() > 1) {
+				for (int i = 0; i < inputText.length(); i++) {
+					if (Character.isDigit(inputText.charAt(i))) {
+						number += Integer.parseInt(String.valueOf(inputText.charAt(i)));
+						res = number;
+						number = number * 10;
+					} else {
+						throw new InstructionFormatException(
+								"\n You can enter only one alphabet character or an integer");
+					}
+				}
+				keyboardInput = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(res), 16);
+				isInteger = true;
+			}
+
 			FrontPanel.SetRegister(word.gpRegister, UtilClass.GetStringFormat(keyboardInput));
 			FrontPanel.helpTextLabel.setText("");
 
 		} catch (Exception e) {
-			throw new InstFailedExecutionException(word, condensedCurrentPc);
+			throw new InstFailedExecutionException(word, condensedCurrentPc, e.getLocalizedMessage());
 		}
 
 	}
@@ -710,17 +727,21 @@ public class Simulator {
 	/* method to perform OUT execution */
 	private void HandleOutputToPrinter(InstructionWord word) throws Exception {
 		try {
-			char outputText;
+			String outputText;
 			String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
 			int deviceId = Integer.parseInt(String.valueOf(word.address), 2);
 			if (deviceId != 1) {
 				throw new Exception("Device id :" + deviceId + " is not supported. Try to set device id to 1");
 			}
-			outputText = binaryOperationsObj.ConvertBinaryStringToChar(gprValue);
+			if (isInteger) {
+				outputText = String.valueOf(Integer.parseInt(gprValue, 2));
+			} else {
+				outputText = String.valueOf(binaryOperationsObj.ConvertBinaryStringToChar(gprValue));
+			}
 			FrontPanel.SetPrinterText(String.valueOf(outputText));
 
 		} catch (Exception e) {
-			throw new InstFailedExecutionException(word, condensedCurrentPc);
+			throw new InstFailedExecutionException(word, condensedCurrentPc, null);
 		}
 	}
 
@@ -730,12 +751,13 @@ public class Simulator {
 		String gpr0text = UtilClass.ReturnWithAppendedZeroes(immediateVal, 16);
 		try {
 			FrontPanel.SetRegister(Registers.GPR0, UtilClass.GetStringFormat(gpr0text));
-			String gpr3Text = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(Registers.GPR3));
-			String pcString = UtilClass.ReturnWithAppendedZeroes(gpr3Text, 12);
-			FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(pcString));
-
+			String currGpr3Value = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(Registers.GPR3));
+			int gpr3IntValue = Integer.parseInt(currGpr3Value, 2);
+			String pcLengthGpr3value = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(gpr3IntValue), 12);
+			FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(pcLengthGpr3value));
+			isJump(true);
 		} catch (Exception e) {
-			throw new InstFailedExecutionException(word, condensedCurrentPc);
+			throw new InstFailedExecutionException(word, condensedCurrentPc, null);
 		}
 	}
 
