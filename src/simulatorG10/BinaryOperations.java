@@ -78,19 +78,37 @@ public class BinaryOperations {
 
 	}
 
+	/*
+	 * Performs binary multiplication of two binary string values "rx" and "ry" and
+	 * returns the result as binary string
+	 */
 	public String BinaryMultiplication(String rx, String ry) {
 		long result = Integer.parseInt(rx, 2) * Integer.parseInt(ry, 2);
 		return Long.toBinaryString(result);
 	}
 
+	/*
+	 * Performs binary division of two binary string values "rx" and "ry" and return
+	 * the result with quotient and remainder appended with &
+	 */
 	public String BinaryDivision(String rx, String ry) {
-		int numerator = Integer.parseInt(rx, 2);
-		int denomenator = Integer.parseInt(ry, 2);
-		int remainder = numerator % denomenator;
-		int quoteint = numerator / denomenator;
-		return Integer.toBinaryString(quoteint) + "&" + Integer.toBinaryString(remainder);
+		try {
+			int numerator = Integer.parseInt(rx, 2);
+			int denomenator = Integer.parseInt(ry, 2);
+			int remainder = numerator % denomenator;
+			int quoteint = numerator / denomenator;
+			return Integer.toBinaryString(quoteint) + "&" + Integer.toBinaryString(remainder);
+		} catch (Exception e) {
+			return "O";
+
+		}
+
 	}
 
+	/*
+	 * Performs equality operation on two binary string "rx" and "ry" and returns
+	 * the result as boolean true if they are equal else false
+	 */
 	public boolean AreRegistersEqual(String rx, String ry) {
 		char bit1, bit2;
 		for (int i = 0; i < 16; i++) {
@@ -104,6 +122,10 @@ public class BinaryOperations {
 		return true;
 	}
 
+	/*
+	 * Performs AND operation on two binary string "rx" and "ry" and returns the
+	 * result as binary string
+	 */
 	public String LogicalAnd(String rx, String ry) {
 		String result = "";
 		char bit1, bit2;
@@ -120,6 +142,10 @@ public class BinaryOperations {
 		return result;
 	}
 
+	/*
+	 * Performs OR operation on two binary string "rx" and "ry" and returns the
+	 * result as binary string
+	 */
 	public String LogicalOr(String rx, String ry) {
 		String result = "";
 		char bit1, bit2;
@@ -136,6 +162,10 @@ public class BinaryOperations {
 		return result;
 	}
 
+	/*
+	 * Performs NOT operation on single binary string "rx" and returns the result as
+	 * binary string
+	 */
 	public String binaryNot(String rx) {
 		String result = "";
 		for (int i = 0; i < 16; i++) {
@@ -148,6 +178,10 @@ public class BinaryOperations {
 		return result;
 	}
 
+	/*
+	 * Performs logical shift on given string "rx" by a count of "count" either
+	 * right or left and returns the result as binary string
+	 */
 	public String DoLogicalShift(String rx, int count, boolean isLeftShift) {
 		String paddingZeroes = new String("0").repeat(count);
 		String buffer = rx;
@@ -164,6 +198,10 @@ public class BinaryOperations {
 		return result;
 	}
 
+	/*
+	 * Performs Arithmetic shift on given string "rx" by a count of "count" either
+	 * right or left and returns the result as binary string
+	 */
 	public String DoArithmeticShift(String rx, int count, boolean isLeftShift) {
 		String padding;
 		String buffer = rx;
@@ -191,6 +229,10 @@ public class BinaryOperations {
 		return result;
 	}
 
+	/*
+	 * Performs logical rotate on given string "rx" by a count of "count" either
+	 * right or left and returns the result
+	 */
 	public String DoLogicalRotate(String rx, int count, boolean isLeftRotate) {
 		StringBuffer buffer = new StringBuffer(rx);
 		String result;
@@ -208,16 +250,23 @@ public class BinaryOperations {
 		return result;
 	}
 
+	/*
+	 * Converts the character into its binary string equivalent and returns the
+	 * result as binary string
+	 */
 	public String ConvertCharToBinaryString(char ch) {
 		int asciiValue = (int) ch;
 		String binaryCode = Integer.toBinaryString(asciiValue);
 		return binaryCode;
 	}
 
+	/*
+	 * Converts the binary string into character type equivalent and returns the
+	 * result as a single character
+	 */
 	public char ConvertBinaryStringToChar(String bString) {
 		int value = Integer.parseInt(bString, 2);
 		char res = (char) value;
 		return res;
-
 	}
 }
