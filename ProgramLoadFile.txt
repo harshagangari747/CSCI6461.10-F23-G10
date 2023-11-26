@@ -17,8 +17,10 @@ LOC 1
  Data 31
  Data 3
  IN 2,0
+ OUT 2,1
  RFS 21
  LDX 1,7
+ LDX 2,7
  SRC 0,2,1,1
  OUT 2,1
  JNE 0,0,9
@@ -62,7 +64,6 @@ LOC 1
  SIR 2,3
  JCC 3,0,14
  LDX 1,2
- STX 1,1,1
  STR 2,0,1,1
  LOC 90
  STR 1,0,4
