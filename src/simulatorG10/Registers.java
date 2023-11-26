@@ -7,10 +7,12 @@ public enum Registers {
 
 	private String label;
 
+	//Constructor
 	private Registers(String labelName) {
 		this.label = labelName;
 	}
 
+	//Getter method
 	public String GetValue() {
 		return this.label;
 	}

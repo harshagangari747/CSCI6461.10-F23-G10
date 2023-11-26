@@ -893,6 +893,7 @@ public class FrontPanel extends JFrame {
 		}
 	}
 
+	/* Sets CC bit to the value 0/1 give at a position */
 	public static void SetCCRegister(int position, boolean flag) {
 		StringBuffer prevCCLable = new StringBuffer(ccValueLbl.getText());
 		prevCCLable.replace(position - 1, position, flag ? "1" : "0");
@@ -901,13 +902,14 @@ public class FrontPanel extends JFrame {
 
 	}
 
+	/* Method to set printer text with the value given in "value" */
 	public static void SetPrinterText(String value) {
 		FrontPanel.printerArea.setText(value);
 	}
 
+	/* Method to get the input value from keyboard area */
 	public static String GetKeyboardInput() {
 		return FrontPanel.keyboardArea.getText();
 	}
-	
-	
+
 }

@@ -29,8 +29,7 @@ public class InstructionWord {
 	 */
 	private OpCodes GetOpcode(String opcode) throws Exception {
 		switch (opcode) {
-		case "000000":
-		{
+		case "000000": {
 			return opCode.HALT;
 		}
 		case "": {
@@ -54,7 +53,6 @@ public class InstructionWord {
 		case "001000": {
 			return OpCodes.JZ;
 		}
-		// Write all opcodes here
 		case "001001": {
 			return opCode.JNE;
 		}

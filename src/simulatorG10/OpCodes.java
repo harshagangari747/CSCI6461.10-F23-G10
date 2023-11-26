@@ -11,10 +11,12 @@ public enum OpCodes {
 
 	public final String label;
 
+	//constructor
 	private OpCodes(String labelName) {
 		this.label = labelName;
 	}
 
+	//Getter method
 	public String GetValue() {
 		return this.label;
 	}

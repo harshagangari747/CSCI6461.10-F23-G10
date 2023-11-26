@@ -25,7 +25,8 @@ public class UtilClass {
 			return formattedString.toString();
 
 		} catch (Exception e) {
-			throw new IllegalArgumentException(" Instruction must be 16 characters long. PC/MBR must be 12 characters long.");
+			throw new IllegalArgumentException(
+					" Instruction must be 16 characters long. PC/MBR must be 12 characters long.");
 		}
 
 	}
@@ -41,7 +42,7 @@ public class UtilClass {
 			adjustedString.append(Constants.defaultSingleZero);
 		}
 		adjustedString.append(text);
-		if(adjustedString.toString().length()>16 && adjustedString.toString().length()!=32)
+		if (adjustedString.toString().length() > 16 && adjustedString.toString().length() != 32)
 			return adjustedString.toString().substring(1);
 		return adjustedString.toString();
 	}
@@ -70,14 +71,14 @@ public class UtilClass {
 		else
 			return null;
 	}
-	
-	public static String ReturnRegisterEncoding(Registers register)
-	{
-		if(register == Registers.IXR0)
+
+	/* Returns the register's canonical value */
+	public static String ReturnRegisterEncoding(Registers register) {
+		if (register == Registers.IXR0)
 			return "00";
-		else if(register == Registers.IXR1)
+		else if (register == Registers.IXR1)
 			return "01";
-		else if(register == Registers.IXR2)
+		else if (register == Registers.IXR2)
 			return "10";
 		return "11";
 	}

@@ -79,7 +79,6 @@ public class Simulator {
 		} catch (Exception e) {
 			throw new Exception(e.getLocalizedMessage());
 		}
-
 	}
 
 	/*
@@ -136,7 +135,7 @@ public class Simulator {
 		}
 		case JMA: {
 			String eftAddr = UtilClass.ReturnWithAppendedZeroes(calculateEffectiveAddress(word), 16);
-			FrontPanel.pcValueLbl.setText(UtilClass.GetStringFormat(eftAddr));
+			FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(eftAddr));
 			break;
 		}
 		case JGE: {
@@ -148,6 +147,7 @@ public class Simulator {
 			break;
 		}
 		case RFS: {
+			ReturnFromSubroutine(word);
 			break;
 		}
 		case SOB: {
@@ -216,7 +216,6 @@ public class Simulator {
 		default:
 			throw new Exception("Can't perfrom operation. Opcode not found or supported");
 		}
-
 	}
 
 	/*
@@ -225,10 +224,16 @@ public class Simulator {
 	 * 000001
 	 */
 	private void LoadRegisterFromMemory(InstructionWord word) throws Exception {
-		String eftAddr = UtilClass.ReturnWithAppendedZeroes(calculateEffectiveAddress(word), 16);
-		String gprContent = UtilClass.GetStringFormat(eftAddr);
-		SetGprOrIndex(gprContent, word.gpRegister);
+		try {
+			String eftAddr = UtilClass.ReturnWithAppendedZeroes(calculateEffectiveAddress(word), 16);
+			String gprContent = UtilClass.GetStringFormat(eftAddr);
+			SetGprOrIndex(gprContent, word.gpRegister);
 
+		} catch (Exception e) {
+			throw new Exception("Instruction failed to execute" + word.opCode + " " + word.gpRegister + " "
+					+ word.ixRegister + " " + word.indirectAddressing + " " + word.address);
+
+		}
 	}
 
 	/*
@@ -237,11 +242,15 @@ public class Simulator {
 	 * value : 000010
 	 */
 	private void StoreRegisterToMemory(InstructionWord word) throws Exception {
-		int eftAddr = Integer.parseInt(calculateEffectiveAddress(word), 2);
-		String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
-		Memory.memory.put(eftAddr, gprValue);
-		opConsoleObj.WriteToOutputConsole("Stored " + gprValue + " into address " + eftAddr, Color.CYAN);
-
+		try {
+			int eftAddr = Integer.parseInt(calculateEffectiveAddress(word), 2);
+			String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
+			Memory.memory.put(eftAddr, gprValue);
+			opConsoleObj.WriteToOutputConsole("Stored " + gprValue + " into address " + eftAddr, Color.CYAN);
+		} catch (Exception e) {
+			throw new Exception("Instruction failed to execute" + word.opCode + " " + word.gpRegister + " "
+					+ word.ixRegister + " " + word.indirectAddressing + " " + word.address);
+		}
 	}
 
 	/*
@@ -264,8 +273,13 @@ public class Simulator {
 	 * 101001
 	 */
 	private void LoadIndexRegisterFromMemory(InstructionWord word) throws Exception {
-		String eftAddr = UtilClass.GetStringFormat(calculateEffectiveAddress(word));
-		SetGprOrIndex(eftAddr, word.ixRegister);
+		try {
+			String eftAddr = UtilClass.GetStringFormat(calculateEffectiveAddress(word));
+			SetGprOrIndex(eftAddr, word.ixRegister);
+		} catch (Exception e) {
+			throw new Exception("Instruction failed to execute" + word.opCode + " " + word.gpRegister + " "
+					+ word.ixRegister + " " + word.indirectAddressing + " " + word.address);
+		}
 	}
 
 	/*
@@ -274,11 +288,15 @@ public class Simulator {
 	 * 101010
 	 */
 	private void StoreIndexRegisterToMemory(InstructionWord word) throws Exception {
-		int eftAddr = Integer.parseInt(calculateEffectiveAddress(word), 2);
-		String ixrValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.ixRegister));
-		Memory.memory.put(eftAddr, ixrValue);
-		opConsoleObj.WriteToOutputConsole("Stored " + ixrValue + " into address " + eftAddr, Color.CYAN);
-
+		try {
+			int eftAddr = Integer.parseInt(calculateEffectiveAddress(word), 2);
+			String ixrValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.ixRegister));
+			Memory.memory.put(eftAddr, ixrValue);
+			opConsoleObj.WriteToOutputConsole("Stored " + ixrValue + " into address " + eftAddr, Color.CYAN);
+		} catch (Exception e) {
+			throw new Exception("Instruction failed to execute: " + word.opCode + " " + word.gpRegister + " "
+					+ word.ixRegister + " " + word.indirectAddressing + " " + word.address);
+		}
 	}
 
 	/*
@@ -418,235 +436,321 @@ public class Simulator {
 
 	/* This method is used to perform various Jump operations */
 	private void Jump(InstructionWord word, boolean isZero, boolean isCCbit, boolean isGreater) throws Exception {
-		int eftAddr = Integer.parseInt(calculateEffectiveAddress(word), 2);
-		String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
-		int gprIntValue = Integer.parseInt(gprValue, 2);
-		if (isCCbit) {
-			String ccBit = FrontPanel.ccValueLbl.getText();
-			int registerId = Integer.parseInt(word.gpRegister.GetValue(), 2);
-			if (ccBit.charAt(registerId) == '1') {
+		try {
+			int eftAddr = Integer.parseInt(calculateEffectiveAddress(word), 2);
+			String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
+			int gprIntValue = Integer.parseInt(gprValue, 2);
+			if (isCCbit) {
+				String ccBit = FrontPanel.ccValueLbl.getText();
+				int registerId = Integer.parseInt(word.gpRegister.GetValue(), 2);
+				if (ccBit.charAt(registerId) == '1') {
+					String pcString = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(eftAddr), 12);
+					FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(pcString));
+				} else {
+					IncrementPC();
+				}
+			} else if ((isZero && gprIntValue == 0) || (!isZero && gprIntValue != 0)
+					|| (isGreater && gprIntValue >= 0)) {
 				String pcString = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(eftAddr), 12);
 				FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(pcString));
 			} else {
 				IncrementPC();
 			}
-		} else if ((isZero && gprIntValue == 0) || (!isZero && gprIntValue != 0) || (isGreater && gprIntValue >= 0)) {
-			String pcString = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(eftAddr), 12);
-			FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(pcString));
-		} else {
-			IncrementPC();
+			isJump(true);
+		} catch (Exception e) {
+			throw new Exception("Instruction failed to execute" + word.opCode + " " + word.gpRegister + " "
+					+ word.ixRegister + " " + word.indirectAddressing + " " + word.address);
 		}
-		isJump(true);
-
 	}
 
 	/* This method is used to perform SOB operation */
 	private void SubtractOneAndBranch(InstructionWord word) throws Exception {
-		String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
-		String result = UtilClass.ReturnWithAppendedZeroes(binaryOperationsObj.BinarySubstraction(gprValue, "1"), 16);
-		FrontPanel.SetRegister(word.gpRegister, UtilClass.GetStringFormat(result));
-		if (binaryOperationsObj.ReturnDecimalFromBinary(result) > 0) {
-			int eftAddr = Integer.parseInt(calculateEffectiveAddress(word), 2);
-			String pcString = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(eftAddr), 12);
-			FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(pcString));
-			isJump(true);
-		} else {
-			IncrementPC();
-		}
-
-	}
-
-	private void AddOrSubtractMemoryToRegister(InstructionWord word, boolean isAddition) throws Exception {
-		String eftAddr = calculateEffectiveAddress(word);
-		String result = null;
-		String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
-		if (isAddition) {
-			result = binaryOperationsObj.BinaryAddition(gprValue, eftAddr);
-		} else
-			result = binaryOperationsObj.BinarySubstraction(gprValue, eftAddr);
-		String paddedResult = UtilClass.ReturnWithAppendedZeroes(result, 16);
-		String formattedResult = UtilClass.GetStringFormat(paddedResult.substring(paddedResult.length() - 16));
-		FrontPanel.SetRegister(word.gpRegister, formattedResult);
-		isJump(false);
-	}
-
-	private void AddOrSubtractImmediate(InstructionWord word, boolean isAddition) throws Exception {
-		String result = null;
-		String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
-		String immValue = String.valueOf(word.address);
-		if (isAddition)
-			result = binaryOperationsObj.BinaryAddition(gprValue, immValue);
-		else
-			result = binaryOperationsObj.BinarySubstraction(gprValue, immValue);
-		String paddedResult = UtilClass.ReturnWithAppendedZeroes(result, 16);
-		String formattedResult = UtilClass.GetStringFormat(paddedResult.substring(paddedResult.length() - 16));
-		FrontPanel.SetRegister(word.gpRegister, formattedResult);
-		isJump(false);
-	}
-
-	private void MultiplyOrDivide(InstructionWord word, boolean isMulOp) throws Exception {
-		if (word.gpRegister == Registers.GPR1 || word.ixRegister == Registers.IXR3 || word.gpRegister == Registers.GPR3
-				|| word.ixRegister == Registers.IXR1) {
-			throw new Exception("Opearands must be stored in GPR0 or GPR2.");
-		}
-		String rx = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
-		Registers ryReg = word.gpRegister == Registers.GPR0 ? Registers.GPR2 : Registers.GPR0;
-		String ry = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(ryReg));
-		Registers resRx, resRy;
-		String result = null, res0 = null, res1 = null;
-		if (isMulOp) {
-			result = binaryOperationsObj.BinaryMultiplication(rx, ry);
-			if (result.length() > 32) {
-				// set cc bit;
-			}
-			String paddedResult = UtilClass.ReturnWithAppendedZeroes(result, 32);
-			res0 = paddedResult.substring(0, 16);
-			res1 = paddedResult.substring(16, 32);
-		} else {
-			result = binaryOperationsObj.BinaryDivision(rx, ry);
-			String[] divResult = result.split("&");
-			res0 = UtilClass.ReturnWithAppendedZeroes(divResult[0], 16);
-			res1 = UtilClass.ReturnWithAppendedZeroes(divResult[1], 16);
-
-		}
-		if (word.gpRegister == Registers.GPR0) {
-			resRx = Registers.GPR0;
-			resRy = Registers.GPR1;
-		} else {
-			resRx = Registers.GPR2;
-			resRy = Registers.GPR3;
-		}
-		FrontPanel.SetRegister(resRx, UtilClass.GetStringFormat(res0));
-		FrontPanel.SetRegister(resRy, UtilClass.GetStringFormat(res1));
-		isJump(false);
-
-	}
-
-	private void RelationalOperatoinsOnBit(InstructionWord word) throws Exception {
-		String rx = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
-		Registers ryReg;
-		switch (word.ixRegister) {
-		case IXR0: {
-			ryReg = Registers.GPR0;
-			break;
-		}
-		case IXR1: {
-			ryReg = Registers.GPR1;
-			break;
-		}
-		case IXR2: {
-			ryReg = Registers.GPR2;
-			break;
-		}
-		case IXR3: {
-			ryReg = Registers.GPR3;
-			break;
-		}
-
-		default:
-			throw new IllegalArgumentException("Register ID " + word.gpRegister + " or " + word.ixRegister
-					+ " not found. Only 0,1,2,3 are supported ");
-		}
-
-		String ry = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(ryReg));
-		boolean areEqual = false;
-		String result = "";
-		if (word.opCode == OpCodes.TRR) {
-
-			areEqual = binaryOperationsObj.AreRegistersEqual(rx, ry);
-			if (areEqual) {
-				FrontPanel.SetCCRegister(4, true);
+		try {
+			String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
+			String result = UtilClass.ReturnWithAppendedZeroes(binaryOperationsObj.BinarySubstraction(gprValue, "1"),
+					16);
+			FrontPanel.SetRegister(word.gpRegister, UtilClass.GetStringFormat(result));
+			if (binaryOperationsObj.ReturnDecimalFromBinary(result) > 0) {
+				int eftAddr = Integer.parseInt(calculateEffectiveAddress(word), 2);
+				String pcString = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(eftAddr), 12);
+				FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(pcString));
+				isJump(true);
 			} else {
-				FrontPanel.SetCCRegister(4, false);
+				IncrementPC();
 			}
-			return;
-		} else if (word.opCode == OpCodes.ORR) {
-			result = binaryOperationsObj.LogicalOr(rx, ry);
-		} else if (word.opCode == OpCodes.AND) {
-			result = binaryOperationsObj.LogicalAnd(rx, ry);
-		} else if (word.opCode == OpCodes.NOT) {
-			result = binaryOperationsObj.binaryNot(rx);
+
+		} catch (Exception e) {
+			throw new Exception("Instruction failed to execute" + word.opCode + " " + word.gpRegister + " "
+					+ word.ixRegister + " " + word.indirectAddressing + " " + word.address);
 		}
-		FrontPanel.SetRegister(word.gpRegister, UtilClass.GetStringFormat(result));
-		isJump(false);
 	}
 
+	/* method to perform AMR/SMR execution */
+	private void AddOrSubtractMemoryToRegister(InstructionWord word, boolean isAddition) throws Exception {
+		try {
+			String eftAddr = calculateEffectiveAddress(word);
+			String result = null;
+			String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
+			if (isAddition) {
+				result = binaryOperationsObj.BinaryAddition(gprValue, eftAddr);
+			} else
+				result = binaryOperationsObj.BinarySubstraction(gprValue, eftAddr);
+			String paddedResult = UtilClass.ReturnWithAppendedZeroes(result, 16);
+			String formattedResult = UtilClass.GetStringFormat(paddedResult.substring(paddedResult.length() - 16));
+			FrontPanel.SetRegister(word.gpRegister, formattedResult);
+			isJump(false);
+		} catch (Exception e) {
+			throw new Exception("Instruction failed to execute" + word.opCode + " " + word.gpRegister + " "
+					+ word.ixRegister + " " + word.indirectAddressing + " " + word.address);
+		}
+	}
+
+	/* method to perform AIM/SIM execution */
+	private void AddOrSubtractImmediate(InstructionWord word, boolean isAddition) throws Exception {
+		try {
+			String result = null;
+			String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
+			String immValue = String.valueOf(word.address);
+			if (isAddition)
+				result = binaryOperationsObj.BinaryAddition(gprValue, immValue);
+			else
+				result = binaryOperationsObj.BinarySubstraction(gprValue, immValue);
+			String paddedResult = UtilClass.ReturnWithAppendedZeroes(result, 16);
+			String formattedResult = UtilClass.GetStringFormat(paddedResult.substring(paddedResult.length() - 16));
+			FrontPanel.SetRegister(word.gpRegister, formattedResult);
+			isJump(false);
+		} catch (Exception e) {
+			throw new Exception("Instruction failed to execute" + word.opCode + " " + word.gpRegister + " "
+					+ word.ixRegister + " " + word.indirectAddressing + " " + word.address);
+		}
+	}
+
+	/* method to perform MLT/ DVD execution */
+	private void MultiplyOrDivide(InstructionWord word, boolean isMulOp) throws Exception {
+		try {
+			if (word.gpRegister == Registers.GPR1 || word.ixRegister == Registers.IXR3
+					|| word.gpRegister == Registers.GPR3 || word.ixRegister == Registers.IXR1) {
+				throw new Exception("Opearands must be stored in GPR0 or GPR2.");
+			}
+			String rx = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
+			Registers ryReg = word.gpRegister == Registers.GPR0 ? Registers.GPR2 : Registers.GPR0;
+			String ry = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(ryReg));
+			Registers resRx, resRy;
+			String result = null, res0 = null, res1 = null;
+			if (isMulOp) {
+				result = binaryOperationsObj.BinaryMultiplication(rx, ry);
+				if (result.length() > 32) {
+					FrontPanel.SetCCRegister(0, true);
+				}
+				String paddedResult = UtilClass.ReturnWithAppendedZeroes(result, 32);
+				res0 = paddedResult.substring(0, 16);
+				res1 = paddedResult.substring(16, 32);
+			} else {
+				result = binaryOperationsObj.BinaryDivision(rx, ry);
+				if (result.equals("O")) {
+					FrontPanel.SetCCRegister(2, true);
+					return;
+				}
+				String[] divResult = result.split("&");
+				res0 = UtilClass.ReturnWithAppendedZeroes(divResult[0], 16);
+				res1 = UtilClass.ReturnWithAppendedZeroes(divResult[1], 16);
+
+			}
+			if (word.gpRegister == Registers.GPR0) {
+				resRx = Registers.GPR0;
+				resRy = Registers.GPR1;
+			} else {
+				resRx = Registers.GPR2;
+				resRy = Registers.GPR3;
+			}
+			FrontPanel.SetRegister(resRx, UtilClass.GetStringFormat(res0));
+			FrontPanel.SetRegister(resRy, UtilClass.GetStringFormat(res1));
+			isJump(false);
+		} catch (Exception e) {
+			throw new Exception("Instruction failed to execute" + word.opCode + " " + word.gpRegister + " "
+					+ word.ixRegister + " " + word.indirectAddressing + " " + word.address);
+		}
+	}
+
+	/* method to perform TRR,NOT,AND,ORR execution */
+	private void RelationalOperatoinsOnBit(InstructionWord word) throws Exception {
+		try {
+			String rx = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
+			Registers ryReg;
+			switch (word.ixRegister) {
+			case IXR0: {
+				ryReg = Registers.GPR0;
+				break;
+			}
+			case IXR1: {
+				ryReg = Registers.GPR1;
+				break;
+			}
+			case IXR2: {
+				ryReg = Registers.GPR2;
+				break;
+			}
+			case IXR3: {
+				ryReg = Registers.GPR3;
+				break;
+			}
+
+			default:
+				throw new IllegalArgumentException("Register ID " + word.gpRegister + " or " + word.ixRegister
+						+ " not found. Only 0,1,2,3 are supported ");
+			}
+
+			String ry = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(ryReg));
+			boolean areEqual = false;
+			String result = "";
+			if (word.opCode == OpCodes.TRR) {
+
+				areEqual = binaryOperationsObj.AreRegistersEqual(rx, ry);
+				if (areEqual) {
+					FrontPanel.SetCCRegister(4, true);
+				} else {
+					FrontPanel.SetCCRegister(4, false);
+				}
+				return;
+			} else if (word.opCode == OpCodes.ORR) {
+				result = binaryOperationsObj.LogicalOr(rx, ry);
+			} else if (word.opCode == OpCodes.AND) {
+				result = binaryOperationsObj.LogicalAnd(rx, ry);
+			} else if (word.opCode == OpCodes.NOT) {
+				result = binaryOperationsObj.binaryNot(rx);
+			}
+			FrontPanel.SetRegister(word.gpRegister, UtilClass.GetStringFormat(result));
+			isJump(false);
+		} catch (Exception e) {
+			throw new Exception("Instruction failed to execute" + word.opCode + " " + word.gpRegister + " "
+					+ word.ixRegister + " " + word.indirectAddressing + " " + word.address);
+		}
+	}
+
+	/* method to perform SRC execution */
 	private void ShiftBits(InstructionWord word) throws Exception {
-		String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
-		String indexInfo = UtilClass.ReturnRegisterEncoding(word.ixRegister);
-		boolean isLogicalShift = (indexInfo.charAt(0) == '1') ? true : false;
-		boolean isLeftShift = (indexInfo.charAt(1) == '1') ? true : false;
-		int count = Integer.parseInt(String.valueOf(word.address), 2);
-		String result;
-		if (isLogicalShift) {
-			result = binaryOperationsObj.DoLogicalShift(gprValue, count, isLeftShift);
-		} else {
-			result = binaryOperationsObj.DoArithmeticShift(gprValue, count, isLeftShift);
+		try {
+			String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
+			String indexInfo = UtilClass.ReturnRegisterEncoding(word.ixRegister);
+			boolean isLogicalShift = (indexInfo.charAt(0) == '1') ? true : false;
+			boolean isLeftShift = (indexInfo.charAt(1) == '1') ? true : false;
+			int count = Integer.parseInt(String.valueOf(word.address), 2);
+			String result;
+			if (isLogicalShift) {
+				result = binaryOperationsObj.DoLogicalShift(gprValue, count, isLeftShift);
+			} else {
+				result = binaryOperationsObj.DoArithmeticShift(gprValue, count, isLeftShift);
+			}
+			FrontPanel.SetRegister(word.gpRegister, UtilClass.GetStringFormat(result));
+			isJump(false);
+		} catch (Exception e) {
+			throw new Exception("Instruction failed to execute" + word.opCode + " " + word.gpRegister + " "
+					+ word.ixRegister + " " + word.indirectAddressing + " " + word.address);
 		}
-		FrontPanel.SetRegister(word.gpRegister, UtilClass.GetStringFormat(result));
-		isJump(false);
 	}
 
+	/*
+	 * Method that sets isJumpInst to true when a jump instruction is executed else
+	 * false
+	 */
 	private void isJump(boolean isJumpInstruction) {
 		isJumpInst = isJumpInstruction;
 	}
 
+	/* method to perform RRC execution */
 	private void RotateBits(InstructionWord word) throws Exception {
-		String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
-		String indexInfo = UtilClass.ReturnRegisterEncoding(word.ixRegister);
-		boolean isLogicalShift = (indexInfo.charAt(0) == '1') ? true : false;
-		boolean isLeftShift = (indexInfo.charAt(1) == '1') ? true : false;
-		int count = Integer.parseInt(String.valueOf(word.address), 2);
-		String result;
-		if (isLogicalShift) {
-			result = binaryOperationsObj.DoLogicalRotate(gprValue, count, isLeftShift);
-		} else {
-			throw new Exception("Arithmetic Rotation of bits is not supported!");
+		try {
+			String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
+			String indexInfo = UtilClass.ReturnRegisterEncoding(word.ixRegister);
+			boolean isLogicalShift = (indexInfo.charAt(0) == '1') ? true : false;
+			boolean isLeftShift = (indexInfo.charAt(1) == '1') ? true : false;
+			int count = Integer.parseInt(String.valueOf(word.address), 2);
+			String result;
+			if (isLogicalShift) {
+				result = binaryOperationsObj.DoLogicalRotate(gprValue, count, isLeftShift);
+			} else {
+				throw new Exception("Arithmetic Rotation of bits is not supported!");
+			}
+			FrontPanel.SetRegister(word.gpRegister, UtilClass.GetStringFormat(result));
+			isJump(false);
+		} catch (Exception e) {
+			throw new Exception("Instruction failed to execute" + word.opCode + " " + word.gpRegister + " "
+					+ word.ixRegister + " " + word.indirectAddressing + " " + word.address);
 		}
-		FrontPanel.SetRegister(word.gpRegister, UtilClass.GetStringFormat(result));
-		isJump(false);
-
 	}
 
+	/* method to perform JSR execution */
 	private void JumpAndSaveReturn(InstructionWord word) throws Exception {
-		int eftAddr = Integer.parseInt(calculateEffectiveAddress(word), 2);
-		String nextPc = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(condensedCurrentPc + 1), 16);
-		FrontPanel.SetRegister(Registers.GPR3, UtilClass.GetStringFormat(nextPc));
-		String pcString = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(eftAddr), 12);
-		FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(pcString));
+		try {
+			int eftAddr = Integer.parseInt(calculateEffectiveAddress(word), 2);
+			String nextPc = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(condensedCurrentPc + 1), 16);
+			FrontPanel.SetRegister(Registers.GPR3, UtilClass.GetStringFormat(nextPc));
+			String pcString = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(eftAddr), 12);
+			FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(pcString));
+		} catch (Exception e) {
+			throw new Exception("Instruction failed to execute" + word.opCode + " " + word.gpRegister + " "
+					+ word.ixRegister + " " + word.indirectAddressing + " " + word.address);
+		}
 	}
 
+	/* method to perform IN execution */
 	private void HandleInputFromKeyboard(InstructionWord word) throws Exception {
-		FrontPanel.helpTextLabel.setText("Enter any character in the keyboard");
-		String inputText = FrontPanel.GetKeyboardInput();
-		if (inputText == null || inputText.isEmpty() || inputText.length() != 1) {
-			throw new Exception(
-					"IN instruction triggerd : Input must be only one character long or no input text found");
+		try {
+			FrontPanel.helpTextLabel.setText("Enter any character in the keyboard");
+			String inputText = FrontPanel.GetKeyboardInput();
+			if (inputText == null || inputText.isEmpty() || inputText.length() != 1) {
+				throw new Exception(
+						"IN instruction triggerd : Input must be only one character long or no input text found");
+			}
+			// String gprValue =
+			// UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
+			int deviceId = Integer.parseInt(String.valueOf(word.address), 2);
+			if (deviceId != 0) {
+				throw new Exception("Device id :" + deviceId + " is not supported. Try to set device id to 1");
+			}
+			keyboardInput = UtilClass
+					.ReturnWithAppendedZeroes(binaryOperationsObj.ConvertCharToBinaryString(inputText.charAt(0)), 16);
+			FrontPanel.SetRegister(word.gpRegister, UtilClass.GetStringFormat(keyboardInput));
+			FrontPanel.helpTextLabel.setText("");
+
+		} catch (Exception e) {
+			throw new Exception("Instruction failed to execute" + word.opCode + " " + word.gpRegister + " "
+					+ word.ixRegister + " " + word.indirectAddressing + " " + word.address);
 		}
-		// String gprValue =
-		// UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
-		int deviceId = Integer.parseInt(String.valueOf(word.address), 2);
-		if (deviceId != 0) {
-			throw new Exception("Device id :" + deviceId + " is not supported. Try to set device id to 1");
-		}
-		keyboardInput = UtilClass
-				.ReturnWithAppendedZeroes(binaryOperationsObj.ConvertCharToBinaryString(inputText.charAt(0)), 16);
-		FrontPanel.SetRegister(word.gpRegister, UtilClass.GetStringFormat(keyboardInput));
-		FrontPanel.helpTextLabel.setText("");
+
 	}
 
+	/* method to perform OUT execution */
 	private void HandleOutputToPrinter(InstructionWord word) throws Exception {
-		char outputText;
-//		if (keyboardInput.isBlank() || keyboardInput.isEmpty() || keyboardInput == null) {
-//			throw new Exception("There is nothing to show the output. Try executing IN instruction before OUT!");
-//		}
-		String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
-		int deviceId = Integer.parseInt(String.valueOf(word.address), 2);
-		if (deviceId != 1) {
-			throw new Exception("Device id :" + deviceId + " is not supported. Try to set device id to 1");
-		}
-		outputText = binaryOperationsObj.ConvertBinaryStringToChar(gprValue);
-		FrontPanel.SetPrinterText(String.valueOf(outputText));
+		try {
+			char outputText;
+			String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
+			int deviceId = Integer.parseInt(String.valueOf(word.address), 2);
+			if (deviceId != 1) {
+				throw new Exception("Device id :" + deviceId + " is not supported. Try to set device id to 1");
+			}
+			outputText = binaryOperationsObj.ConvertBinaryStringToChar(gprValue);
+			FrontPanel.SetPrinterText(String.valueOf(outputText));
 
+		} catch (Exception e) {
+			throw new Exception("Instruction failed to execute" + word.opCode + " " + word.gpRegister + " "
+					+ word.ixRegister + " " + word.indirectAddressing + " " + word.address);
+		}
+	}
+
+	/* method to execute RFS instruction */
+	private void ReturnFromSubroutine(InstructionWord word) throws Exception {
+		String immediateVal = String.valueOf(word.address);
+		String gpr0text = UtilClass.ReturnWithAppendedZeroes(immediateVal, 16);
+		try {
+			FrontPanel.SetRegister(Registers.GPR0, UtilClass.GetStringFormat(gpr0text));
+			String gpr3Text = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(Registers.GPR3));
+			String pcString = UtilClass.ReturnWithAppendedZeroes(gpr3Text, 12);
+			FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(pcString));
+
+		} catch (Exception e) {
+			throw new Exception("Instruction failed to execute" + word.opCode + " " + word.gpRegister + " "
+					+ word.ixRegister + " " + word.indirectAddressing + " " + word.address);
+		}
 	}
 }
