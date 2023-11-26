@@ -1,6 +1,7 @@
 package simulatorG10;
 
 import java.lang.*;
+import java.math.BigInteger;
 import java.security.interfaces.RSAKey;
 import java.util.*;
 
@@ -61,7 +62,11 @@ public class BinaryOperations {
 	 */
 	public String BinarySubstraction(String value1, String value2) {
 		int substractionValue = Integer.parseInt(value1, 2) - Integer.parseInt(value2, 2);
-		return Integer.toBinaryString(substractionValue);
+		String result = Integer.toBinaryString(substractionValue);
+		if (String.valueOf(result).length() > 16) {
+			result = result.substring(result.length() - 16);
+		}
+		return result;
 	}
 
 	/*
@@ -203,4 +208,16 @@ public class BinaryOperations {
 		return result;
 	}
 
+	public String ConvertCharToBinaryString(char ch) {
+		int asciiValue = (int) ch;
+		String binaryCode = Integer.toBinaryString(asciiValue);
+		return binaryCode;
+	}
+
+	public char ConvertBinaryStringToChar(String bString) {
+		int value = Integer.parseInt(bString, 2);
+		char res = (char) value;
+		return res;
+
+	}
 }

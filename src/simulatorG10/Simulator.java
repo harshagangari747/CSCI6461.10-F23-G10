@@ -21,6 +21,7 @@ public class Simulator {
 	private BinaryOperations binaryOperationsObj;
 	private boolean isJumpInst = false;
 	private int condensedCurrentPc;
+	private String keyboardInput = null;
 
 	/*
 	 * Class constructor to set the address with keys of memory to iterate through
@@ -202,9 +203,11 @@ public class Simulator {
 			break;
 		}
 		case IN: {
+			HandleInputFromKeyboard(word);
 			break;
 		}
 		case OUT: {
+			HandleOutputToPrinter(word);
 			break;
 		}
 		case CHK: {
@@ -427,8 +430,7 @@ public class Simulator {
 			} else {
 				IncrementPC();
 			}
-		}
-		else if ((isZero && gprIntValue == 0) || (!isZero && gprIntValue != 0) || (isGreater && gprIntValue >= 0)) {
+		} else if ((isZero && gprIntValue == 0) || (!isZero && gprIntValue != 0) || (isGreater && gprIntValue >= 0)) {
 			String pcString = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(eftAddr), 12);
 			FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(pcString));
 		} else {
@@ -614,4 +616,37 @@ public class Simulator {
 		FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(pcString));
 	}
 
+	private void HandleInputFromKeyboard(InstructionWord word) throws Exception {
+		FrontPanel.helpTextLabel.setText("Enter any character in the keyboard");
+		String inputText = FrontPanel.GetKeyboardInput();
+		if (inputText == null || inputText.isEmpty() || inputText.length() != 1) {
+			throw new Exception(
+					"IN instruction triggerd : Input must be only one character long or no input text found");
+		}
+		// String gprValue =
+		// UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
+		int deviceId = Integer.parseInt(String.valueOf(word.address), 2);
+		if (deviceId != 0) {
+			throw new Exception("Device id :" + deviceId + " is not supported. Try to set device id to 1");
+		}
+		keyboardInput = UtilClass
+				.ReturnWithAppendedZeroes(binaryOperationsObj.ConvertCharToBinaryString(inputText.charAt(0)), 16);
+		FrontPanel.SetRegister(word.gpRegister, UtilClass.GetStringFormat(keyboardInput));
+		FrontPanel.helpTextLabel.setText("");
+	}
+
+	private void HandleOutputToPrinter(InstructionWord word) throws Exception {
+		char outputText;
+//		if (keyboardInput.isBlank() || keyboardInput.isEmpty() || keyboardInput == null) {
+//			throw new Exception("There is nothing to show the output. Try executing IN instruction before OUT!");
+//		}
+		String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
+		int deviceId = Integer.parseInt(String.valueOf(word.address), 2);
+		if (deviceId != 1) {
+			throw new Exception("Device id :" + deviceId + " is not supported. Try to set device id to 1");
+		}
+		outputText = binaryOperationsObj.ConvertBinaryStringToChar(gprValue);
+		FrontPanel.SetPrinterText(String.valueOf(outputText));
+
+	}
 }

@@ -7,17 +7,14 @@ import java.awt.Insets;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.Map;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.plaf.synth.SynthCheckBoxMenuItemUI;
+import javax.swing.JTextArea;
 
 //Main class that contains the Front Panel User Interface
 public class FrontPanel extends JFrame {
@@ -104,6 +101,13 @@ public class FrontPanel extends JFrame {
 	private static JButton ccLoadBtn;
 	public static JLabel ccValueLbl;
 	private static String ccText;
+
+	public static JTextArea keyboardArea;
+	public static JTextArea printerArea;
+
+	public static JLabel helpTextLabel;
+
+	public static boolean faultTriggered;
 
 	// Main method performing some tasks before the user can interact with the UI
 	public static void main(String[] args) {
@@ -443,7 +447,7 @@ public class FrontPanel extends JFrame {
 	private static void InitializeFrameComponents() {
 		frame = new JFrame("Group10");
 		frame.getContentPane().setBackground(SystemColor.activeCaption);
-		frame.setSize(840, 460);
+		frame.setSize(840, 560);
 		frame.getContentPane().setLayout(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -759,6 +763,19 @@ public class FrontPanel extends JFrame {
 		ccLoadBtn.setBounds(778, 225, 18, 14);
 		frame.getContentPane().add(ccLoadBtn);
 
+		keyboardArea = new JTextArea();
+		keyboardArea.setBounds(26, 333, 208, 115);
+		frame.getContentPane().add(keyboardArea);
+
+		printerArea = new JTextArea();
+		printerArea.setBounds(244, 333, 190, 115);
+		printerArea.setEditable(false);
+		frame.getContentPane().add(printerArea);
+
+		helpTextLabel = new JLabel("");
+		helpTextLabel.setBounds(451, 392, 274, 18);
+		frame.getContentPane().add(helpTextLabel);
+
 		frame.setVisible(true);
 		frame.setResizable(false);
 
@@ -883,4 +900,14 @@ public class FrontPanel extends JFrame {
 		opConsoleObj.WriteToOutputConsole("Set CC[" + position + "] to " + flag, null);
 
 	}
+
+	public static void SetPrinterText(String value) {
+		FrontPanel.printerArea.setText(value);
+	}
+
+	public static String GetKeyboardInput() {
+		return FrontPanel.keyboardArea.getText();
+	}
+	
+	
 }
