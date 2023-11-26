@@ -1,14 +1,15 @@
 package simulatorG10;
+import simulatorG10.Exceptions.*;
 
-import javax.swing.text.StyledEditorKit.ForegroundAction;
+import simulatorG10.Exceptions.OpCodeNotSupportedException;
 
 //Class for instructionword given by user
 public class InstructionWord {
-	OpCodes opCode;
-	Registers gpRegister;
-	Registers ixRegister;
-	boolean indirectAddressing;
-	int address;
+	public OpCodes opCode;
+	public Registers gpRegister;
+	public Registers ixRegister;
+	public boolean indirectAddressing;
+	public int address;
 
 	/*
 	 * Class constructor to set the different fields of the instruction word for the
@@ -118,7 +119,7 @@ public class InstructionWord {
 		}
 
 		default:
-			throw new Exception("Opcode : " + opcode + " is currently not supported!");
+			throw new OpCodeNotSupportedException("Opcode : " + opcode + " is currently not supported!");
 		}
 	}
 
@@ -127,7 +128,7 @@ public class InstructionWord {
 	 * isGPR is to identify if the caller is seeking to get enum for GPR registers
 	 * or Index registers
 	 */
-	private Registers GetRegistersToSet(String register, boolean isGPR) {
+	private Registers GetRegistersToSet(String register, boolean isGPR) throws Exception{
 		switch (register) {
 		case "00": {
 			if (isGPR)
@@ -150,7 +151,7 @@ public class InstructionWord {
 			return Registers.IXR3;
 		}
 		default:
-			throw new IllegalArgumentException("Unexpected value: " + register);
+			throw new InstructionFormatException("Unexpected value: " + register);
 		}
 	}
 

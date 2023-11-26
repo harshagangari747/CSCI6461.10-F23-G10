@@ -1,5 +1,5 @@
 package simulatorG10;
-
+import simulatorG10.Exceptions.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,7 +10,7 @@ public class UtilClass {
 	 * Gets the string with format XXXX XXXX XXXX XXXX or XXXX XXXX XXXX or XXXX
 	 * XXXX to represent aesthetically and for better readability in the UI
 	 */
-	public static String GetStringFormat(String input) {
+	public static String GetStringFormat(String input) throws InstructionFormatException {
 
 		StringBuilder formattedString = new StringBuilder();
 		try {
@@ -25,8 +25,8 @@ public class UtilClass {
 			return formattedString.toString();
 
 		} catch (Exception e) {
-			throw new IllegalArgumentException(
-					" Instruction must be 16 characters long. PC/MBR must be 12 characters long.");
+			throw new InstructionFormatException(
+					"Instruction must be 16 characters long. PC/MBR must be 12 characters long.");
 		}
 
 	}

@@ -1,5 +1,6 @@
 package simulatorG10;
 
+import simulatorG10.Exceptions.*;
 import java.awt.Color;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
@@ -230,8 +231,7 @@ public class Simulator {
 			SetGprOrIndex(gprContent, word.gpRegister);
 
 		} catch (Exception e) {
-			throw new Exception("Instruction failed to execute" + word.opCode + " " + word.gpRegister + " "
-					+ word.ixRegister + " " + word.indirectAddressing + " " + word.address);
+			throw new InstFailedExecutionException(word, condensedCurrentPc);
 
 		}
 	}
@@ -248,8 +248,7 @@ public class Simulator {
 			Memory.memory.put(eftAddr, gprValue);
 			opConsoleObj.WriteToOutputConsole("Stored " + gprValue + " into address " + eftAddr, Color.CYAN);
 		} catch (Exception e) {
-			throw new Exception("Instruction failed to execute" + word.opCode + " " + word.gpRegister + " "
-					+ word.ixRegister + " " + word.indirectAddressing + " " + word.address);
+			throw new InstFailedExecutionException(word, condensedCurrentPc);
 		}
 	}
 
@@ -277,8 +276,7 @@ public class Simulator {
 			String eftAddr = UtilClass.GetStringFormat(calculateEffectiveAddress(word));
 			SetGprOrIndex(eftAddr, word.ixRegister);
 		} catch (Exception e) {
-			throw new Exception("Instruction failed to execute" + word.opCode + " " + word.gpRegister + " "
-					+ word.ixRegister + " " + word.indirectAddressing + " " + word.address);
+			throw new InstFailedExecutionException(word, condensedCurrentPc);
 		}
 	}
 
@@ -294,8 +292,7 @@ public class Simulator {
 			Memory.memory.put(eftAddr, ixrValue);
 			opConsoleObj.WriteToOutputConsole("Stored " + ixrValue + " into address " + eftAddr, Color.CYAN);
 		} catch (Exception e) {
-			throw new Exception("Instruction failed to execute: " + word.opCode + " " + word.gpRegister + " "
-					+ word.ixRegister + " " + word.indirectAddressing + " " + word.address);
+			throw new InstFailedExecutionException(word, condensedCurrentPc);
 		}
 	}
 
@@ -458,8 +455,7 @@ public class Simulator {
 			}
 			isJump(true);
 		} catch (Exception e) {
-			throw new Exception("Instruction failed to execute" + word.opCode + " " + word.gpRegister + " "
-					+ word.ixRegister + " " + word.indirectAddressing + " " + word.address);
+			throw new InstFailedExecutionException(word, condensedCurrentPc);
 		}
 	}
 
@@ -480,8 +476,7 @@ public class Simulator {
 			}
 
 		} catch (Exception e) {
-			throw new Exception("Instruction failed to execute" + word.opCode + " " + word.gpRegister + " "
-					+ word.ixRegister + " " + word.indirectAddressing + " " + word.address);
+			throw new InstFailedExecutionException(word, condensedCurrentPc);
 		}
 	}
 
@@ -500,8 +495,7 @@ public class Simulator {
 			FrontPanel.SetRegister(word.gpRegister, formattedResult);
 			isJump(false);
 		} catch (Exception e) {
-			throw new Exception("Instruction failed to execute" + word.opCode + " " + word.gpRegister + " "
-					+ word.ixRegister + " " + word.indirectAddressing + " " + word.address);
+			throw new InstFailedExecutionException(word, condensedCurrentPc);
 		}
 	}
 
@@ -520,8 +514,7 @@ public class Simulator {
 			FrontPanel.SetRegister(word.gpRegister, formattedResult);
 			isJump(false);
 		} catch (Exception e) {
-			throw new Exception("Instruction failed to execute" + word.opCode + " " + word.gpRegister + " "
-					+ word.ixRegister + " " + word.indirectAddressing + " " + word.address);
+			throw new InstFailedExecutionException(word, condensedCurrentPc);
 		}
 	}
 
@@ -567,8 +560,7 @@ public class Simulator {
 			FrontPanel.SetRegister(resRy, UtilClass.GetStringFormat(res1));
 			isJump(false);
 		} catch (Exception e) {
-			throw new Exception("Instruction failed to execute" + word.opCode + " " + word.gpRegister + " "
-					+ word.ixRegister + " " + word.indirectAddressing + " " + word.address);
+			throw new InstFailedExecutionException(word, condensedCurrentPc);
 		}
 	}
 
@@ -622,8 +614,7 @@ public class Simulator {
 			FrontPanel.SetRegister(word.gpRegister, UtilClass.GetStringFormat(result));
 			isJump(false);
 		} catch (Exception e) {
-			throw new Exception("Instruction failed to execute" + word.opCode + " " + word.gpRegister + " "
-					+ word.ixRegister + " " + word.indirectAddressing + " " + word.address);
+			throw new InstFailedExecutionException(word, condensedCurrentPc);
 		}
 	}
 
@@ -644,8 +635,7 @@ public class Simulator {
 			FrontPanel.SetRegister(word.gpRegister, UtilClass.GetStringFormat(result));
 			isJump(false);
 		} catch (Exception e) {
-			throw new Exception("Instruction failed to execute" + word.opCode + " " + word.gpRegister + " "
-					+ word.ixRegister + " " + word.indirectAddressing + " " + word.address);
+			throw new InstFailedExecutionException(word, condensedCurrentPc);
 		}
 	}
 
@@ -674,8 +664,7 @@ public class Simulator {
 			FrontPanel.SetRegister(word.gpRegister, UtilClass.GetStringFormat(result));
 			isJump(false);
 		} catch (Exception e) {
-			throw new Exception("Instruction failed to execute" + word.opCode + " " + word.gpRegister + " "
-					+ word.ixRegister + " " + word.indirectAddressing + " " + word.address);
+			throw new InstFailedExecutionException(word, condensedCurrentPc);
 		}
 	}
 
@@ -688,8 +677,7 @@ public class Simulator {
 			String pcString = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(eftAddr), 12);
 			FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(pcString));
 		} catch (Exception e) {
-			throw new Exception("Instruction failed to execute" + word.opCode + " " + word.gpRegister + " "
-					+ word.ixRegister + " " + word.indirectAddressing + " " + word.address);
+			throw new InstFailedExecutionException(word, condensedCurrentPc);
 		}
 	}
 
@@ -714,8 +702,7 @@ public class Simulator {
 			FrontPanel.helpTextLabel.setText("");
 
 		} catch (Exception e) {
-			throw new Exception("Instruction failed to execute" + word.opCode + " " + word.gpRegister + " "
-					+ word.ixRegister + " " + word.indirectAddressing + " " + word.address);
+			throw new InstFailedExecutionException(word, condensedCurrentPc);
 		}
 
 	}
@@ -733,8 +720,7 @@ public class Simulator {
 			FrontPanel.SetPrinterText(String.valueOf(outputText));
 
 		} catch (Exception e) {
-			throw new Exception("Instruction failed to execute" + word.opCode + " " + word.gpRegister + " "
-					+ word.ixRegister + " " + word.indirectAddressing + " " + word.address);
+			throw new InstFailedExecutionException(word, condensedCurrentPc);
 		}
 	}
 
@@ -749,8 +735,8 @@ public class Simulator {
 			FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(pcString));
 
 		} catch (Exception e) {
-			throw new Exception("Instruction failed to execute" + word.opCode + " " + word.gpRegister + " "
-					+ word.ixRegister + " " + word.indirectAddressing + " " + word.address);
+			throw new InstFailedExecutionException(word, condensedCurrentPc);
 		}
 	}
+
 }

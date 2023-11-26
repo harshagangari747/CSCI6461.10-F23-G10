@@ -1,5 +1,7 @@
 package simulatorG10;
 
+import simulatorG10.Exceptions.*;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -66,7 +68,7 @@ public class Translator {
 	}
 
 	/* This method decodes instructions with single parameter */
-	private void DecodeSingleRegInfoIntoHex(InstructionMetaData insMetaData, String[] byteInfo) {
+	private void DecodeSingleRegInfoIntoHex(InstructionMetaData insMetaData, String[] byteInfo) throws Exception {
 		int parsedByteInfo = -1;
 		String parsedByteInfoString = null;
 		try {
@@ -95,7 +97,6 @@ public class Translator {
 			String address = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(parsedByteInfo), 5);
 			bytePatternString.replace(11, 16, address);
 			inputToWrite.put(Integer.toBinaryString(tempPC++), bytePatternString.toString());
-			
 
 			break;
 		}
@@ -110,7 +111,7 @@ public class Translator {
 			break;
 		}
 		default:
-			throw new IllegalArgumentException(
+			throw new OpCodeNotSupportedException(
 					"Opcode" + insMetaData.opCode + " is currently not supported for conversion ");
 		}
 	}
@@ -154,7 +155,7 @@ public class Translator {
 		}
 
 		default:
-			throw new IllegalArgumentException(
+			throw new OpCodeNotSupportedException(
 					"Opcode" + insMetaData.opCode + " is currently not supported for conversion ");
 		}
 	}
@@ -212,13 +213,14 @@ public class Translator {
 		}
 
 		default:
-			throw new Exception("Opcode" + insMetaData.opCode + " is currently not supported for conversion");
+			throw new OpCodeNotSupportedException(
+					"Opcode" + insMetaData.opCode + " is currently not supported for conversion");
 
 		}
 	}
 
 	/* This method decodes instructions with four parameters */
-	private void DecodeQuadrapleRegInfoIntoHex(InstructionMetaData insMetaData, String[] byteInfo) {
+	private void DecodeQuadrapleRegInfoIntoHex(InstructionMetaData insMetaData, String[] byteInfo) throws Exception {
 		String gpr = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(Integer.parseInt(byteInfo[0])), 2);
 		StringBuffer bytePatternString = new StringBuffer(insMetaData.bytePattern);
 		switch (insMetaData.opCode) {
@@ -259,7 +261,7 @@ public class Translator {
 			break;
 		}
 		default:
-			throw new IllegalArgumentException(
+			throw new OpCodeNotSupportedException(
 					"Opcode" + insMetaData.opCode + " is currently not supported for conversion ");
 		}
 	}

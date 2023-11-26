@@ -1,5 +1,5 @@
 package simulatorG10;
-
+import simulatorG10.Exceptions.*;
 //Class to interpret the instruction word that user entered manually
 public class UserInputReader {
 	public String opCode;
@@ -29,7 +29,7 @@ public class UserInputReader {
 				&& ValidateLength(indexCode, 1) && ValidateLength(addrCode, 5)) {
 			return true;
 		} else {
-			throw new Exception(
+			throw new InstructionFormatException(
 					"One or more input fields are not in expected length. \n Click Help to the input format");
 		}
 	}
@@ -51,7 +51,8 @@ public class UserInputReader {
 	private static boolean IsBinaryString(String string) throws Exception {
 		for (char c : string.toCharArray()) {
 			if (c != '0' && c != '1') {
-				throw new Exception("Contains illegal characters. Make sure the instruction word is in binary :)");
+				throw new InstructionFormatException(
+						"Contains illegal characters. Make sure the instruction word is in binary :)");
 			}
 		}
 		return true;
@@ -106,7 +107,7 @@ public class UserInputReader {
 	 * Assembles 16 bit instruction word from the user input from the different text
 	 * fields
 	 */
-	private String GetCompleteUserInput() {
+	private String GetCompleteUserInput() throws InstructionFormatException {
 		return UtilClass.GetStringFormat(opCode + gprCode + ixrCode + indexCode + addrCode);
 	}
 
@@ -114,7 +115,7 @@ public class UserInputReader {
 	 * Calculates what value to set for CC register. Typically gpr register + index
 	 * register
 	 */
-	private String GetCCInput() {
+	private String GetCCInput() throws InstructionFormatException {
 		return UtilClass.GetStringFormat(gprCode + ixrCode);
 	}
 }
