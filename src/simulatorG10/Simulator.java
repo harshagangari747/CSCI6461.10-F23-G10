@@ -19,7 +19,7 @@ public class Simulator {
 	private boolean isJumpInst = false;
 	private int condensedCurrentPc;
 	private String keyboardInput = null;
-	private static boolean isInteger;
+	private static boolean isInteger = true;
 
 	/*
 	 * Class constructor to set the address with keys of memory to iterate through
@@ -692,13 +692,20 @@ public class Simulator {
 			int deviceId = Integer.parseInt(String.valueOf(word.address), 2);
 			if (deviceId != 0) {
 				throw new InstructionFormatException(
-						"Device id :" + deviceId + " is not supported. Try to set device id to 1");
+						"Device id :" + deviceId + " is not supported. Try to set device id to 0");
 			}
-			if (inputText.length() == 1 && !Character.isDigit(inputText.charAt(0))) {
+			if (inputText.length() == 1 ) {
 				singleChar = inputText.charAt(0);
-				keyboardInput = UtilClass
-						.ReturnWithAppendedZeroes(binaryOperationsObj.ConvertCharToBinaryString(singleChar), 16);
-				isInteger = false;
+				if (Character.isDigit(singleChar)) {
+					keyboardInput = UtilClass.ReturnWithAppendedZeroes(
+							binaryOperationsObj.ConvertCharToBinaryString(inputText.charAt(0)), 16);
+					isInteger = true;
+				} else {
+					keyboardInput = UtilClass
+							.ReturnWithAppendedZeroes(binaryOperationsObj.ConvertCharToBinaryString(singleChar), 16);
+					isInteger = false;
+				}
+
 			}
 			if (inputText.length() > 1) {
 				for (int i = 0; i < inputText.length(); i++) {
