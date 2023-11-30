@@ -33,7 +33,7 @@ LOC 1
  LDX 2,6
  LDR 2,0,3
  LDR 3,0,4
- OUT 0,1
+ OUT 2,1
  ORR 2,3
  RRC 2,2,0,1
  AND 3,2

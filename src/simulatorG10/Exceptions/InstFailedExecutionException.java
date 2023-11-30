@@ -1,5 +1,6 @@
 package simulatorG10.Exceptions;
 import simulatorG10.InstructionWord;
+import simulatorG10.Simulator;
 
 public class InstFailedExecutionException extends Exception {
 	public InstFailedExecutionException(InstructionWord word, int pcValue,String message) {
@@ -8,6 +9,7 @@ public class InstFailedExecutionException extends Exception {
 				+ ExceptionMessageDecodeBinary(word.ixRegister.GetValue()) + ","
 				+ ExceptionMessageDecodeBoolean(word.indirectAddressing) + ","
 				+ ExceptionMessageDecodeBinary(String.valueOf(word.address))+ "\n Exception Message : " +message);
+		Simulator.faultOccured = true;
 	}
 
 	private static int ExceptionMessageDecodeBoolean(boolean value) {

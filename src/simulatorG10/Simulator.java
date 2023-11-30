@@ -20,6 +20,7 @@ public class Simulator {
 	private int condensedCurrentPc;
 	private String keyboardInput = null;
 	private static boolean isInteger = true;
+	public static boolean faultOccured = false;
 
 	/*
 	 * Class constructor to set the address with keys of memory to iterate through
@@ -223,8 +224,10 @@ public class Simulator {
 	 */
 	private void LoadRegisterFromMemory(InstructionWord word) throws Exception {
 		try {
-			String eftAddr = UtilClass.ReturnWithAppendedZeroes(calculateEffectiveAddress(word), 16);
-			String gprContent = UtilClass.GetStringFormat(eftAddr);
+			String eftAddr = calculateEffectiveAddress(word);
+			IsEffectiveAddressValid(eftAddr, word);
+			String formattedEftAddr = UtilClass.ReturnWithAppendedZeroes(eftAddr, 16);
+			String gprContent = UtilClass.GetStringFormat(formattedEftAddr);
 			SetGprOrIndex(gprContent, word.gpRegister);
 
 		} catch (Exception e) {
@@ -240,9 +243,11 @@ public class Simulator {
 	 */
 	private void StoreRegisterToMemory(InstructionWord word) throws Exception {
 		try {
-			int eftAddr = Integer.parseInt(calculateEffectiveAddress(word), 2);
+			String eftAddr = calculateEffectiveAddress(word);
+			IsEffectiveAddressValid(eftAddr, word);
+			int IntEftAddr = Integer.parseInt(eftAddr, 2);
 			String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
-			Memory.memory.put(eftAddr, gprValue);
+			Memory.memory.put(IntEftAddr, gprValue);
 			opConsoleObj.WriteToOutputConsole("Stored " + gprValue + " into address " + eftAddr, Color.CYAN);
 		} catch (Exception e) {
 			throw new InstFailedExecutionException(word, condensedCurrentPc, null);
@@ -255,8 +260,10 @@ public class Simulator {
 	 */
 	private void LoadRegisterWithAddress(InstructionWord word) throws Exception {
 		try {
-			String eftAddr = UtilClass.ReturnWithAppendedZeroes(calculateEffectiveAddress(word), 16);
-			SetGprOrIndex(UtilClass.GetStringFormat(eftAddr), word.gpRegister);
+			String eftAddr = calculateEffectiveAddress(word);
+			IsEffectiveAddressValid(eftAddr, word);
+			String formattedEftAddr = UtilClass.ReturnWithAppendedZeroes(eftAddr, 16);
+			SetGprOrIndex(UtilClass.GetStringFormat(formattedEftAddr), word.gpRegister);
 		} catch (Exception e) {
 			throw new Exception(e.getLocalizedMessage());
 
@@ -270,8 +277,10 @@ public class Simulator {
 	 */
 	private void LoadIndexRegisterFromMemory(InstructionWord word) throws Exception {
 		try {
-			String eftAddr = UtilClass.GetStringFormat(calculateEffectiveAddress(word));
-			SetGprOrIndex(eftAddr, word.ixRegister);
+			String eftAddr = calculateEffectiveAddress(word);
+			IsEffectiveAddressValid(eftAddr, word);
+			String formattedEftAddr = UtilClass.GetStringFormat(eftAddr);
+			SetGprOrIndex(formattedEftAddr, word.ixRegister);
 		} catch (Exception e) {
 			throw new InstFailedExecutionException(word, condensedCurrentPc, null);
 		}
@@ -284,9 +293,11 @@ public class Simulator {
 	 */
 	private void StoreIndexRegisterToMemory(InstructionWord word) throws Exception {
 		try {
-			int eftAddr = Integer.parseInt(calculateEffectiveAddress(word), 2);
+			String eftAddr = calculateEffectiveAddress(word);
+			IsEffectiveAddressValid(eftAddr, word);
+			int IntEftAddr = Integer.parseInt(eftAddr, 2);
 			String ixrValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.ixRegister));
-			Memory.memory.put(eftAddr, ixrValue);
+			Memory.memory.put(IntEftAddr, ixrValue);
 			opConsoleObj.WriteToOutputConsole("Stored " + ixrValue + " into address " + eftAddr, Color.CYAN);
 		} catch (Exception e) {
 			throw new InstFailedExecutionException(word, condensedCurrentPc, null);
@@ -431,21 +442,23 @@ public class Simulator {
 	/* This method is used to perform various Jump operations */
 	private void Jump(InstructionWord word, boolean isZero, boolean isCCbit, boolean isGreater) throws Exception {
 		try {
-			int eftAddr = Integer.parseInt(calculateEffectiveAddress(word), 2);
+			String eftAddr = calculateEffectiveAddress(word);
+			IsEffectiveAddressValid(eftAddr, word);
+			int IntEftAddr = Integer.parseInt(eftAddr, 2);
 			String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
 			int gprIntValue = Integer.parseInt(gprValue, 2);
 			if (isCCbit) {
 				String ccBit = FrontPanel.ccValueLbl.getText();
 				int registerId = Integer.parseInt(word.gpRegister.GetValue(), 2);
 				if (ccBit.charAt(registerId) == '1') {
-					String pcString = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(eftAddr), 12);
+					String pcString = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(IntEftAddr), 12);
 					FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(pcString));
 				} else {
 					IncrementPC();
 				}
 			} else if ((isZero && gprIntValue == 0) || (!isZero && gprIntValue != 0)
 					|| (isGreater && gprIntValue >= 0)) {
-				String pcString = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(eftAddr), 12);
+				String pcString = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(IntEftAddr), 12);
 				FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(pcString));
 			} else {
 				IncrementPC();
@@ -464,8 +477,10 @@ public class Simulator {
 					16);
 			FrontPanel.SetRegister(word.gpRegister, UtilClass.GetStringFormat(result));
 			if (binaryOperationsObj.ReturnDecimalFromBinary(result) > 0) {
-				int eftAddr = Integer.parseInt(calculateEffectiveAddress(word), 2);
-				String pcString = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(eftAddr), 12);
+				String eftAddr = calculateEffectiveAddress(word);
+				IsEffectiveAddressValid(eftAddr, word);
+				int IntEftAddr = Integer.parseInt(eftAddr, 2);
+				String pcString = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(IntEftAddr), 12);
 				FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(pcString));
 				isJump(true);
 			} else {
@@ -481,6 +496,7 @@ public class Simulator {
 	private void AddOrSubtractMemoryToRegister(InstructionWord word, boolean isAddition) throws Exception {
 		try {
 			String eftAddr = calculateEffectiveAddress(word);
+			IsEffectiveAddressValid(eftAddr, word);
 			String result = null;
 			String gprValue = UtilClass.ReturnUnformattedString(GetGprOrIndxContent(word.gpRegister));
 			if (isAddition) {
@@ -668,10 +684,12 @@ public class Simulator {
 	/* method to perform JSR execution */
 	private void JumpAndSaveReturn(InstructionWord word) throws Exception {
 		try {
-			int eftAddr = Integer.parseInt(calculateEffectiveAddress(word), 2);
+			String eftAddr = calculateEffectiveAddress(word);
+			IsEffectiveAddressValid(eftAddr, word);
+			int intEftAddr = Integer.parseInt(eftAddr, 2);
 			String nextPc = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(condensedCurrentPc + 1), 16);
 			FrontPanel.SetRegister(Registers.GPR3, UtilClass.GetStringFormat(nextPc));
-			String pcString = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(eftAddr), 12);
+			String pcString = UtilClass.ReturnWithAppendedZeroes(Integer.toBinaryString(intEftAddr), 12);
 			FrontPanel.SetRegister(Registers.PC, UtilClass.GetStringFormat(pcString));
 		} catch (Exception e) {
 			throw new InstFailedExecutionException(word, condensedCurrentPc, null);
@@ -694,7 +712,7 @@ public class Simulator {
 				throw new InstructionFormatException(
 						"Device id :" + deviceId + " is not supported. Try to set device id to 0");
 			}
-			if (inputText.length() == 1 ) {
+			if (inputText.length() == 1) {
 				singleChar = inputText.charAt(0);
 				if (Character.isDigit(singleChar)) {
 					keyboardInput = UtilClass.ReturnWithAppendedZeroes(
@@ -766,6 +784,19 @@ public class Simulator {
 		} catch (Exception e) {
 			throw new InstFailedExecutionException(word, condensedCurrentPc, null);
 		}
+	}
+
+	/*
+	 * Method to check if the given effective address is valid. Throw exception if
+	 * the effective address is not accessible from memory
+	 */
+	private void IsEffectiveAddressValid(String efftAddr, InstructionWord word) throws MemoryFaultException {
+		if (efftAddr.equals("null")) {
+			throw new MemoryFaultException("Program is trying to access an unspecified"
+					+ " address that is not found in the memory.\n Please check the program again.\n"
+					+ new InstFailedExecutionException(word, condensedCurrentPc, efftAddr));
+		}
+
 	}
 
 }
