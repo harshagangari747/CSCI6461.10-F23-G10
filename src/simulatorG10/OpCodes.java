@@ -1,7 +1,5 @@
 package simulatorG10;
 
-import javax.xml.stream.events.EndDocument;
-
 //Enum for identifying the opcodes
 public enum OpCodes {
 
@@ -13,10 +11,12 @@ public enum OpCodes {
 
 	public final String label;
 
+	//constructor
 	private OpCodes(String labelName) {
 		this.label = labelName;
 	}
 
+	//Getter method
 	public String GetValue() {
 		return this.label;
 	}

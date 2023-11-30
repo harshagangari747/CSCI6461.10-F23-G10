@@ -2,5 +2,18 @@ package simulatorG10;
 
 //Enum to identify the registers in the UserInterface
 public enum Registers {
-	GPR0, GPR1, GPR2, GPR3, IXR0, IXR1, IXR2, IXR3, PC, MAR, MBR, IR, MFR, PRIV,CC;
+	GPR0("00"), GPR1("01"), GPR2("10"), GPR3("11"), IXR0("00"), IXR1("01"), IXR2("10"), IXR3("11"), PC(""), MAR(""),
+	MBR(""), IR(""), MFR(""), PRIV(""), CC("");
+
+	private String label;
+
+	//Constructor
+	private Registers(String labelName) {
+		this.label = labelName;
+	}
+
+	//Getter method
+	public String GetValue() {
+		return this.label;
+	}
 }

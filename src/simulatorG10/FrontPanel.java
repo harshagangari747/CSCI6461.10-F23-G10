@@ -9,14 +9,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.Map;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.plaf.synth.SynthCheckBoxMenuItemUI;
+
+import simulatorG10.Exceptions.InstructionFormatException;
+import simulatorG10.Exceptions.MemoryFaultException;
+
+import javax.swing.JTextArea;
 
 //Main class that contains the Front Panel User Interface
 public class FrontPanel extends JFrame {
@@ -103,6 +105,16 @@ public class FrontPanel extends JFrame {
 	private static JButton ccLoadBtn;
 	public static JLabel ccValueLbl;
 	private static String ccText;
+
+	public static JTextArea keyboardArea;
+	public static JTextArea printerArea;
+
+	public static JLabel helpTextLabel;
+
+	public static boolean faultTriggered;
+
+	private static JLabel keyboardNameLbl;
+	private static JLabel printerNameLbl;
 
 	// Main method performing some tasks before the user can interact with the UI
 	public static void main(String[] args) {
@@ -442,7 +454,7 @@ public class FrontPanel extends JFrame {
 	private static void InitializeFrameComponents() {
 		frame = new JFrame("Group10");
 		frame.getContentPane().setBackground(SystemColor.activeCaption);
-		frame.setSize(840, 460);
+		frame.setSize(840, 560);
 		frame.getContentPane().setLayout(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -655,7 +667,7 @@ public class FrontPanel extends JFrame {
 
 		helpBtn.setMargin(new Insets(0, 0, 0, -3));
 		helpBtn.setFont(new Font("Yu Gothic UI", Font.BOLD, 12));
-		helpBtn.setBounds(743, 387, 40, 23);
+		helpBtn.setBounds(756, 487, 40, 23);
 		helpBtn.setEnabled(false);
 
 // 		  Add To Frame Here
@@ -758,6 +770,27 @@ public class FrontPanel extends JFrame {
 		ccLoadBtn.setBounds(778, 225, 18, 14);
 		frame.getContentPane().add(ccLoadBtn);
 
+		keyboardArea = new JTextArea();
+		keyboardArea.setBounds(26, 333, 208, 115);
+		frame.getContentPane().add(keyboardArea);
+
+		printerArea = new JTextArea();
+		printerArea.setBounds(244, 333, 190, 115);
+		printerArea.setEditable(false);
+		frame.getContentPane().add(printerArea);
+
+		helpTextLabel = new JLabel("");
+		helpTextLabel.setBounds(451, 392, 274, 18);
+		frame.getContentPane().add(helpTextLabel);
+
+		keyboardNameLbl = new JLabel("Keyboard");
+		keyboardNameLbl.setBounds(109, 459, 70, 14);
+		frame.getContentPane().add(keyboardNameLbl);
+
+		printerNameLbl = new JLabel("Printer");
+		printerNameLbl.setBounds(324, 459, 46, 14);
+		frame.getContentPane().add(printerNameLbl);
+
 		frame.setVisible(true);
 		frame.setResizable(false);
 
@@ -810,65 +843,87 @@ public class FrontPanel extends JFrame {
 		try {
 			return Memory.GetFromMemory(marText);
 		} catch (Exception e) {
-			throw new Exception("Address " + marText + " not found");
+			throw new MemoryFaultException("Address " + marText + " not found");
 		}
 	}
 
 	/*
 	 * Set different registers with the value passed to the parameter "value"
 	 */
-	public static void SetRegister(Registers register, String value) {
-		try {
-			switch (register) {
-			case GPR0: {
-				gpr0ValueLbl.setText(value);
-			}
-				break;
-			case GPR1: {
-				gpr1ValueLbl.setText(value);
-			}
-				break;
-			case GPR2: {
-				gpr2ValueLbl.setText(value);
-			}
-				break;
-			case GPR3: {
-				gpr3ValueLbl.setText(value);
-			}
-				break;
-			case IXR1: {
-				ixr1ValueLbl.setText(value);
-			}
-				break;
-			case IXR2: {
-				ixr2ValueLbl.setText(value);
-			}
-			case IXR3: {
-				ixr3ValueLbl.setText(value);
-			}
-			case PC: {
-				pcValueLbl.setText(value);
-			}
-				break;
-			case MAR: {
-				marValueLbl.setText(value);
-			}
-				break;
-			case MBR: {
-				mbrValueLbl.setText(value);
-			}
-				break;
-			case IR: {
-				irValueLbl.setText(value);
-			}
-				break;
-
-			default:
-				throw new IllegalArgumentException("Unexpected value: " + register);
-			}
-		} catch (Exception e) {
-
+	public static void SetRegister(Registers register, String value) throws Exception {
+		String outputText = "Set " + register + " to value :" + value;
+		switch (register) {
+		case GPR0: {
+			gpr0ValueLbl.setText(value);
+			opConsoleObj.WriteToOutputConsole(outputText, null);
 		}
+			break;
+		case GPR1: {
+			gpr1ValueLbl.setText(value);
+			opConsoleObj.WriteToOutputConsole(outputText, null);
+		}
+			break;
+		case GPR2: {
+			gpr2ValueLbl.setText(value);
+			opConsoleObj.WriteToOutputConsole(outputText, null);
+		}
+			break;
+		case GPR3: {
+			gpr3ValueLbl.setText(value);
+			opConsoleObj.WriteToOutputConsole(outputText, null);
+		}
+			break;
+		case IXR1: {
+			ixr1ValueLbl.setText(value);
+			opConsoleObj.WriteToOutputConsole(outputText, null);
+		}
+			break;
+		case IXR2: {
+			ixr2ValueLbl.setText(value);
+			opConsoleObj.WriteToOutputConsole(outputText, null);
+		}
+		case IXR3: {
+			ixr3ValueLbl.setText(value);
+			opConsoleObj.WriteToOutputConsole(outputText, null);
+		}
+		case PC: {
+			pcValueLbl.setText(value);
+		}
+			break;
+		case MAR: {
+			marValueLbl.setText(value);
+		}
+			break;
+		case MBR: {
+			mbrValueLbl.setText(value);
+		}
+			break;
+		case IR: {
+			irValueLbl.setText(value);
+		}
+			break;
 
+		default:
+			throw new InstructionFormatException("Unexpected value: " + register);
+		}
+	}
+
+	/* Sets CC bit to the value 0/1 give at a position */
+	public static void SetCCRegister(int position, boolean flag) {
+		StringBuffer prevCCLable = new StringBuffer(ccValueLbl.getText());
+		prevCCLable.replace(position - 1, position, flag ? "1" : "0");
+		ccValueLbl.setText(prevCCLable.toString());
+		opConsoleObj.WriteToOutputConsole("Set CC[" + position + "] to " + flag, null);
+
+	}
+
+	/* Method to set printer text with the value given in "value" */
+	public static void SetPrinterText(String value) {
+		FrontPanel.printerArea.setText(value);
+	}
+
+	/* Method to get the input value from keyboard area */
+	public static String GetKeyboardInput() {
+		return FrontPanel.keyboardArea.getText();
 	}
 }

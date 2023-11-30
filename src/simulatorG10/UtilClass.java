@@ -1,5 +1,5 @@
 package simulatorG10;
-
+import simulatorG10.Exceptions.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,7 +10,7 @@ public class UtilClass {
 	 * Gets the string with format XXXX XXXX XXXX XXXX or XXXX XXXX XXXX or XXXX
 	 * XXXX to represent aesthetically and for better readability in the UI
 	 */
-	public static String GetStringFormat(String input) {
+	public static String GetStringFormat(String input) throws InstructionFormatException {
 
 		StringBuilder formattedString = new StringBuilder();
 		try {
@@ -25,7 +25,8 @@ public class UtilClass {
 			return formattedString.toString();
 
 		} catch (Exception e) {
-			throw new IllegalArgumentException(" Instruction must be 16 characters long. PC/MBR must be 12 characters long.");
+			throw new InstructionFormatException(
+					"Instruction must be 16 characters long. PC/MBR must be 12 characters long.");
 		}
 
 	}
@@ -41,7 +42,7 @@ public class UtilClass {
 			adjustedString.append(Constants.defaultSingleZero);
 		}
 		adjustedString.append(text);
-		if(adjustedString.toString().length()>16)
+		if (adjustedString.toString().length() > 16 && adjustedString.toString().length() != 32)
 			return adjustedString.toString().substring(1);
 		return adjustedString.toString();
 	}
@@ -69,5 +70,16 @@ public class UtilClass {
 			return patternMatch;
 		else
 			return null;
+	}
+
+	/* Returns the register's canonical value */
+	public static String ReturnRegisterEncoding(Registers register) {
+		if (register == Registers.IXR0)
+			return "00";
+		else if (register == Registers.IXR1)
+			return "01";
+		else if (register == Registers.IXR2)
+			return "10";
+		return "11";
 	}
 }
