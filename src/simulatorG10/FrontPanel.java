@@ -175,14 +175,17 @@ public class FrontPanel extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				Simulator step = new Simulator();
 				int memSize = -1;
+
 				while (memSize < Memory.memory.size()) {
 					try {
-						singleStepBtn.doClick();
-						if (!Simulator.haltTriggered) {
+						if (!Simulator.haltTriggered && !Simulator.faultOccured) {
+							singleStepBtn.doClick();
 							memSize++;
-						} else {
+						} else if (Simulator.haltTriggered && !Simulator.faultOccured) {
 							Simulator.haltTriggered = true;
 							memSize = Memory.memory.size();
+						} else if (Simulator.faultOccured && !Simulator.haltTriggered) {
+							memSize = Memory.memory.size() + 1;
 						}
 					} catch (Exception e1) {
 						ShowDialog(e1.getLocalizedMessage());
